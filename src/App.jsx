@@ -137,9 +137,9 @@ function CookieBanner() {
 // 1. Зарегистрируйтесь на emailjs.com
 // 2. Создайте Email Service и Template (переменные: {{from_name}}, {{contact}}, {{subject}}, {{message}})
 // 3. Замените три константы ниже на свои значения из дашборда EmailJS
-const EMAILJS_KEY = 'YOUR_PUBLIC_KEY';
-const EMAILJS_SVC = 'YOUR_SERVICE_ID';
-const EMAILJS_TPL = 'YOUR_TEMPLATE_ID';
+const EMAILJS_KEY = 'wCDNR5ZVSZmWBHgnG';
+const EMAILJS_SVC = 'service_5b68jmx';
+const EMAILJS_TPL = 'template_uo1ifkb';
 
 const openContact = (e) => { if(e) e.preventDefault(); window.dispatchEvent(new CustomEvent('openContact')); };
 
