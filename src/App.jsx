@@ -177,7 +177,7 @@ function HomeView({navigate}) {
     if(pendingScroll){const id=pendingScroll;pendingScroll=null;setTimeout(()=>document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'}),80);}
   },[]);
 
-  const TICKER=['САЙТЫ','ПРИЛОЖЕНИЯ','WEB-СЕРВИСЫ','ANDROID','ДАШБОРДЫ','ЛЕНДИНГИ','PWA','FLUTTER','REACT'];
+  const TICKER=['ВЕБ-РАЗРАБОТКА','PREMIUM UX/UI','МОБИЛЬНЫЕ ПРИЛОЖЕНИЯ','ЧИСТЫЙ КОД','ВЫСОКАЯ КОНВЕРСИЯ','WEB SERVICES','СКОРОСТЬ & ОПТИМИЗАЦИЯ','МАСШТАБИРУЕМОСТЬ ИТ-РЕШЕНИЙ','ТЕХНОЛОГИЧНЫЙ ДИЗАЙН'];
   const SVCS=[
     {n:'01',t:'Лендинги',            p:'от 5 000 ₽',   d:'2–3 дня · высокая конверсия'},
     {n:'02',t:'Корпоративные сайты', p:'от 80 000 ₽',  d:'CMS, каталоги, мультистраничные'},
@@ -205,13 +205,13 @@ function HomeView({navigate}) {
             <div style={{fontSize:9,letterSpacing:'0.2em',color:TEXT_D,textTransform:'uppercase',marginTop:2}}>Разработка сайтов и приложений</div>
           </div>
         </a>
-        <nav style={{display:'flex',gap:36,alignItems:'center'}}>
+        <nav className="desktop-nav" style={{display:'flex',gap:36,alignItems:'center'}}>
           {[['Услуги','#services'],['Кейсы','#cases'],['Процесс','#process'],['FAQ','#faq']].map(([n,h])=>(
             <a key={n} href={h} style={{fontSize:13,fontWeight:500,color:TEXT_M,textDecoration:'none',transition:'color 200ms'}}
               onMouseEnter={e=>e.target.style.color=TEXT} onMouseLeave={e=>e.target.style.color=TEXT_M}>{n}</a>
           ))}
         </nav>
-        <a href="#contact" className="btn-gold" style={{padding:'10px 24px',borderRadius:8,fontSize:13,fontWeight:700,color:'#0C0D10',textDecoration:'none'}}>
+        <a href="#contact" className="btn-gold desktop-nav" style={{padding:'10px 24px',borderRadius:8,fontSize:13,fontWeight:700,color:'#0C0D10',textDecoration:'none'}}>
           Обсудить проект
         </a>
       </header>
@@ -247,7 +247,7 @@ function HomeView({navigate}) {
                 <div style={{fontSize:8.5,letterSpacing:'0.18em',color:'rgba(245,240,232,0.28)',textTransform:'uppercase',marginTop:2}}>Fullstack · Mobile · Web</div>
               </div>
             </a>
-            <div style={{display:'flex',gap:32,alignItems:'center'}}>
+            <div className="hero-nav-links" style={{display:'flex',gap:32,alignItems:'center'}}>
               {[['Услуги','#services'],['Кейсы','#cases'],['Процесс','#process'],['FAQ','#faq']].map(([label,href])=>(
                 <a key={label} href={href}
                   style={{color:'rgba(245,240,232,0.6)',fontSize:14,textDecoration:'none',transition:'color 200ms'}}
@@ -257,7 +257,7 @@ function HomeView({navigate}) {
                 </a>
               ))}
             </div>
-            <a href="#contact" className="btn-gold" style={{padding:'9px 22px',borderRadius:8,fontSize:13,fontWeight:700,color:'#0C0D10',textDecoration:'none',display:'inline-block'}}>
+            <a href="#contact" className="btn-gold hero-nav-cta" style={{padding:'9px 22px',borderRadius:8,fontSize:13,fontWeight:700,color:'#0C0D10',textDecoration:'none',display:'inline-block'}}>
               Обсудить проект
             </a>
           </nav>
@@ -341,7 +341,7 @@ function HomeView({navigate}) {
           {[...TICKER,...TICKER].map((item,i)=>(
             <span key={i} style={{display:'inline-flex',alignItems:'center'}}>
               <span style={{fontSize:11,fontWeight:700,letterSpacing:'0.2em',color:TEXT_D,textTransform:'uppercase',padding:'0 22px'}}>{item}</span>
-              <span style={{color:GOLD,fontSize:9,opacity:0.6}}>·</span>
+              <span style={{color:GOLD,fontSize:8,opacity:0.45}}>◆</span>
             </span>
           ))}
         </div>
