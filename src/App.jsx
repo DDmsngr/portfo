@@ -55,6 +55,84 @@ function Orb({ top, left, right, bottom, size = 400, color = 'rgba(201,163,78,0.
   );
 }
 
+// ─── Privacy helpers ──────────────────────────────────────────────────────
+const openPrivacy = (e) => { if(e) e.preventDefault(); window.dispatchEvent(new CustomEvent('openPrivacy')); };
+
+function PrivacyModal() {
+  const [open, setOpen] = useState(false);
+  useEffect(()=>{
+    const h=()=>setOpen(true);
+    window.addEventListener('openPrivacy',h);
+    return()=>window.removeEventListener('openPrivacy',h);
+  },[]);
+  if(!open) return null;
+  const close=()=>setOpen(false);
+  const st={fontSize:11,fontWeight:700,letterSpacing:'0.14em',textTransform:'uppercase',color:GOLD,marginTop:20,marginBottom:8};
+  const pt={fontSize:13,color:'rgba(229,229,229,0.58)',lineHeight:1.82,margin:'0 0 6px'};
+  const lt={fontSize:13,color:'rgba(229,229,229,0.58)',lineHeight:1.82,paddingLeft:14};
+  return(
+    <div style={{position:'fixed',inset:0,zIndex:2000,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px'}}>
+      <div onClick={close} style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.72)',backdropFilter:'blur(10px)'}}/>
+      <div style={{position:'relative',zIndex:1,width:'100%',maxWidth:640,maxHeight:'86vh',background:'rgba(9,8,6,0.97)',border:'1px solid rgba(201,163,78,0.22)',borderRadius:18,backdropFilter:'blur(24px)',boxShadow:'0 32px 80px rgba(0,0,0,0.7),inset 0 1px 0 rgba(201,163,78,0.12)',display:'flex',flexDirection:'column',overflow:'hidden'}}>
+        <div style={{padding:'22px 26px 18px',borderBottom:'1px solid rgba(201,163,78,0.1)',display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexShrink:0}}>
+          <div>
+            <div style={{fontSize:10,fontWeight:700,letterSpacing:'0.18em',color:GOLD,textTransform:'uppercase',marginBottom:6}}>Юридический документ · 152-ФЗ</div>
+            <div style={{fontSize:19,fontWeight:500,color:'#F0EDE8',fontFamily:"'Cormorant Garamond',serif",lineHeight:1.2}}>Политика обработки<br/>персональных данных</div>
+          </div>
+          <button onClick={close} style={{width:34,height:34,borderRadius:'50%',border:'1px solid rgba(255,255,255,0.1)',background:'rgba(255,255,255,0.04)',color:'rgba(255,255,255,0.45)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,fontSize:20,lineHeight:1,marginTop:2}}>×</button>
+        </div>
+        <div style={{overflowY:'auto',padding:'20px 26px 28px',flex:1}}>
+          <p style={pt}>Настоящая Политика разработана в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных».</p>
+          <div style={{padding:'12px 16px',borderRadius:10,border:'1px solid rgba(201,163,78,0.15)',background:'rgba(201,163,78,0.04)',margin:'12px 0'}}>
+            <div style={{fontSize:10,fontWeight:700,color:GOLD,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:5}}>Оператор персональных данных</div>
+            <div style={{fontSize:13,color:'rgba(229,229,229,0.72)',lineHeight:1.7}}>ИП Евтушенко Алексей Михайлович<br/>E-mail: 9254652@bk.ru</div>
+          </div>
+          <div style={st}>1. Состав обрабатываемых данных</div>
+          <p style={pt}>Оператор обрабатывает данные, добровольно предоставленные через форму обратной связи:</p>
+          {['Имя и фамилия','Номер телефона','Адрес электронной почты','Содержание обращения'].map(i=><div key={i} style={lt}>· {i}</div>)}
+          <div style={st}>2. Цели обработки</div>
+          {['Ответ на заявки и обращения пользователей','Заключение и исполнение договоров об оказании услуг','Информирование о статусе выполняемых работ'].map(i=><div key={i} style={lt}>· {i}</div>)}
+          <div style={st}>3. Правовое основание</div>
+          <p style={pt}>Обработка осуществляется на основании согласия субъекта (ст. 6, ч. 1, п. 1 Федерального закона № 152-ФЗ).</p>
+          <div style={st}>4. Сроки хранения</div>
+          <p style={pt}>Данные хранятся не дольше, чем требуется для целей обработки, но не более 3 лет, либо до отзыва согласия субъектом.</p>
+          <div style={st}>5. Передача третьим лицам</div>
+          <p style={pt}>Данные не передаются третьим лицам без согласия субъекта, за исключением случаев, предусмотренных законодательством РФ.</p>
+          <div style={st}>6. Права субъекта</div>
+          {['Получить информацию об обработке своих данных','Потребовать уточнения или удаления данных','Отозвать согласие на обработку','Обратиться с жалобой в Роскомнадзор (rkn.gov.ru)'].map(i=><div key={i} style={lt}>· {i}</div>)}
+          <div style={st}>7. Файлы Cookie</div>
+          <p style={pt}>Сайт использует файлы cookie для корректной работы. Cookie можно отключить в настройках браузера.</p>
+          <div style={st}>8. Контакты оператора</div>
+          <p style={pt}>По вопросам обработки персональных данных: 9254652@bk.ru</p>
+          <button onClick={close} className="btn-gold" style={{marginTop:22,width:'100%',padding:'12px',borderRadius:10,fontSize:13,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>Понятно, закрыть</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CookieBanner() {
+  const [visible, setVisible] = useState(false);
+  useEffect(()=>{
+    if(!localStorage.getItem('cookies_accepted')){
+      const t=setTimeout(()=>setVisible(true),1400);
+      return()=>clearTimeout(t);
+    }
+  },[]);
+  const accept=()=>{ localStorage.setItem('cookies_accepted','1'); setVisible(false); };
+  return(
+    <div style={{position:'fixed',bottom:20,left:'50%',zIndex:900,width:'calc(100% - 32px)',maxWidth:540,transition:'opacity 380ms,transform 380ms',opacity:visible?1:0,transform:`translateX(-50%) translateY(${visible?'0':'72px'})`,pointerEvents:visible?'auto':'none'}}>
+      <div style={{background:'rgba(13,11,7,0.96)',border:'1px solid rgba(201,163,78,0.18)',borderRadius:14,backdropFilter:'blur(20px)',padding:'14px 18px',display:'flex',alignItems:'center',gap:14,boxShadow:'0 8px 40px rgba(0,0,0,0.55),inset 0 1px 0 rgba(201,163,78,0.07)'}}>
+        <div style={{flex:1,fontSize:12.5,color:'rgba(229,229,229,0.52)',lineHeight:1.55}}>
+          Мы используем файлы cookie для повышения удобства работы с сайтом.{' '}
+          <a href="#" onClick={openPrivacy} style={{color:'rgba(201,163,78,0.65)',textDecoration:'underline',textUnderlineOffset:'2px'}}>Подробнее</a>
+        </div>
+        <button onClick={accept} className="btn-gold" style={{padding:'8px 18px',borderRadius:8,fontSize:12,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer',flexShrink:0,whiteSpace:'nowrap'}}>Принять</button>
+      </div>
+    </div>
+  );
+}
+
 // ─── Data ─────────────────────────────────────────────────────────────────
 const HERO_BG  = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1920&q=85&fit=crop';
 const CASES_BG = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80&fit=crop';
@@ -560,6 +638,9 @@ function HomeView({navigate}) {
                 <Phone size={16}/> +7 911 925 46 52
               </a>
             </div>
+            <p style={{fontSize:11,color:'rgba(229,229,229,0.28)',marginTop:18,textAlign:'center',lineHeight:1.65,maxWidth:420,margin:'18px auto 0'}}>
+              Нажимая кнопку, вы даёте согласие на обработку персональных данных в&nbsp;соответствии с&nbsp;<a href="#" onClick={openPrivacy} style={{color:'rgba(201,163,78,0.5)',textDecoration:'underline',textUnderlineOffset:'2px',cursor:'pointer'}}>Политикой конфиденциальности</a>
+            </p>
           </motion.div>
         </div>
       </section>
@@ -571,7 +652,10 @@ function HomeView({navigate}) {
             <AELogo height={24}/>
             <span style={{fontSize:11.5,fontWeight:600,color:TEXT_D,letterSpacing:'0.08em',textTransform:'uppercase'}}>Алексей Евтушенко</span>
           </div>
-          <div style={{fontSize:13,color:TEXT_D}}>© 2026</div>
+          <div style={{display:'flex',alignItems:'center',gap:20,flexWrap:'wrap'}}>
+            <div style={{fontSize:13,color:TEXT_D}}>© 2026</div>
+            <a href="#" onClick={openPrivacy} style={{fontSize:12,color:'rgba(229,229,229,0.2)',textDecoration:'none',borderBottom:'1px solid rgba(229,229,229,0.1)',paddingBottom:1,cursor:'pointer',transition:'color 200ms'}} onMouseEnter={e=>e.currentTarget.style.color='rgba(201,163,78,0.55)'} onMouseLeave={e=>e.currentTarget.style.color='rgba(229,229,229,0.2)'}>Политика конфиденциальности</a>
+          </div>
         </div>
       </footer>
     </div>
@@ -585,7 +669,7 @@ function LawyerView({navigate}){
     <div style={{position:'relative',height:440,overflow:'hidden'}}><img src={IMGS.lawyer} alt="" style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.28) saturate(0.55)'}}/><div style={{position:'absolute',inset:0,background:'linear-gradient(to bottom,transparent 30%,#0A192F 100%)'}}/><div className="lawyer-nav" style={{position:'absolute',top:0,left:0,right:0,padding:'22px 56px 22px 100px',display:'flex',justifyContent:'space-between',alignItems:'center'}}><div><div style={{fontSize:17,fontWeight:700,color:'#D4AF37',letterSpacing:'0.06em',fontFamily:"'Cormorant Garamond',serif"}}>КОВАЛЁВ & ПАРТНЁРЫ</div><div style={{fontSize:10,color:'rgba(255,255,255,0.38)',letterSpacing:'0.2em',marginTop:2,textTransform:'uppercase'}}>Адвокатское бюро · с 2008</div></div><button style={{background:'transparent',border:'1px solid rgba(212,175,55,0.4)',color:'#D4AF37',padding:'9px 22px',fontSize:11.5,letterSpacing:'0.1em',cursor:'pointer',textTransform:'uppercase'}}>Записаться</button></div><div className="lawyer-hero-text" style={{position:'absolute',bottom:52,left:56,maxWidth:580}}><div style={{width:36,height:1,background:'#D4AF37',marginBottom:22}}/><h1 style={{fontSize:'clamp(30px,4.5vw,54px)',fontWeight:400,lineHeight:1.12,color:'#F0EAD6',marginBottom:20,fontFamily:"'Cormorant Garamond',serif"}}>Защита интересов <em style={{color:'#D4AF37'}}>на высшем уровне.</em></h1><p style={{fontSize:14,color:'rgba(255,255,255,0.52)',lineHeight:1.8,marginBottom:26}}>15 лет практики в арбитраже, семейном и корпоративном праве.</p><button style={{background:'#D4AF37',color:'#0A192F',padding:'12px 28px',fontSize:12,fontWeight:700,letterSpacing:'0.07em',border:'none',cursor:'pointer',textTransform:'uppercase'}}>Первичная консультация</button></div></div>
     <div className="lawyer-content" style={{maxWidth:1060,margin:'0 auto',padding:'52px 56px'}}><div style={{fontSize:11,letterSpacing:'0.14em',color:'#D4AF37',textTransform:'uppercase',marginBottom:28}}>Области практики</div><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:1,background:'rgba(212,175,55,0.1)',marginBottom:52}}>{[{Icon:Scale,t:'Арбитраж',d:'Представление интересов в арбитражных судах.'},{Icon:Users,t:'Семейное право',d:'Бракоразводные процессы, раздел имущества.'},{Icon:FileText,t:'Корпоративные споры',d:'Защита акционеров, оспаривание сделок.'}].map((s,i)=>(<div key={i} style={{background:'#0A192F',padding:'30px 26px'}}><s.Icon size={20} color="#D4AF37" style={{marginBottom:14}}/><div style={{fontSize:17,fontWeight:600,color:'#F0EAD6',marginBottom:8,fontFamily:"'Cormorant Garamond',serif"}}>{s.t}</div><div style={{fontSize:13,color:'rgba(255,255,255,0.48)',lineHeight:1.7}}>{s.d}</div></div>))}</div>
     <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:48,alignItems:'start',marginBottom:52}}><div><div style={{fontSize:11,letterSpacing:'0.14em',color:'#D4AF37',textTransform:'uppercase',marginBottom:16}}>Об адвокате</div><div style={{fontSize:24,color:'#F0EAD6',marginBottom:12,fontFamily:"'Cormorant Garamond',serif"}}>Александр Ковалёв</div><p style={{fontSize:13.5,color:'rgba(255,255,255,0.52)',lineHeight:1.8,marginBottom:22}}>Адвокат с 2008 года. Кандидат юридических наук.</p><div style={{display:'flex',gap:24}}>{[['500+','выигранных дел'],['15','лет практики'],['98%','успешных']].map(([v,l])=>(<div key={l}><div style={{fontSize:24,color:'#D4AF37',fontWeight:700,fontFamily:"'Cormorant Garamond',serif"}}>{v}</div><div style={{fontSize:10.5,color:'rgba(255,255,255,0.3)',textTransform:'uppercase',letterSpacing:'0.07em',marginTop:3}}>{l}</div></div>))}</div></div>
-    <div style={{background:'rgba(15,37,64,0.9)',border:'1px solid rgba(212,175,55,0.15)',padding:28,borderRadius:4}}><div style={{fontSize:11,letterSpacing:'0.12em',color:'#D4AF37',textTransform:'uppercase',marginBottom:18}}>Записаться</div>{['Ваше имя','Телефон','Тема обращения'].map(ph=><input key={ph} placeholder={ph} style={{display:'block',width:'100%',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,175,55,0.15)',padding:'11px 14px',color:'#fff',marginBottom:10,fontSize:13.5,outline:'none',fontFamily:'Inter,sans-serif',boxSizing:'border-box'}}/>)}<textarea placeholder="Описание" rows={3} style={{display:'block',width:'100%',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,175,55,0.15)',padding:'11px 14px',color:'#fff',marginBottom:16,fontSize:13.5,resize:'none',outline:'none',fontFamily:'Inter,sans-serif',boxSizing:'border-box'}}/><button style={{width:'100%',background:'#D4AF37',color:'#0A192F',padding:12,fontSize:12,fontWeight:700,letterSpacing:'0.07em',border:'none',cursor:'pointer',textTransform:'uppercase'}}>Отправить заявку</button></div></div>
+    <div style={{background:'rgba(15,37,64,0.9)',border:'1px solid rgba(212,175,55,0.15)',padding:28,borderRadius:4}}><div style={{fontSize:11,letterSpacing:'0.12em',color:'#D4AF37',textTransform:'uppercase',marginBottom:18}}>Записаться</div>{['Ваше имя','Телефон','Тема обращения'].map(ph=><input key={ph} placeholder={ph} style={{display:'block',width:'100%',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,175,55,0.15)',padding:'11px 14px',color:'#fff',marginBottom:10,fontSize:13.5,outline:'none',fontFamily:'Inter,sans-serif',boxSizing:'border-box'}}/>)}<textarea placeholder="Описание" rows={3} style={{display:'block',width:'100%',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,175,55,0.15)',padding:'11px 14px',color:'#fff',marginBottom:16,fontSize:13.5,resize:'none',outline:'none',fontFamily:'Inter,sans-serif',boxSizing:'border-box'}}/><button style={{width:'100%',background:'#D4AF37',color:'#0A192F',padding:12,fontSize:12,fontWeight:700,letterSpacing:'0.07em',border:'none',cursor:'pointer',textTransform:'uppercase'}}>Отправить заявку</button><p style={{fontSize:10.5,color:'rgba(255,255,255,0.28)',marginTop:10,lineHeight:1.65,fontFamily:'Inter,sans-serif'}}>Нажимая кнопку, вы даёте согласие на обработку персональных данных в&nbsp;соответствии с&nbsp;<a href="#" onClick={openPrivacy} style={{color:'rgba(212,175,55,0.5)',textDecoration:'underline',textUnderlineOffset:'2px',cursor:'pointer'}}>Политикой конфиденциальности</a></p></div></div>
     <div><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:24}}><div style={{fontSize:11,letterSpacing:'0.14em',color:'#D4AF37',textTransform:'uppercase'}}>Отзывы</div><div style={{display:'flex',gap:8}}><button onClick={()=>setSlide(s=>(s-1+LAWYER_REV.length)%LAWYER_REV.length)} style={{width:34,height:34,borderRadius:'50%',border:'1px solid rgba(212,175,55,0.28)',background:'transparent',color:'#D4AF37',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}}><ChevronLeft size={14}/></button><button onClick={()=>setSlide(s=>(s+1)%LAWYER_REV.length)} style={{width:34,height:34,borderRadius:'50%',border:'none',background:'#D4AF37',color:'#0A192F',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}}><ChevronRight size={14}/></button></div></div>
     <AnimatePresence mode="wait"><motion.div key={slide} initial={{opacity:0,x:12}} animate={{opacity:1,x:0}} exit={{opacity:0,x:-12}} transition={{duration:0.25}} style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(212,175,55,0.08)',borderRadius:4,padding:'28px 30px'}}><div style={{display:'flex',gap:3,marginBottom:14}}>{Array.from({length:5}).map((_,i)=><Star key={i} size={13} fill="#D4AF37" color="#D4AF37"/>)}</div><p style={{fontSize:17,color:'#F0EAD6',lineHeight:1.78,fontStyle:'italic',marginBottom:18,fontFamily:"'Cormorant Garamond',serif"}}>«{LAWYER_REV[slide].text}»</p><div style={{fontWeight:700,color:'#D4AF37',fontSize:13}}>{LAWYER_REV[slide].name}</div><div style={{fontSize:11.5,color:'rgba(255,255,255,0.3)',marginTop:3}}>{LAWYER_REV[slide].role}</div></motion.div></AnimatePresence></div></div>
   </div>);
@@ -737,6 +821,7 @@ export default function App(){
   const realProject=PROJECTS.find(p=>p.id===currentView);
 
   return(
+    <>
     <AnimatePresence mode="wait">
       <motion.div key={currentView} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:0.22}}>
         {currentView==='home'      && <HomeView navigate={navigate}/>}
@@ -747,5 +832,8 @@ export default function App(){
         {realProject               && <ProjectDetailView navigate={navigate} project={realProject}/>}
       </motion.div>
     </AnimatePresence>
+    <PrivacyModal/>
+    <CookieBanner/>
+    </>
   );
 }
