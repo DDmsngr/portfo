@@ -216,71 +216,115 @@ function HomeView({navigate}) {
         </a>
       </header>
 
-      {/* HERO — fullscreen video with embedded navbar */}
-      <div style={{position:'relative',overflow:'hidden',minHeight:'100vh',background:'hsl(260,87%,3%)'}}>
-        {/* Background video */}
+      {/* HERO — fullscreen video, black+gold palette */}
+      <div style={{position:'relative',overflow:'hidden',minHeight:'100vh',background:'#060608'}}>
+        {/* Background video — desaturated to kill purple cast */}
         <video
           ref={videoRef}
           src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_065045_c44942da-53c6-4804-b734-f9e07fc22e08.mp4"
           muted playsInline
-          style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:0,pointerEvents:'none'}}
+          style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:0,pointerEvents:'none',filter:'saturate(0.28) brightness(0.82)'}}
         />
+        {/* Warm dark overlay to shift tone from blue-purple to near-black */}
+        <div style={{position:'absolute',inset:0,background:'rgba(8,5,2,0.52)',pointerEvents:'none',zIndex:1}}/>
 
-        {/* Hero content — z-10, overflow-visible so blur isn't clipped */}
+        {/* Hero content */}
         <div style={{position:'relative',zIndex:10,minHeight:'100vh',display:'flex',flexDirection:'column',overflow:'visible'}}>
 
-          {/* Blur overlay — centered behind content */}
-          <div style={{position:'absolute',width:984,height:527,top:'50%',left:'50%',transform:'translate(-50%,-50%)',background:'#030712',filter:'blur(82px)',opacity:0.9,pointerEvents:'none',zIndex:0}}/>
+          {/* Dark warm core blur */}
+          <div style={{position:'absolute',width:1020,height:560,top:'50%',left:'50%',transform:'translate(-50%,-50%)',background:'#070401',filter:'blur(90px)',opacity:0.94,pointerEvents:'none',zIndex:0}}/>
+          {/* Gold ambient — top right */}
+          <div style={{position:'absolute',width:680,height:680,top:'-10%',left:'50%',background:'radial-gradient(circle,rgba(201,163,78,0.09) 0%,transparent 65%)',filter:'blur(60px)',pointerEvents:'none',zIndex:0}}/>
+          {/* Gold ambient — bottom left */}
+          <div style={{position:'absolute',width:500,height:500,bottom:'0%',left:'-6%',background:'radial-gradient(circle,rgba(201,163,78,0.055) 0%,transparent 65%)',filter:'blur(80px)',pointerEvents:'none',zIndex:0}}/>
 
           {/* Navbar */}
-          <nav style={{position:'relative',zIndex:1,padding:'20px 32px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-            <img src={logoSrc} alt="logo" style={{height:32,display:'block',objectFit:'contain'}}/>
+          <nav style={{position:'relative',zIndex:1,padding:'20px 44px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            <a href="#" style={{display:'flex',alignItems:'center',gap:12,textDecoration:'none'}}>
+              <AELogo height={34}/>
+              <div>
+                <div style={{fontWeight:700,fontSize:11,letterSpacing:'0.14em',color:'rgba(245,240,232,0.88)',textTransform:'uppercase',lineHeight:1.2}}>Алексей Евтушенко</div>
+                <div style={{fontSize:8.5,letterSpacing:'0.18em',color:'rgba(245,240,232,0.28)',textTransform:'uppercase',marginTop:2}}>Fullstack · Mobile · Web</div>
+              </div>
+            </a>
             <div style={{display:'flex',gap:32,alignItems:'center'}}>
-              {[['Features',true],['Solutions',false],['Plans',false],['Learning',true]].map(([lbl,chev])=>(
-                <button key={lbl}
-                  style={{display:'flex',alignItems:'center',gap:4,background:'none',border:'none',cursor:'pointer',color:'hsla(40,6%,95%,0.9)',fontSize:14,fontFamily:'inherit',padding:0,transition:'opacity 200ms'}}
-                  onMouseEnter={e=>e.currentTarget.style.opacity='.65'}
-                  onMouseLeave={e=>e.currentTarget.style.opacity='1'}>
-                  {lbl}{chev&&<ChevronDown size={13} style={{marginLeft:2}}/>}
-                </button>
+              {[['Услуги','#services'],['Кейсы','#cases'],['Процесс','#process'],['FAQ','#faq']].map(([label,href])=>(
+                <a key={label} href={href}
+                  style={{color:'rgba(245,240,232,0.6)',fontSize:14,textDecoration:'none',transition:'color 200ms'}}
+                  onMouseEnter={e=>e.currentTarget.style.color='rgba(245,240,232,1)'}
+                  onMouseLeave={e=>e.currentTarget.style.color='rgba(245,240,232,0.6)'}>
+                  {label}
+                </a>
               ))}
             </div>
-            <button className="hero-secondary" style={{borderRadius:9999,padding:'8px 16px',fontSize:14,fontWeight:500,cursor:'pointer'}}>Sign Up</button>
+            <a href="#contact" className="btn-gold" style={{padding:'9px 22px',borderRadius:8,fontSize:13,fontWeight:700,color:'#0C0D10',textDecoration:'none',display:'inline-block'}}>
+              Обсудить проект
+            </a>
           </nav>
 
-          {/* Divider */}
-          <div style={{height:1,background:'linear-gradient(to right,transparent,rgba(242,241,240,0.2),transparent)',marginTop:3}}/>
+          {/* Divider — gold tint */}
+          <div style={{height:1,background:'linear-gradient(to right,transparent,rgba(201,163,78,0.2),transparent)',marginTop:3}}/>
 
           {/* Headline + subtitle + CTA */}
-          <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',position:'relative',zIndex:1}}>
-            <div>
-              <h1 style={{fontSize:220,fontFamily:"'General Sans',sans-serif",fontWeight:400,lineHeight:1.02,letterSpacing:'-0.024em',margin:0,whiteSpace:'nowrap'}}>
-                <span style={{color:'hsl(40,6%,95%)'}}>Power </span>
-                <span style={{background:'linear-gradient(to left,#6366f1,#a855f7,#fcd34d)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>AI</span>
+          <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'flex-start',position:'relative',zIndex:1,padding:'0 52px'}}>
+            <div style={{maxWidth:820}}>
+
+              {/* Status pill */}
+              <div style={{display:'inline-flex',alignItems:'center',gap:8,marginBottom:30,padding:'5px 14px',borderRadius:40,border:'1px solid rgba(201,163,78,0.22)',background:'rgba(201,163,78,0.06)'}}>
+                <div style={{width:6,height:6,borderRadius:'50%',background:GOLD,boxShadow:`0 0 8px ${GOLD}88`}}/>
+                <span style={{fontSize:11,fontWeight:700,letterSpacing:'0.16em',color:GOLD,textTransform:'uppercase'}}>Fullstack-разработчик · Открыт для проектов</span>
+              </div>
+
+              {/* Name */}
+              <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:'clamp(68px,9vw,116px)',fontWeight:400,lineHeight:0.96,letterSpacing:'-0.02em',margin:'0 0 30px'}}>
+                <span style={{color:'#F5F0E8',display:'block'}}>Алексей</span>
+                <span style={{
+                  background:'linear-gradient(135deg,#E8C94A 0%,#C9A34E 40%,#D4AF37 72%,#EDD060 100%)',
+                  WebkitBackgroundClip:'text',
+                  WebkitTextFillColor:'transparent',
+                  backgroundClip:'text',
+                  display:'block',
+                }}>Евтушенко</span>
               </h1>
-              <p style={{color:'hsl(40,6%,82%)',fontSize:18,lineHeight:'32px',maxWidth:448,margin:'9px 0 0',opacity:0.8}}>
-                The most powerful AI ever deployed<br/>in talent acquisition
+
+              {/* Subtitle */}
+              <p style={{color:'rgba(245,240,232,0.72)',fontSize:18,lineHeight:'30px',maxWidth:530,margin:'0 0 14px',fontWeight:400}}>
+                Разработка высококлассных сайтов, мобильных приложений и&nbsp;веб-сервисов премиум-уровня
               </p>
-              <button className="hero-secondary" style={{padding:'24px 29px',marginTop:25,borderRadius:8,fontSize:15,fontWeight:500,cursor:'pointer',display:'block'}}>
-                Schedule a Consult
-              </button>
+              {/* Description */}
+              <p style={{color:'rgba(245,240,232,0.36)',fontSize:14,lineHeight:'25px',maxWidth:480,margin:'0 0 42px'}}>
+                Создаю технологичные цифровые продукты с высокой конверсией и&nbsp;топовым дизайном — от&nbsp;идеи до&nbsp;продакшена.
+              </p>
+
+              {/* CTA buttons */}
+              <div style={{display:'flex',gap:12,flexWrap:'wrap',alignItems:'center'}}>
+                <a href="#contact" className="btn-gold" style={{display:'inline-flex',alignItems:'center',gap:8,padding:'14px 32px',borderRadius:10,fontSize:14,fontWeight:700,color:'#0C0D10',textDecoration:'none'}}>
+                  Обсудить проект <ArrowRight size={15}/>
+                </a>
+                <a href="#cases"
+                  style={{display:'inline-flex',alignItems:'center',gap:8,padding:'13px 28px',borderRadius:10,fontSize:14,fontWeight:500,color:'rgba(245,240,232,0.78)',textDecoration:'none',border:'1px solid rgba(201,163,78,0.24)',background:'rgba(201,163,78,0.04)',transition:'border-color 200ms,background 200ms'}}
+                  onMouseEnter={e=>{e.currentTarget.style.borderColor='rgba(201,163,78,0.45)';e.currentTarget.style.background='rgba(201,163,78,0.09)'}}
+                  onMouseLeave={e=>{e.currentTarget.style.borderColor='rgba(201,163,78,0.24)';e.currentTarget.style.background='rgba(201,163,78,0.04)'}}>
+                  Смотреть кейсы <ArrowUpRight size={14}/>
+                </a>
+              </div>
             </div>
           </div>
 
           {/* Logo marquee — pinned to bottom */}
           <div style={{paddingBottom:40,position:'relative',zIndex:1}}>
-            <div style={{maxWidth:'64rem',margin:'0 auto',padding:'0 32px',display:'flex',alignItems:'center',gap:48}}>
-              <div style={{fontSize:14,color:'hsla(40,6%,95%,0.5)',whiteSpace:'nowrap',lineHeight:1.6,flexShrink:0}}>
-                Relied on by brands<br/>across the globe
+            <div style={{maxWidth:'64rem',margin:'0 auto',padding:'0 44px',display:'flex',alignItems:'center',gap:48}}>
+              <div style={{fontSize:12,color:'rgba(245,240,232,0.3)',whiteSpace:'nowrap',lineHeight:1.7,flexShrink:0,letterSpacing:'0.02em'}}>
+                Доверяют бренды<br/>по всей России
               </div>
               <div style={{overflow:'hidden',flex:1}}>
-                <div style={{display:'flex',gap:64,animation:'marquee 20s linear infinite',width:'max-content'}}>
+                <div style={{display:'flex',gap:56,animation:'marquee 20s linear infinite',width:'max-content'}}>
                   {['Vortex','Nimbus','Prysma','Cirrus','Kynder','Halcyn','Vortex','Nimbus','Prysma','Cirrus','Kynder','Halcyn'].map((name,i)=>(
                     <div key={i} style={{display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
-                      <div className="liquid-glass" style={{width:24,height:24,borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'hsl(40,6%,95%)',flexShrink:0}}>
+                      <div className="liquid-glass" style={{width:24,height:24,borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'rgba(201,163,78,0.72)',flexShrink:0}}>
                         {name[0]}
                       </div>
-                      <span style={{fontSize:16,fontWeight:600,color:'hsl(40,6%,95%)',whiteSpace:'nowrap'}}>{name}</span>
+                      <span style={{fontSize:15,fontWeight:600,color:'rgba(245,240,232,0.46)',whiteSpace:'nowrap'}}>{name}</span>
                     </div>
                   ))}
                 </div>
