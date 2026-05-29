@@ -570,9 +570,10 @@ function HomeView({navigate}) {
         <div style={{position:'relative',height:240,overflow:'hidden',marginBottom:2}}>
           <img src={CASES_BG} alt="" style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.32) saturate(0.7)'}}/>
           <div style={{position:'absolute',inset:0,background:'linear-gradient(to bottom,rgba(12,13,16,0.3),rgba(12,13,16,0.88))'}}/>
-          <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',position:'relative',zIndex:1}}>
-            <div style={lbl}>Кейсы</div>
-            <h2 style={h2}>Избранные проекты</h2>
+          <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',zIndex:1}}>
+            <div style={{...lbl,marginBottom:14}}>Портфолио</div>
+            <h2 style={{...h2,fontSize:'clamp(32px,4.5vw,52px)'}}>Избранные проекты</h2>
+            <p style={{fontSize:14,color:'rgba(229,229,229,0.38)',marginTop:10,letterSpacing:'0.02em'}}>Нажмите на карточку — откроется кейс или живой сайт</p>
           </div>
         </div>
 
