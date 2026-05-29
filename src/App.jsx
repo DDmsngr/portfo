@@ -133,6 +133,122 @@ function CookieBanner() {
   );
 }
 
+// ─── Contact form ────────────────────────────────────────────────────────────
+// 1. Зарегистрируйтесь на emailjs.com
+// 2. Создайте Email Service и Template (переменные: {{from_name}}, {{contact}}, {{subject}}, {{message}})
+// 3. Замените три константы ниже на свои значения из дашборда EmailJS
+const EMAILJS_KEY = 'YOUR_PUBLIC_KEY';
+const EMAILJS_SVC = 'YOUR_SERVICE_ID';
+const EMAILJS_TPL = 'YOUR_TEMPLATE_ID';
+
+const openContact = (e) => { if(e) e.preventDefault(); window.dispatchEvent(new CustomEvent('openContact')); };
+
+function ContactModal() {
+  const [open,setOpen]=useState(false);
+  const [form,setForm]=useState({name:'',contact:'',subject:'',message:''});
+  const [status,setStatus]=useState('idle');
+  const [errMsg,setErrMsg]=useState('');
+
+  useEffect(()=>{
+    const h=()=>{setOpen(true);setStatus('idle');setErrMsg('');};
+    window.addEventListener('openContact',h);
+    return()=>window.removeEventListener('openContact',h);
+  },[]);
+
+  const close=()=>{setOpen(false);setStatus('idle');setErrMsg('');};
+  const upd=(e)=>setForm(f=>({...f,[e.target.name]:e.target.value}));
+
+  const send=async(e)=>{
+    e.preventDefault();
+    if(!form.name.trim()||!form.contact.trim()||!form.message.trim()){
+      setErrMsg('Пожалуйста, заполните обязательные поля (*)');
+      return;
+    }
+    setStatus('sending');setErrMsg('');
+    try{
+      await window.emailjs.send(EMAILJS_SVC,EMAILJS_TPL,{
+        from_name:form.name,
+        contact:form.contact,
+        subject:form.subject||'Новая заявка с сайта',
+        message:form.message,
+        reply_to:form.contact,
+      },{publicKey:EMAILJS_KEY});
+      setStatus('success');
+      setForm({name:'',contact:'',subject:'',message:''});
+    }catch{
+      setStatus('error');
+      setErrMsg('Ошибка отправки. Напишите напрямую: 9254652@bk.ru');
+    }
+  };
+
+  if(!open) return null;
+
+  const inp={
+    display:'block',width:'100%',background:'rgba(255,255,255,0.04)',
+    border:'1px solid rgba(201,163,78,0.18)',borderRadius:8,padding:'12px 14px',
+    color:'#F0EDE8',fontSize:14,outline:'none',fontFamily:'Inter,sans-serif',
+    boxSizing:'border-box',marginBottom:14,transition:'border-color 200ms',
+  };
+  const lbl={fontSize:10,fontWeight:700,letterSpacing:'0.14em',color:GOLD,textTransform:'uppercase',display:'block',marginBottom:6};
+  const focusIn=e=>e.target.style.borderColor='rgba(201,163,78,0.55)';
+  const focusOut=e=>e.target.style.borderColor='rgba(201,163,78,0.18)';
+
+  return(
+    <div style={{position:'fixed',inset:0,zIndex:2001,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px'}}>
+      <div onClick={close} style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.72)',backdropFilter:'blur(10px)'}}/>
+      <div style={{position:'relative',zIndex:1,width:'100%',maxWidth:500,background:'rgba(9,8,6,0.97)',border:'1px solid rgba(201,163,78,0.22)',borderRadius:18,backdropFilter:'blur(24px)',boxShadow:'0 32px 80px rgba(0,0,0,0.7),inset 0 1px 0 rgba(201,163,78,0.12)',overflow:'hidden'}}>
+
+        {/* Header */}
+        <div style={{padding:'22px 26px 18px',borderBottom:'1px solid rgba(201,163,78,0.1)',display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+          <div>
+            <div style={{fontSize:10,fontWeight:700,letterSpacing:'0.18em',color:GOLD,textTransform:'uppercase',marginBottom:5}}>Новый проект</div>
+            <div style={{fontSize:22,fontWeight:500,color:'#F0EDE8',fontFamily:"'Cormorant Garamond',serif",lineHeight:1.2}}>Обсудить задачу</div>
+          </div>
+          <button onClick={close} style={{width:34,height:34,borderRadius:'50%',border:'1px solid rgba(255,255,255,0.1)',background:'rgba(255,255,255,0.04)',color:'rgba(255,255,255,0.45)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,lineHeight:1}}>×</button>
+        </div>
+
+        {/* Body */}
+        <div style={{padding:'22px 26px 26px',maxHeight:'calc(90vh - 100px)',overflowY:'auto'}}>
+          {status==='success'?(
+            <div style={{textAlign:'center',padding:'28px 0'}}>
+              <div style={{width:56,height:56,borderRadius:'50%',background:'rgba(201,163,78,0.1)',border:'1px solid rgba(201,163,78,0.3)',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 18px'}}>
+                <CheckCircle size={24} color={GOLD}/>
+              </div>
+              <div style={{fontSize:20,fontWeight:500,color:'#F0EDE8',fontFamily:"'Cormorant Garamond',serif",marginBottom:8}}>Заявка отправлена!</div>
+              <div style={{fontSize:14,color:'rgba(229,229,229,0.5)',lineHeight:1.65,marginBottom:24}}>Отвечу в течение нескольких часов. Спасибо за обращение.</div>
+              <button onClick={close} className="btn-gold" style={{padding:'12px 32px',borderRadius:10,fontSize:13,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>Закрыть</button>
+            </div>
+          ):(
+            <form onSubmit={send}>
+              <label style={lbl}>Имя *</label>
+              <input name="name" value={form.name} onChange={upd} placeholder="Как вас зовут?" style={inp} onFocus={focusIn} onBlur={focusOut}/>
+
+              <label style={lbl}>Телефон или Email *</label>
+              <input name="contact" value={form.contact} onChange={upd} placeholder="+7 900 000 00 00 или mail@example.ru" style={inp} onFocus={focusIn} onBlur={focusOut}/>
+
+              <label style={lbl}>Тема обращения</label>
+              <input name="subject" value={form.subject} onChange={upd} placeholder="Лендинг, приложение, CRM…" style={inp} onFocus={focusIn} onBlur={focusOut}/>
+
+              <label style={lbl}>Расскажите о задаче *</label>
+              <textarea name="message" value={form.message} onChange={upd} rows={4} placeholder="Что нужно сделать, сроки, бюджет, референсы…" style={{...inp,resize:'vertical',minHeight:96,marginBottom:8}} onFocus={focusIn} onBlur={focusOut}/>
+
+              {errMsg&&<div style={{fontSize:12,color:status==='error'?'rgba(229,229,229,0.5)':'#F87171',marginBottom:12,lineHeight:1.55}}>{errMsg}{status==='error'&&<> → <a href="mailto:9254652@bk.ru" style={{color:GOLD}}>9254652@bk.ru</a></>}</div>}
+
+              <button type="submit" className="btn-gold" disabled={status==='sending'} style={{width:'100%',padding:'14px',borderRadius:10,fontSize:14,fontWeight:700,color:'#0C0D10',border:'none',cursor:status==='sending'?'default':'pointer',opacity:status==='sending'?0.65:1,marginTop:4}}>
+                {status==='sending'?'Отправляю…':'Отправить заявку →'}
+              </button>
+              <p style={{fontSize:11,color:'rgba(229,229,229,0.27)',marginTop:12,lineHeight:1.6,textAlign:'center'}}>
+                Нажимая кнопку, вы соглашаетесь с{' '}
+                <a href="#" onClick={openPrivacy} style={{color:'rgba(201,163,78,0.5)',textDecoration:'underline',textUnderlineOffset:'2px',cursor:'pointer'}}>Политикой конфиденциальности</a>
+              </p>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Data ─────────────────────────────────────────────────────────────────
 const HERO_BG  = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1920&q=85&fit=crop';
 const CASES_BG = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80&fit=crop';
@@ -289,9 +405,9 @@ function HomeView({navigate}) {
               onMouseEnter={e=>e.target.style.color=TEXT} onMouseLeave={e=>e.target.style.color=TEXT_M}>{n}</a>
           ))}
         </nav>
-        <a href="#contact" className="btn-gold desktop-nav" style={{padding:'10px 24px',borderRadius:8,fontSize:13,fontWeight:700,color:'#0C0D10',textDecoration:'none'}}>
+        <button onClick={openContact} className="btn-gold desktop-nav" style={{padding:'10px 24px',borderRadius:8,fontSize:13,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>
           Обсудить проект
-        </a>
+        </button>
       </header>
 
       {/* HERO — fullscreen video, black+gold palette */}
@@ -335,9 +451,9 @@ function HomeView({navigate}) {
                 </a>
               ))}
             </div>
-            <a href="#contact" className="btn-gold hero-nav-cta" style={{padding:'9px 22px',borderRadius:8,fontSize:13,fontWeight:700,color:'#0C0D10',textDecoration:'none',display:'inline-block'}}>
+            <button onClick={openContact} className="btn-gold hero-nav-cta" style={{padding:'9px 22px',borderRadius:8,fontSize:13,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>
               Обсудить проект
-            </a>
+            </button>
           </nav>
 
           {/* Divider — gold tint */}
@@ -376,9 +492,9 @@ function HomeView({navigate}) {
 
               {/* CTA buttons */}
               <div style={{display:'flex',gap:12,flexWrap:'wrap',alignItems:'center'}}>
-                <a href="#contact" className="btn-gold" style={{display:'inline-flex',alignItems:'center',gap:8,padding:'14px 32px',borderRadius:10,fontSize:14,fontWeight:700,color:'#0C0D10',textDecoration:'none'}}>
+                <button onClick={openContact} className="btn-gold" style={{display:'inline-flex',alignItems:'center',gap:8,padding:'14px 32px',borderRadius:10,fontSize:14,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>
                   Обсудить проект <ArrowRight size={15}/>
-                </a>
+                </button>
                 <a href="#cases"
                   style={{display:'inline-flex',alignItems:'center',gap:8,padding:'13px 28px',borderRadius:10,fontSize:14,fontWeight:500,color:'rgba(245,240,232,0.78)',textDecoration:'none',border:'1px solid rgba(201,163,78,0.24)',background:'rgba(201,163,78,0.04)',transition:'border-color 200ms,background 200ms'}}
                   onMouseEnter={e=>{e.currentTarget.style.borderColor='rgba(201,163,78,0.45)';e.currentTarget.style.background='rgba(201,163,78,0.09)'}}
@@ -834,6 +950,7 @@ export default function App(){
     </AnimatePresence>
     <PrivacyModal/>
     <CookieBanner/>
+    <ContactModal/>
     </>
   );
 }
