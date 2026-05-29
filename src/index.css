@@ -195,4 +195,34 @@ body {
 
   /* Process grid — single column */
   .process-grid { grid-template-columns: 1fr !important; }
+
+  /* ── Lawyer demo page ─────────────────────── */
+  /* Navbar: push below fixed BackBtn, reduce padding */
+  .lawyer-nav {
+    padding: 70px 16px 16px 16px !important;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .lawyer-nav > div:first-child > div:first-child {
+    font-size: 13px !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  /* Hero text: full width, proper bottom margin */
+  .lawyer-hero-text {
+    left: 16px !important;
+    right: 16px !important;
+    bottom: 20px !important;
+    max-width: 100% !important;
+  }
+  .lawyer-hero-text h1 {
+    font-size: clamp(26px, 7vw, 40px) !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Content area: compact horizontal padding */
+  .lawyer-content {
+    padding: 28px 16px !important;
+  }
 }
