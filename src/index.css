@@ -184,8 +184,14 @@ body {
   /* Section padding */
   section[style] { padding-left: 20px !important; padding-right: 20px !important; }
 
-  /* Cases grid — single column on mobile */
-  .cases-grid { grid-template-columns: 1fr !important; }
+  /* Cases grid — 1 column on mobile */
+  .cases-grid { grid-template-columns: 1fr !important; gap: 3px !important; }
+
+  /* Case cards — taller on mobile for readability */
+  .cases-grid .case-card { height: 300px !important; }
+
+  /* Mobile cases label — show only on mobile */
+  .mobile-cases-label { display: flex !important; }
 
   /* Process grid — single column */
   .process-grid { grid-template-columns: 1fr !important; }

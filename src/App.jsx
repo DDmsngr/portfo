@@ -177,7 +177,7 @@ function HomeView({navigate}) {
     if(pendingScroll){const id=pendingScroll;pendingScroll=null;setTimeout(()=>document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'}),80);}
   },[]);
 
-  const TICKER=['ВЕБ-РАЗРАБОТКА','PREMIUM UX/UI','МОБИЛЬНЫЕ ПРИЛОЖЕНИЯ','ЧИСТЫЙ КОД','ВЫСОКАЯ КОНВЕРСИЯ','WEB SERVICES','СКОРОСТЬ & ОПТИМИЗАЦИЯ','МАСШТАБИРУЕМОСТЬ ИТ-РЕШЕНИЙ','ТЕХНОЛОГИЧНЫЙ ДИЗАЙН'];
+  const TICKER=['ВЕБ-РАЗРАБОТКА','PREMIUM UX/UI','REACT','МОБИЛЬНЫЕ ПРИЛОЖЕНИЯ','FLUTTER','ЧИСТЫЙ КОД','ANDROID','ВЫСОКАЯ КОНВЕРСИЯ','WEB SERVICES','PWA','СКОРОСТЬ & ОПТИМИЗАЦИЯ','МАСШТАБИРУЕМОСТЬ ИТ-РЕШЕНИЙ','ТЕХНОЛОГИЧНЫЙ ДИЗАЙН'];
   const SVCS=[
     {n:'01',t:'Лендинги',            p:'от 5 000 ₽',   d:'2–3 дня · высокая конверсия'},
     {n:'02',t:'Корпоративные сайты', p:'от 80 000 ₽',  d:'CMS, каталоги, мультистраничные'},
@@ -319,7 +319,7 @@ function HomeView({navigate}) {
               </div>
               <div style={{overflow:'hidden',flex:1}}>
                 <div style={{display:'flex',gap:56,animation:'marquee 20s linear infinite',width:'max-content'}}>
-                  {['Vortex','Nimbus','Prysma','Cirrus','Kynder','Halcyn','Vortex','Nimbus','Prysma','Cirrus','Kynder','Halcyn'].map((name,i)=>(
+                  {['DDChat','KOTT','DeepDrift','Kitliash','ИнвестГрупп','ТехноРост','DDChat','KOTT','DeepDrift','Kitliash','ИнвестГрупп','ТехноРост'].map((name,i)=>(
                     <div key={i} style={{display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
                       <div className="liquid-glass" style={{width:24,height:24,borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'rgba(201,163,78,0.72)',flexShrink:0}}>
                         {name[0]}
@@ -382,8 +382,17 @@ function HomeView({navigate}) {
           </div>
         </div>
 
-        {/* 3-column grid — 6 карточек = два ровных ряда */}
-        <div style={{
+        {/* Mobile-only label above cases */}
+        <div className="mobile-cases-label" style={{display:'none',alignItems:'center',gap:12,padding:'28px 20px 16px',borderTop:`1px solid ${BORDER}`}}>
+          <div style={{width:3,height:28,background:`linear-gradient(to bottom,${GOLD},transparent)`,borderRadius:2,flexShrink:0}}/>
+          <div>
+            <div style={{fontSize:10,fontWeight:700,letterSpacing:'0.18em',color:GOLD,textTransform:'uppercase',marginBottom:3}}>Портфолио</div>
+            <div style={{fontSize:20,fontWeight:700,color:'#F0EDE8',letterSpacing:'-0.01em',lineHeight:1.1}}>Реализованные проекты</div>
+          </div>
+        </div>
+
+        {/* 3-column grid → 1 column on mobile */}
+        <div className="cases-grid" style={{
           display:'grid',
           gridTemplateColumns:'repeat(3,1fr)',
           gap:2,
