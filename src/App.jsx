@@ -466,7 +466,7 @@ function HomeView({navigate}) {
               {/* Status pill */}
               <div style={{display:'inline-flex',alignItems:'center',gap:8,marginBottom:30,padding:'5px 14px',borderRadius:40,border:'1px solid rgba(201,163,78,0.22)',background:'rgba(201,163,78,0.06)'}}>
                 <div style={{width:6,height:6,borderRadius:'50%',background:GOLD,boxShadow:`0 0 8px ${GOLD}88`}}/>
-                <span style={{fontSize:11,fontWeight:700,letterSpacing:'0.16em',color:GOLD,textTransform:'uppercase'}}>Fullstack-разработчик · Открыт для проектов</span>
+                <span style={{fontSize:11,fontWeight:700,letterSpacing:'0.16em',color:GOLD,textTransform:'uppercase'}}>Инженер · Разработчик · 8+ лет в ЧПУ-производстве</span>
               </div>
 
               {/* Name */}
@@ -482,24 +482,26 @@ function HomeView({navigate}) {
               </h1>
 
               {/* Subtitle */}
-              <p style={{color:'rgba(245,240,232,0.72)',fontSize:18,lineHeight:'30px',maxWidth:530,margin:'0 0 14px',fontWeight:400}}>
-                Разработка высококлассных сайтов, мобильных приложений и&nbsp;веб-сервисов премиум-уровня
+              <p style={{color:'rgba(245,240,232,0.72)',fontSize:18,lineHeight:'30px',maxWidth:560,margin:'0 0 16px',fontWeight:400}}>
+                Создаю сайты, приложения и&nbsp;системы автоматизации для&nbsp;бизнеса — в&nbsp;срок, без переделок, с&nbsp;первого раза
               </p>
               {/* Description */}
-              <p style={{color:'rgba(245,240,232,0.36)',fontSize:14,lineHeight:'25px',maxWidth:480,margin:'0 0 42px'}}>
-                Создаю технологичные цифровые продукты с высокой конверсией и&nbsp;топовым дизайном — от&nbsp;идеи до&nbsp;продакшена.
+              <p style={{color:'rgba(245,240,232,0.38)',fontSize:14,lineHeight:'24px',maxWidth:500,margin:'0 0 42px'}}>
+                8 лет в&nbsp;ЧПУ-производстве — это нулевой допуск ошибки и системное мышление.
+                Применяю тот же стандарт в&nbsp;разработке: фиксированная цена,
+                конкретные сроки, результат понятен до&nbsp;старта.
               </p>
 
               {/* CTA buttons */}
               <div style={{display:'flex',gap:12,flexWrap:'wrap',alignItems:'center'}}>
                 <button onClick={openContact} className="btn-gold" style={{display:'inline-flex',alignItems:'center',gap:8,padding:'14px 32px',borderRadius:10,fontSize:14,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>
-                  Обсудить проект <ArrowRight size={15}/>
+                  Обсудить задачу бесплатно <ArrowRight size={15}/>
                 </button>
                 <a href="#cases"
                   style={{display:'inline-flex',alignItems:'center',gap:8,padding:'13px 28px',borderRadius:10,fontSize:14,fontWeight:500,color:'rgba(245,240,232,0.78)',textDecoration:'none',border:'1px solid rgba(201,163,78,0.24)',background:'rgba(201,163,78,0.04)',transition:'border-color 200ms,background 200ms'}}
                   onMouseEnter={e=>{e.currentTarget.style.borderColor='rgba(201,163,78,0.45)';e.currentTarget.style.background='rgba(201,163,78,0.09)'}}
                   onMouseLeave={e=>{e.currentTarget.style.borderColor='rgba(201,163,78,0.24)';e.currentTarget.style.background='rgba(201,163,78,0.04)'}}>
-                  Смотреть кейсы <ArrowUpRight size={14}/>
+                  Смотреть проекты <ArrowUpRight size={14}/>
                 </a>
               </div>
             </div>
@@ -509,16 +511,14 @@ function HomeView({navigate}) {
           <div style={{paddingBottom:40,position:'relative',zIndex:1}}>
             <div style={{maxWidth:'64rem',margin:'0 auto',padding:'0 44px',display:'flex',alignItems:'center',gap:48}}>
               <div style={{fontSize:12,color:'rgba(245,240,232,0.3)',whiteSpace:'nowrap',lineHeight:1.7,flexShrink:0,letterSpacing:'0.02em'}}>
-                Доверяют бренды<br/>по всей России
+                Работаю с клиентами<br/>из разных сфер
               </div>
               <div style={{overflow:'hidden',flex:1}}>
-                <div style={{display:'flex',gap:56,animation:'marquee 20s linear infinite',width:'max-content'}}>
-                  {['DDChat','KOTT','DeepDrift','Kitliash','ИнвестГрупп','ТехноРост','DDChat','KOTT','DeepDrift','Kitliash','ИнвестГрупп','ТехноРост'].map((name,i)=>(
+                <div style={{display:'flex',gap:48,animation:'marquee 28s linear infinite',width:'max-content'}}>
+                  {['Малый бизнес','Производство','Косметология','Юридические услуги','IT-стартапы','Художники и галереи','Образование','Красота и здоровье','Малый бизнес','Производство','Косметология','Юридические услуги','IT-стартапы','Художники и галереи','Образование','Красота и здоровье'].map((name,i)=>(
                     <div key={i} style={{display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
-                      <div className="liquid-glass" style={{width:24,height:24,borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'rgba(201,163,78,0.72)',flexShrink:0}}>
-                        {name[0]}
-                      </div>
-                      <span style={{fontSize:15,fontWeight:600,color:'rgba(245,240,232,0.46)',whiteSpace:'nowrap'}}>{name}</span>
+                      <div style={{width:5,height:5,borderRadius:'50%',background:'rgba(201,163,78,0.5)',flexShrink:0}}/>
+                      <span style={{fontSize:13,fontWeight:500,color:'rgba(245,240,232,0.4)',whiteSpace:'nowrap',letterSpacing:'0.01em'}}>{name}</span>
                     </div>
                   ))}
                 </div>
