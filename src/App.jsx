@@ -273,12 +273,12 @@ const DEMOS = [
 ];
 
 const PROJECTS = [
-  { id:'capoeira', tag:'Web · HTML · CSS · JS',   title:'FGR Capoeira',   subtitle:'Школа капоэйры в СПб',      desc:'SEO-оптимизированный лендинг для международной школы боевых искусств.', accent:'#009C3B', bg:'#020D05', url:'https://ddmsngr.github.io/FGR_Capoeira/',         metric:{value:'Live',label:'продакшен'}, stack:['HTML5','CSS3','JavaScript'],    description:'Лендинг для Familia Ginga e Raça — международной школы капоэйры в СПб с 30-летней историей. Бразильская эстетика, полная SEO-оптимизация, мобильная адаптация.', role:'Frontend Developer & UI/UX', featuresLabel:'Что реализовано', features:['Бразильская цветовая палитра с тематическим фоном','SEO: полный meta-пакет og:image, keywords, OpenGraph','Секции: герой, тренеры, расписание, контакты','Призыв к действию — первое занятие бесплатно','Mobile-first адаптация и touch-навигация','Деплой GitHub Pages + домен fgr-capoeira.ru'], tech:[['Frontend','HTML5, CSS3, Vanilla JS'],['SEO','OpenGraph, meta-keywords'],['Деплой','GitHub Pages']], challenges:[] },
-  { id:'olga',     tag:'Web · HTML · Tailwind',    title:'Kitliash.cosmo', subtitle:'Сайт косметолога',          desc:'Премиальная визитка с фотографиями, lightbox-галереей и книгой автора.', accent:'#C9A34E', bg:'#0F0D09', url:'https://ddmsngr.github.io/olga-kosmetolog/',      metric:{value:'Live',label:'продакшен'}, stack:['HTML5','Tailwind CSS','Vanilla JS'], description:'Сайт-визитка для косметолога-эксперта Ольги Китляш (СПб). Тёплая крафтовая палитра, 10 реальных фотографий клиента, lightbox-галерея результатов, раздел для коллег.', role:'Frontend Developer & UI/UX', featuresLabel:'Что реализовано', features:['3 портрета расставлены по смысловым блокам','Lightbox: fullscreen по клику, закрытие по Esc','Превью книги «Скин-система»: обложка + 2 страницы','Оффер для коллег: консультация 10 000 ₽/час','Анимации через IntersectionObserver без библиотек','TG-канал вынесен отдельным баннером'], tech:[['Frontend','HTML5, Tailwind CSS'],['Анимации','CSS + IntersectionObserver'],['Деплой','GitHub Pages']], challenges:[] },
+  { id:'capoeira', tag:'Web · HTML · CSS · JS',   title:'FGR Capoeira',   subtitle:'Сайт вместо зависимости от соцсетей',      desc:'Школа работала только через Instagram. Нужен был собственный канал, который продаёт без алгоритмов — напрямую из поиска.', accent:'#009C3B', bg:'#020D05', url:'https://ddmsngr.github.io/FGR_Capoeira/',         metric:{value:'Live',label:'продакшен'}, stack:['HTML5','CSS3','JavaScript'],    description:'Лендинг для Familia Ginga e Raça — международной школы капоэйры в СПб с 30-летней историей. Бразильская эстетика, полная SEO-оптимизация, мобильная адаптация.', role:'Frontend Developer & UI/UX', featuresLabel:'Что реализовано', features:['Бразильская цветовая палитра с тематическим фоном','SEO: полный meta-пакет og:image, keywords, OpenGraph','Секции: герой, тренеры, расписание, контакты','Призыв к действию — первое занятие бесплатно','Mobile-first адаптация и touch-навигация','Деплой GitHub Pages + домен fgr-capoeira.ru'], tech:[['Frontend','HTML5, CSS3, Vanilla JS'],['SEO','OpenGraph, meta-keywords'],['Деплой','GitHub Pages']], challenges:[] },
+  { id:'olga',     tag:'Web · HTML · Tailwind',    title:'Kitliash.cosmo', subtitle:'Онлайн-инструмент вместо сарафанного радио',          desc:'Эксперт-косметолог 10 лет работала только по рекомендациям. Сделали сайт-продавец, который привлекает клиентов и работает 24/7.', accent:'#C9A34E', bg:'#0F0D09', url:'https://ddmsngr.github.io/olga-kosmetolog/',      metric:{value:'Live',label:'продакшен'}, stack:['HTML5','Tailwind CSS','Vanilla JS'], description:'Сайт-визитка для косметолога-эксперта Ольги Китляш (СПб). Тёплая крафтовая палитра, 10 реальных фотографий клиента, lightbox-галерея результатов, раздел для коллег.', role:'Frontend Developer & UI/UX', featuresLabel:'Что реализовано', features:['3 портрета расставлены по смысловым блокам','Lightbox: fullscreen по клику, закрытие по Esc','Превью книги «Скин-система»: обложка + 2 страницы','Оффер для коллег: консультация 10 000 ₽/час','Анимации через IntersectionObserver без библиотек','TG-канал вынесен отдельным баннером'], tech:[['Frontend','HTML5, Tailwind CSS'],['Анимации','CSS + IntersectionObserver'],['Деплой','GitHub Pages']], challenges:[] },
   { id:'iching',   tag:'Android · Flutter',        title:'И Цзин',         subtitle:'Книга Перемен',             desc:'Аутентичный ритуал монет, 64 гексаграммы и AI-интерпретатор.',             accent:'#D4AF37', bg:'#0A0908',                                                     metric:{value:'64', label:'гексаграммы'}, stack:['Flutter','Dart','OpenRouter API'],  description:'Нативное Android-приложение, воссоздающее ритуал гадания по Книге Перемен. Аутентичная механика трёх монет, полная база 64 гексаграмм и AI-интерпретатор.', role:'Solo Full-Stack Mobile Developer', featuresLabel:'Фишки приложения', features:['Анимированный ритуал броска монет с тактильной отдачей','Полный расклад: суждение, шесть черт, производная гексаграмма','AI: гексаграмма + вопрос + ситуация → ответ из 5 блоков','История с поиском и повторным вызовом AI','Гексаграмма дня, факт дня из 10 ротаций','Graceful Fallback при сбое API'], tech:[['UI','Flutter 3.x, Dart'],['State','Provider'],['AI','OpenRouter API'],['CI/CD','GitHub Actions']], challenges:['Интеллектуальная система выбора LLM с fallback','Поддержка кириллицы в HTTP-заголовках','Замена AI-провайдера без изменения кода клиента'] },
   { id:'ddchat',   tag:'Web · PWA · React',        title:'DDChat',         subtitle:'Защищённый мессенджер',     desc:'Zero-Data: ключи только на клиенте, сервер — слепой ретранслятор.',        accent:'#00C49A', bg:'#060C10',                                                     metric:{value:'E2E', label:'шифрование'}, stack:['React 18','TypeScript','WebSockets'], description:'Веб-приложение для безопасного обмена сообщениями. Ключи генерируются на клиенте — сервер является слепым ретранслятором.', role:'Solo Frontend & UI/UX Engineer', featuresLabel:'Фишки приложения', features:['Zero-Data: сервер не может раскрыть переписку','Нативные круглые видеосообщения на Android','Группы и каналы с полной логикой прав','PWA: установка из браузера без App Store','Гарантированный порядок сообщений при 3G/4G'], tech:[['Frontend','React 18, TypeScript'],['Протокол','WebSockets'],['Платформа','PWA']], challenges:['Видео-кружки: оптимизация CSS-композитинга','Клиентский алгоритм упорядочивания пакетов','Молниеносный рендер в групповых чатах'] },
   { id:'deepdrift',tag:'Python · PyTorch · R&D',   title:'DeepDrift',      subtitle:'Мониторинг ML-моделей',    desc:'Авторский метод детекции Model Drift через геометрию hidden states.',       accent:'#7C5CCC', bg:'#0D0B14', zenodoUrl:'https://zenodo.org/records/18622319', metric:{value:'Zenodo',label:'статья'},    stack:['Python 3.10+','PyTorch','CUDA'],   description:'Open-source инструмент мониторинга нейросетей. Автор разработал математический метод и опубликовал научную статью на Zenodo. Semantic Velocity решает Model Drift без дообучения.', role:'Автор метода, научной статьи и Solo Developer', featuresLabel:'Ключевые возможности', features:['Zero-Training: мониторинг без изменения весов','Semantic Velocity — авторская метрика дрейфа','OOD Detection: сигнал до ошибки на выходе','XAI: визуализация слой за слоем','Low-Overhead: параллельно с инференсом','Zenodo v5.2 — международный научный репозиторий'], tech:[['Стек','Python 3.10+, PyTorch'],['Математика','Линейная алгебра, геометрия тензоров'],['Интеграция','PyTorch hooks + HuggingFace'],['Дистрибуция','Zenodo v5.2']], challenges:['Расчёт метрик без задержки инференса','Универсальный интерфейс хуков для HuggingFace','Математическое обоснование Semantic Velocity'] },
-  { id:'kott',     tag:'Android · Flutter',        title:'KOTT',           subtitle:'Реестр арт-коллекций',     desc:'Учёт произведений искусства с журналом перемещений и PDF-документами.',     accent:'#C8956C', bg:'#100C08', url:'https://ddmsngr.github.io/KOTT-site/',            metric:{value:'100%',label:'офлайн'},     stack:['Flutter','Isar','Riverpod'],       description:'Система учёта произведений искусства для художников. Полный цикл: от реестра до продажи и генерации юридически значимых документов. 100% локально.', role:'Solo Full-Stack Mobile Developer', featuresLabel:'Фишки приложения', features:['Реестр с цветовой кодировкой 7 статусов','Карточка: фото, размеры, серии, тираж, человеко-часы','Транзакционный журнал перемещений','PDF в 1 клик: сертификаты с QR, договоры, акты','Экспорт в Excel/CSV + JSON-бэкап','Уникальные ID без интернета'], tech:[['UI','Flutter 3.19, Material Design 3'],['State','Riverpod 2.x'],['БД','Isar 3.x'],['PDF','pdf, printing']], challenges:['Полная автономность без интернета','Генерация уникальных номеров без коллизий','Реактивный UI: изменения в БД → мгновенное отражение'] },
+  { id:'kott',     tag:'Android · Flutter',        title:'KOTT',           subtitle:'Автоматизация вместо Excel и бумажной волокиты',     desc:'Художница тратила часы на документооборот вручную. Теперь сертификат, договор и акт — одна кнопка.',     accent:'#C8956C', bg:'#100C08', url:'https://ddmsngr.github.io/KOTT-site/',            metric:{value:'100%',label:'офлайн'},     stack:['Flutter','Isar','Riverpod'],       description:'Система учёта произведений искусства для художников. Полный цикл: от реестра до продажи и генерации юридически значимых документов. 100% локально.', role:'Solo Full-Stack Mobile Developer', featuresLabel:'Фишки приложения', features:['Реестр с цветовой кодировкой 7 статусов','Карточка: фото, размеры, серии, тираж, человеко-часы','Транзакционный журнал перемещений','PDF в 1 клик: сертификаты с QR, договоры, акты','Экспорт в Excel/CSV + JSON-бэкап','Уникальные ID без интернета'], tech:[['UI','Flutter 3.19, Material Design 3'],['State','Riverpod 2.x'],['БД','Isar 3.x'],['PDF','pdf, printing']], challenges:['Полная автономность без интернета','Генерация уникальных номеров без коллизий','Реактивный UI: изменения в БД → мгновенное отражение'] },
 ];
 
 const TESTIMONIALS = [
@@ -466,7 +466,7 @@ function HomeView({navigate}) {
               {/* Status pill */}
               <div style={{display:'inline-flex',alignItems:'center',gap:8,marginBottom:30,padding:'5px 14px',borderRadius:40,border:'1px solid rgba(201,163,78,0.22)',background:'rgba(201,163,78,0.06)'}}>
                 <div style={{width:6,height:6,borderRadius:'50%',background:GOLD,boxShadow:`0 0 8px ${GOLD}88`}}/>
-                <span style={{fontSize:11,fontWeight:700,letterSpacing:'0.16em',color:GOLD,textTransform:'uppercase'}}>Инженер · Разработчик · 8+ лет в ЧПУ-производстве</span>
+                <span style={{fontSize:11,fontWeight:700,letterSpacing:'0.16em',color:GOLD,textTransform:'uppercase'}}>Инженер · Разработчик · 8 лет в производстве</span>
               </div>
 
               {/* Name */}
@@ -482,14 +482,14 @@ function HomeView({navigate}) {
               </h1>
 
               {/* Subtitle */}
-              <p style={{color:'rgba(245,240,232,0.72)',fontSize:18,lineHeight:'30px',maxWidth:560,margin:'0 0 16px',fontWeight:400}}>
-                Создаю сайты, приложения и&nbsp;системы автоматизации для&nbsp;бизнеса — в&nbsp;срок, без переделок, с&nbsp;первого раза
+              <p style={{color:'rgba(245,240,232,0.78)',fontSize:19,lineHeight:'32px',maxWidth:560,margin:'0 0 18px',fontWeight:400}}>
+                Создаю сайты, мобильные приложения и&nbsp;системы автоматизации — с&nbsp;инженерной точностью и&nbsp;без переделок
               </p>
               {/* Description */}
-              <p style={{color:'rgba(245,240,232,0.38)',fontSize:14,lineHeight:'24px',maxWidth:500,margin:'0 0 42px'}}>
-                8 лет в&nbsp;ЧПУ-производстве — это нулевой допуск ошибки и системное мышление.
-                Применяю тот же стандарт в&nbsp;разработке: фиксированная цена,
-                конкретные сроки, результат понятен до&nbsp;старта.
+              <p style={{color:'rgba(245,240,232,0.42)',fontSize:15,lineHeight:'26px',maxWidth:500,margin:'0 0 42px'}}>
+                Я 8 лет работал с&nbsp;ЧПУ-системами, где ошибка стоит дорого.
+                Теперь применяю тот же подход в&nbsp;разработке: чёткая логика,
+                предсказуемый результат и&nbsp;запуск без хаоса.
               </p>
 
               {/* CTA buttons */}
@@ -540,6 +540,39 @@ function HomeView({navigate}) {
           ))}
         </div>
       </div>
+
+      {/* WHO I HELP */}
+      <section style={{maxWidth:1100,margin:'0 auto',padding:'96px 48px 80px'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',marginBottom:48,flexWrap:'wrap',gap:16}}>
+          <div>
+            <div style={lbl}>Для кого</div>
+            <h2 style={h2}>Кому я могу быть полезен</h2>
+          </div>
+          <p style={{fontSize:15,color:TEXT_M,maxWidth:360,lineHeight:1.65,textAlign:'right'}}>У каждой сферы своя задача — работаю с теми, кому нужен результат.</p>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:1,background:BORDER}}>
+          {[
+            {Icon:Globe,    label:'Малый бизнес',           title:'Сайт как менеджер продаж',      text:'Отвечает на вопросы, показывает товар, принимает заявки — пока вы занимаетесь делом.',              highlight:false},
+            {Icon:Settings, label:'Производство',            title:'Понимаю изнутри',               text:'8 лет с ЧПУ-системами. Системы учёта, автоматизации и отчётности без долгого объяснения терминов.', highlight:true},
+            {Icon:Users,    label:'Частные специалисты',     title:'Косметологи, юристы, тренеры',  text:'Сайт-визитка, который отличает от конкурентов и привлекает правильных клиентов.',                  highlight:false},
+            {Icon:Rocket,   label:'Стартапы и продукты',     title:'Технический партнёр',           text:'Понимаю бизнес-логику. MVP, веб-приложения и Android — от задачи до запуска.',                    highlight:false},
+          ].map((s,i)=>(
+            <motion.div key={i} initial={{opacity:0,y:10}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{delay:i*0.08}}
+              style={{background:s.highlight?'rgba(201,163,78,0.04)':BG,padding:'32px 28px',borderLeft:s.highlight?`2px solid ${GOLD}`:'2px solid transparent',transition:'background 200ms'}}
+              onMouseEnter={e=>e.currentTarget.style.background=s.highlight?'rgba(201,163,78,0.08)':'rgba(255,255,255,0.025)'}
+              onMouseLeave={e=>e.currentTarget.style.background=s.highlight?'rgba(201,163,78,0.04)':BG}>
+              <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16}}>
+                <div style={{width:36,height:36,borderRadius:9,background:s.highlight?'rgba(201,163,78,0.1)':'rgba(255,255,255,0.04)',border:`1px solid ${s.highlight?'rgba(201,163,78,0.22)':BORDER}`,display:'flex',alignItems:'center',justifyContent:'center',color:s.highlight?GOLD:TEXT_M}}>
+                  <s.Icon size={16}/>
+                </div>
+                <span style={{fontSize:10,fontWeight:700,letterSpacing:'0.14em',color:s.highlight?GOLD:TEXT_D,textTransform:'uppercase'}}>{s.label}</span>
+              </div>
+              <div style={{fontSize:17,fontWeight:700,color:TEXT,marginBottom:10,letterSpacing:'-0.01em',lineHeight:1.25}}>{s.title}</div>
+              <div style={{fontSize:13.5,color:TEXT_M,lineHeight:1.72}}>{s.text}</div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
 
       {/* SERVICES */}
       <section id="services" style={{maxWidth:1100,margin:'0 auto',padding:'120px 48px',scrollMarginTop:70}}>
@@ -608,8 +641,9 @@ function HomeView({navigate}) {
                 <div style={{display:'flex',gap:7,marginBottom:10,flexWrap:'wrap'}}>
                   {p.stack.slice(0,2).map(t=><span key={t} style={{fontSize:10,fontWeight:700,padding:'3px 9px',borderRadius:40,background:p.accent+'18',border:`1px solid ${p.accent}22`,color:p.accent,letterSpacing:'0.06em'}}>{t}</span>)}
                 </div>
-                <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:'clamp(22px,2.5vw,30px)',fontWeight:400,color:'#F0EDE8',letterSpacing:'-0.01em',lineHeight:1.1,marginBottom:6}}>{p.title}</div>
-                <div style={{fontSize:12.5,color:TEXT_M,marginBottom:14}}>{p.subtitle}</div>
+                <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:'clamp(22px,2.5vw,30px)',fontWeight:400,color:'#F0EDE8',letterSpacing:'-0.01em',lineHeight:1.1,marginBottom:5}}>{p.title}</div>
+                <div style={{fontSize:11,fontWeight:700,letterSpacing:'0.08em',color:p.accent,textTransform:'uppercase',marginBottom:7,opacity:0.85}}>{p.subtitle}</div>
+                <div style={{fontSize:12,color:'rgba(229,229,229,0.46)',marginBottom:14,lineHeight:1.6}}>{p.desc}</div>
                 <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
                   <div style={{fontSize:13,color:p.accent,fontWeight:600,display:'flex',alignItems:'center',gap:5}}>
                     {p.url?'Открыть сайт':'Читать кейс'} <ArrowUpRight size={13}/>
@@ -745,16 +779,18 @@ function HomeView({navigate}) {
         <div style={{maxWidth:1100,margin:'0 auto',padding:'112px 48px 128px',position:'relative',zIndex:1}}>
           <motion.div initial={{opacity:0,y:20}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{duration:0.65}} style={{textAlign:'center'}}>
             <div style={{marginBottom:24,display:'flex',justifyContent:'center'}}><AELogo height={44}/></div>
-            <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:'clamp(52px,9vw,100px)',fontWeight:400,color:'#F0EDE8',letterSpacing:'-0.025em',lineHeight:1.0,marginBottom:24}}>Есть задача?</h2>
-            <p style={{fontSize:18,color:TEXT_M,marginBottom:48,maxWidth:440,margin:'0 auto 48px',lineHeight:1.65}}>Бесплатная консультация: разберём задачу и назовём точную стоимость.</p>
-            <div style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
-              <a href="mailto:9254652@bk.ru" className="btn-gold" style={{display:'inline-flex',alignItems:'center',gap:9,padding:'15px 32px',borderRadius:10,fontSize:15,fontWeight:700,color:'#0C0D10',textDecoration:'none'}}>
-                <Mail size={16}/> 9254652@bk.ru
-              </a>
+            <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:'clamp(42px,7vw,82px)',fontWeight:400,color:'#F0EDE8',letterSpacing:'-0.025em',lineHeight:1.05,marginBottom:20}}>Разберём вашу задачу<br/>за 30 минут — бесплатно</h2>
+            <p style={{fontSize:17,color:TEXT_M,maxWidth:460,margin:'0 auto 16px',lineHeight:1.7}}>Я задам правильные вопросы, предложу конкретное решение и скажу точную стоимость. Без шаблонных КП и ожидания три дня.</p>
+            <p style={{fontSize:13,color:TEXT_D,marginBottom:40}}>Работаю с малым бизнесом, частными специалистами и производственными компаниями.</p>
+            <div style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap',marginBottom:16}}>
+              <button onClick={openContact} className="btn-gold" style={{display:'inline-flex',alignItems:'center',gap:9,padding:'15px 36px',borderRadius:10,fontSize:15,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>
+                Написать <ArrowRight size={15}/>
+              </button>
               <a href="tel:+79119254652" className="btn-outline" style={{display:'inline-flex',alignItems:'center',gap:9,padding:'15px 32px',background:'rgba(255,255,255,0.04)',color:TEXT,border:`1px solid rgba(255,255,255,0.12)`,borderRadius:10,fontSize:15,fontWeight:500,textDecoration:'none'}}>
                 <Phone size={16}/> +7 911 925 46 52
               </a>
             </div>
+            <p style={{fontSize:12,color:TEXT_D}}>Обычно отвечаю в течение 2 часов</p>
             <p style={{fontSize:11,color:'rgba(229,229,229,0.28)',marginTop:18,textAlign:'center',lineHeight:1.65,maxWidth:420,margin:'18px auto 0'}}>
               Нажимая кнопку, вы даёте согласие на обработку персональных данных в&nbsp;соответствии с&nbsp;<a href="#" onClick={openPrivacy} style={{color:'rgba(201,163,78,0.5)',textDecoration:'underline',textUnderlineOffset:'2px',cursor:'pointer'}}>Политикой конфиденциальности</a>
             </p>
