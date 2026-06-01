@@ -28,7 +28,7 @@ function AELogo({ height = 38 }) {
   const w = Math.round(height * 1.72);
   return (
     <img
-      src="/portfo/ae-logo.png"
+      src="/ae-logo.png"
       alt="AE"
       style={{
         width: w,
