@@ -255,7 +255,7 @@ const CASES_BG = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w
 const IMGS = {
   lawyer:    'https://images.unsplash.com/photo-1589994965851-a8f479c573a9?w=900&q=80&fit=crop',
   cats:      'https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?w=900&q=80&fit=crop',
-  cnc:       'https://images.unsplash.com/photo-fGaYOyRaijs?auto=format&fit=crop&w=900&q=80',
+  cnc:       'https://images.unsplash.com/photo-1666634157070-6fd830fb5672?fm=jpg&q=80&w=900&auto=format&fit=crop',
   mycaviar:  'https://ddmsngr.github.io/mycaviar/img/hero.jpg',
   iching:    'https://images.unsplash.com/photo-1547481887-a26e2cacb5b2?w=900&q=80&fit=crop',
   kott:      'https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=900&q=80&fit=crop',
