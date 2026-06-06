@@ -255,7 +255,7 @@ const CASES_BG = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w
 const IMGS = {
   lawyer:    'https://images.unsplash.com/photo-1589994965851-a8f479c573a9?w=900&q=80&fit=crop',
   cats:      'https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?w=900&q=80&fit=crop',
-  dashboard: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=900&q=80&fit=crop',
+  cnc:       'https://images.unsplash.com/photo-fGaYOyRaijs?auto=format&fit=crop&w=900&q=80',
   mycaviar:  'https://ddmsngr.github.io/mycaviar/img/hero.jpg',
   iching:    'https://images.unsplash.com/photo-1547481887-a26e2cacb5b2?w=900&q=80&fit=crop',
   kott:      'https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=900&q=80&fit=crop',
@@ -269,7 +269,7 @@ const DEMOS = [
   { id:'mycaviar',  tag:'B2B · Оптовая торговля', title:'Охотоморье',                 img:IMGS.mycaviar  },
   { id:'lawyer',    tag:'Корпоративный сайт',      title:'Визитка юриста',            img:IMGS.lawyer    },
   { id:'cats',      tag:'B2C Лендинг',             title:'Магазин для кошек',          img:IMGS.cats      },
-  { id:'dashboard', tag:'SaaS · B2B',              title:'Панель мониторинга',         img:IMGS.dashboard },
+  { id:'cnc',       tag:'ЧПУ · Инжиниринг',        title:'Инженер-программист ЧПУ',    img:IMGS.cnc       },
 ];
 
 const PROJECTS = [
@@ -302,7 +302,7 @@ const ALERTS=[{level:'error',msg:'db-master: RAM превысила 80%',time:'2
 const LAWYER_REV=[{name:'Игорь Смирнов',role:'Гендиректор, «ИнвестГрупп»',text:'Взялись за спор, когда другие отказывались. Победа в суде.'},{name:'Елена Васильева',role:'Партнёр, «ТехноРост»',text:'Сопровождение слияния прошло безупречно. Внимание к деталям.'},{name:'Дмитрий Орлов',role:'Частный клиент',text:'Семейное дело. Адвокат защитила интересы и сохранила достоинство.'}];
 
 // ─── History-aware navigation ─────────────────────────────────────────────
-const DEMO_IDS = new Set(['mycaviar','lawyer','cats','dashboard']);
+const DEMO_IDS = new Set(['mycaviar','lawyer','cats','cnc']);
 const HAS_URL  = new Set(['olga','capoeira','kott']);
 
 function viewFromHash(hash) {
@@ -869,6 +869,20 @@ function DashboardView({navigate}){
   </div>);
 }
 
+function CncView({navigate}){
+  return(
+    <div style={{position:'fixed',inset:0,background:'#141414',zIndex:10,display:'flex',flexDirection:'column'}}>
+      <BackBtn navigate={navigate}/>
+      <iframe
+        src="https://ddmsngr.github.io/cnc/"
+        title="Инженер-программист ЧПУ — Евтушенко"
+        style={{flex:1,border:'none',width:'100%',height:'100%'}}
+        loading="lazy"
+      />
+    </div>
+  );
+}
+
 function MycaviarView({navigate}){
   return(
     <div style={{position:'fixed',inset:0,background:'#0D2140',zIndex:10,display:'flex',flexDirection:'column'}}>
@@ -994,7 +1008,7 @@ export default function App(){
         {currentView==='home'      && <HomeView navigate={navigate}/>}
         {currentView==='lawyer'    && <LawyerView navigate={navigate}/>}
         {currentView==='cats'      && <CatsView navigate={navigate}/>}
-        {currentView==='dashboard' && <DashboardView navigate={navigate}/>}
+        {currentView==='cnc'       && <CncView navigate={navigate}/>}
         {currentView==='mycaviar'  && <MycaviarView navigate={navigate}/>}
         {realProject               && <ProjectDetailView navigate={navigate} project={realProject}/>}
       </motion.div>
