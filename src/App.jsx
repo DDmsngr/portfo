@@ -256,7 +256,7 @@ const IMGS = {
   lawyer:    'https://images.unsplash.com/photo-1589994965851-a8f479c573a9?w=900&q=80&fit=crop',
   cats:      'https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?w=900&q=80&fit=crop',
   cnc:       'https://images.unsplash.com/photo-1666634157070-6fd830fb5672?fm=jpg&q=80&w=900&auto=format&fit=crop',
-  mycaviar:  'https://ddmsngr.github.io/mycaviar/img/hero.jpg',
+  mycaviar:  '/demos/mycaviar.jpg',
   iching:    'https://images.unsplash.com/photo-1547481887-a26e2cacb5b2?w=900&q=80&fit=crop',
   kott:      'https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=900&q=80&fit=crop',
   ddchat:    'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=900&q=80&fit=crop',
@@ -415,7 +415,7 @@ function HomeView({navigate}) {
         {/* Background video — desaturated to kill purple cast */}
         <video
           ref={videoRef}
-          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_065045_c44942da-53c6-4804-b734-f9e07fc22e08.mp4"
+          src="/hero-bg.mp4"
           muted playsInline
           style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:0,pointerEvents:'none',filter:'saturate(0.28) brightness(0.82)'}}
         />
