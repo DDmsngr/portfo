@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
-import logoSrc from './assets/logo.png';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import HeroCanvas from './HeroCanvas';
 import {
@@ -20,7 +19,6 @@ const TEXT   = '#E5E5E5';
 const TEXT_M = 'rgba(229,229,229,0.52)';
 const TEXT_D = 'rgba(229,229,229,0.24)';
 const BORDER = 'rgba(255,255,255,0.06)';
-
 let pendingScroll = null;
 
 // ─── AELogo — реальный PNG через mix-blend-mode:screen ────────────────────
@@ -137,7 +135,6 @@ function CookieBanner() {
 const EMAILJS_KEY = import.meta.env.VITE_EMAILJS_KEY;
 const EMAILJS_SVC = import.meta.env.VITE_EMAILJS_SVC;
 const EMAILJS_TPL = import.meta.env.VITE_EMAILJS_TPL;
-
 const openContact = (e) => { if(e) e.preventDefault(); window.dispatchEvent(new CustomEvent('openContact')); };
 
 function ContactModal() {
@@ -145,16 +142,13 @@ function ContactModal() {
   const [form,setForm]=useState({name:'',contact:'',subject:'',message:''});
   const [status,setStatus]=useState('idle');
   const [errMsg,setErrMsg]=useState('');
-
   useEffect(()=>{
     const h=()=>{setOpen(true);setStatus('idle');setErrMsg('');};
     window.addEventListener('openContact',h);
     return()=>window.removeEventListener('openContact',h);
   },[]);
-
   const close=()=>{setOpen(false);setStatus('idle');setErrMsg('');};
   const upd=(e)=>setForm(f=>({...f,[e.target.name]:e.target.value}));
-
   const send=async(e)=>{
     e.preventDefault();
     if(!form.name.trim()||!form.contact.trim()||!form.message.trim()){
@@ -177,9 +171,7 @@ function ContactModal() {
       setErrMsg('Ошибка отправки. Напишите напрямую: 9254652@bk.ru');
     }
   };
-
   if(!open) return null;
-
   const inp={
     display:'block',width:'100%',background:'rgba(255,255,255,0.04)',
     border:'1px solid rgba(201,163,78,0.18)',borderRadius:8,padding:'12px 14px',
@@ -189,12 +181,10 @@ function ContactModal() {
   const lbl={fontSize:10,fontWeight:700,letterSpacing:'0.14em',color:GOLD,textTransform:'uppercase',display:'block',marginBottom:6};
   const focusIn=e=>e.target.style.borderColor='rgba(201,163,78,0.55)';
   const focusOut=e=>e.target.style.borderColor='rgba(201,163,78,0.18)';
-
   return(
     <div style={{position:'fixed',inset:0,zIndex:2001,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px'}}>
       <div onClick={close} style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.72)',backdropFilter:'blur(10px)'}}/>
       <div style={{position:'relative',zIndex:1,width:'100%',maxWidth:500,background:'rgba(9,8,6,0.97)',border:'1px solid rgba(201,163,78,0.22)',borderRadius:18,backdropFilter:'blur(24px)',boxShadow:'0 32px 80px rgba(0,0,0,0.7),inset 0 1px 0 rgba(201,163,78,0.12)',overflow:'hidden'}}>
-
         <div style={{padding:'22px 26px 18px',borderBottom:'1px solid rgba(201,163,78,0.1)',display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
           <div>
             <div style={{fontSize:10,fontWeight:700,letterSpacing:'0.18em',color:GOLD,textTransform:'uppercase',marginBottom:5}}>Новый проект</div>
@@ -202,7 +192,6 @@ function ContactModal() {
           </div>
           <button onClick={close} style={{width:34,height:34,borderRadius:'50%',border:'1px solid rgba(255,255,255,0.1)',background:'rgba(255,255,255,0.04)',color:'rgba(255,255,255,0.45)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,lineHeight:1}}>×</button>
         </div>
-
         <div style={{padding:'22px 26px 26px',maxHeight:'calc(90vh - 100px)',overflowY:'auto'}}>
           {status==='success'?(
             <div style={{textAlign:'center',padding:'28px 0'}}>
@@ -217,18 +206,13 @@ function ContactModal() {
             <form onSubmit={send}>
               <label style={lbl}>Имя *</label>
               <input name="name" value={form.name} onChange={upd} placeholder="Как вас зовут?" style={inp} onFocus={focusIn} onBlur={focusOut}/>
-
               <label style={lbl}>Телефон или Email *</label>
               <input name="contact" value={form.contact} onChange={upd} placeholder="+7 900 000 00 00 или mail@example.ru" style={inp} onFocus={focusIn} onBlur={focusOut}/>
-
               <label style={lbl}>Тема обращения</label>
               <input name="subject" value={form.subject} onChange={upd} placeholder="Лендинг, приложение, CRM…" style={inp} onFocus={focusIn} onBlur={focusOut}/>
-
               <label style={lbl}>Расскажите о задаче *</label>
               <textarea name="message" value={form.message} onChange={upd} rows={4} placeholder="Что нужно сделать, сроки, бюджет, референсы…" style={{...inp,resize:'vertical',minHeight:96,marginBottom:8}} onFocus={focusIn} onBlur={focusOut}/>
-
               {errMsg&&<div style={{fontSize:12,color:status==='error'?'rgba(229,229,229,0.5)':'#F87171',marginBottom:12,lineHeight:1.55}}>{errMsg}{status==='error'&&<> → <a href="mailto:9254652@bk.ru" style={{color:GOLD}}>9254652@bk.ru</a></>}</div>}
-
               <button type="submit" className="btn-gold" disabled={status==='sending'} style={{width:'100%',padding:'14px',borderRadius:10,fontSize:14,fontWeight:700,color:'#0C0D10',border:'none',cursor:status==='sending'?'default':'pointer',opacity:status==='sending'?0.65:1,marginTop:4}}>
                 {status==='sending'?'Отправляю…':'Отправить заявку →'}
               </button>
@@ -259,14 +243,12 @@ const IMGS = {
   olga:      'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=900&q=80&fit=crop',
   capoeira:  'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=900&q=80&fit=crop',
 };
-
 const DEMOS = [
   { id:'mycaviar',  tag:'B2B · Оптовая торговля', title:'Охотоморье',                 img:IMGS.mycaviar  },
   { id:'lawyer',    tag:'Корпоративный сайт',      title:'Визитка юриста',            img:IMGS.lawyer    },
   { id:'cats',      tag:'B2C Лендинг',             title:'Магазин для кошек',          img:IMGS.cats      },
   { id:'cnc',       tag:'ЧПУ · Инжиниринг',        title:'Инженер-программист ЧПУ',    img:IMGS.cnc       },
 ];
-
 const PROJECTS = [
   { id:'capoeira', tag:'Web · HTML · CSS · JS',   title:'FGR Capoeira',   subtitle:'Сайт вместо зависимости от соцсетей',      desc:'Школа работала только через Instagram. Нужен был собственный канал, который продаёт без алгоритмов — напрямую из поиска.', accent:'#009C3B', bg:'#020D05', url:'https://ddmsngr.github.io/FGR_Capoeira/',         metric:{value:'Live',label:'продакшен'}, stack:['HTML5','CSS3','JavaScript'],    description:'Лендинг для Familia Ginga e Raça — международной школы капоэйры в СПб с 30-летней историей. Бразильская эстетика, полная SEO-оптимизация, мобильная адаптация.', role:'Frontend Developer & UI/UX', featuresLabel:'Что реализовано', features:['Бразильская цветовая палитра с тематическим фоном','SEO: полный meta-пакет og:image, keywords, OpenGraph','Секции: герой, тренеры, расписание, контакты','Призыв к действию — первое занятие бесплатно','Mobile-first адаптация и touch-навигация','Деплой GitHub Pages + домен fgr-capoeira.ru'], tech:[['Frontend','HTML5, CSS3, Vanilla JS'],['SEO','OpenGraph, meta-keywords'],['Деплой','GitHub Pages']], challenges:[] },
   { id:'olga',     tag:'Web · HTML · Tailwind',    title:'Kitliash.cosmo', subtitle:'Онлайн-инструмент вместо сарафанного радио',          desc:'Эксперт-косметолог 10 лет работала только по рекомендациям. Сделали сайт-продавец, который привлекает клиентов и работает 24/7.', accent:'#C9A34E', bg:'#0F0D09', url:'https://ddmsngr.github.io/olga-kosmetolog/',      metric:{value:'Live',label:'продакшен'}, stack:['HTML5','Tailwind CSS','Vanilla JS'], description:'Сайт-визитка для косметолога-эксперта Ольги Китляш (СПб). Тёплая крафтовая палитра, 10 реальных фотографий клиента, lightbox-галерея результатов, раздел для коллег.', role:'Frontend Developer & UI/UX', featuresLabel:'Что реализовано', features:['3 портрета расставлены по смысловым блокам','Lightbox: fullscreen по клику, закрытие по Esc','Превью книги «Скин-система»: обложка + 2 страницы','Оффер для коллег: консультация 10 000 ₽/час','Анимации через IntersectionObserver без библиотек','TG-канал вынесен отдельным баннером'], tech:[['Frontend','HTML5, Tailwind CSS'],['Анимации','CSS + IntersectionObserver'],['Деплой','GitHub Pages']], challenges:[] },
@@ -275,7 +257,6 @@ const PROJECTS = [
   { id:'deepdrift',tag:'Python · PyTorch · R&D',   title:'DeepDrift',      subtitle:'Мониторинг ML-моделей',    desc:'Авторский метод детекции Model Drift через геометрию hidden states.',       accent:'#7C5CCC', bg:'#0D0B14', zenodoUrl:'https://zenodo.org/records/18622319', metric:{value:'Zenodo',label:'статья'},    stack:['Python 3.10+','PyTorch','CUDA'],   description:'Open-source инструмент мониторинга нейросетей. Автор разработал математический метод и опубликовал научную статью на Zenodo. Semantic Velocity решает Model Drift без дообучения.', role:'Автор метода, научной статьи и Solo Developer', featuresLabel:'Ключевые возможности', features:['Zero-Training: мониторинг без изменения весов','Semantic Velocity — авторская метрика дрейфа','OOD Detection: сигнал до ошибки на выходе','XAI: визуализация слой за слоем','Low-Overhead: параллельно с инференсом','Zenodo v5.2 — международный научный репозиторий'], tech:[['Стек','Python 3.10+, PyTorch'],['Математика','Линейная алгебра, геометрия тензоров'],['Интеграция','PyTorch hooks + HuggingFace'],['Дистрибуция','Zenodo v5.2']], challenges:['Расчёт метрик без задержки инференса','Универсальный интерфейс хуков для HuggingFace','Математическое обоснование Semantic Velocity'] },
   { id:'kott',     tag:'Android · Flutter',        title:'KOTT',           subtitle:'Автоматизация вместо Excel и бумажной волокиты',     desc:'Художница тратила часы на документооборот вручную. Теперь сертификат, договор и акт — одна кнопка.',     accent:'#C8956C', bg:'#100C08', url:'https://ddmsngr.github.io/KOTT-site/',            metric:{value:'100%',label:'офлайн'},     stack:['Flutter','Isar','Riverpod'],       description:'Система учёта произведений искусства для художников. Полный цикл: от реестра до продажи и генерации юридически значимых документов. 100% локально.', role:'Solo Full-Stack Mobile Developer', featuresLabel:'Фишки приложения', features:['Реестр с цветовой кодировкой 7 статусов','Карточка: фото, размеры, серии, тираж, человеко-часы','Транзакционный журнал перемещений','PDF в 1 клик: сертификаты с QR, договоры, акты','Экспорт в Excel/CSV + JSON-бэкап','Уникальные ID без интернета'], tech:[['UI','Flutter 3.19, Material Design 3'],['State','Riverpod 2.x'],['БД','Isar 3.x'],['PDF','pdf, printing']], challenges:['Полная автономность без интернета','Генерация уникальных номеров без коллизий','Реактивный UI: изменения в БД → мгновенное отражение'] },
 ];
-
 const TESTIMONIALS = [
   { name:'Игорь Смирнов',   role:'CEO, «ИнвестГрупп»',  text:'Запустили CRM за 6 недель вместо трёх месяцев. Окупилось в первый же квартал.' },
   { name:'Елена Васильева', role:'CMO, «ТехноРост»',     text:'Редкий случай, когда разработчик думает о метриках. Конверсия выросла на 42%.' },
@@ -362,7 +343,6 @@ function HomeView({navigate}) {
 
   return(
     <div style={{background:BG,color:TEXT,fontFamily:'Inter,sans-serif',overflowX:'hidden'}}>
-
       {/* HEADER */}
       <header style={{position:'fixed',top:0,left:0,right:0,zIndex:80,padding:'0 48px',height:70,display:'flex',alignItems:'center',justifyContent:'space-between',background:scrolled?'rgba(12,13,16,0.96)':'transparent',backdropFilter:scrolled?'blur(20px)':'none',borderBottom:scrolled?`1px solid ${BORDER}`:'none',opacity:scrolled?1:0,pointerEvents:scrolled?'auto':'none',transition:'background 350ms,border-color 350ms,backdrop-filter 350ms,opacity 350ms'}}>
         <a href="#" style={{display:'flex',alignItems:'center',gap:14,textDecoration:'none'}}>
@@ -385,23 +365,20 @@ function HomeView({navigate}) {
 
       {/* HERO */}
       <div style={{position:'relative',overflow:'hidden',minHeight:'100vh',background:'#060608'}}>
-
         {/* ── 3D canvas background — replaces video ── */}
         <HeroCanvas />
-
         {/* Warm dark overlay */}
         <div style={{position:'absolute',inset:0,background:'rgba(8,5,2,0.48)',pointerEvents:'none',zIndex:1}}/>
-
+        
         {/* Hero content */}
         <div style={{position:'relative',zIndex:10,minHeight:'100vh',display:'flex',flexDirection:'column',overflow:'visible'}}>
-
           {/* Dark warm core blur */}
           <div style={{position:'absolute',width:1020,height:560,top:'50%',left:'50%',transform:'translate(-50%,-50%)',background:'#070401',filter:'blur(90px)',opacity:0.88,pointerEvents:'none',zIndex:0}}/>
           {/* Gold ambient — top right */}
           <div style={{position:'absolute',width:680,height:680,top:'-10%',left:'50%',background:'radial-gradient(circle,rgba(201,163,78,0.09) 0%,transparent 65%)',filter:'blur(60px)',pointerEvents:'none',zIndex:0}}/>
           {/* Gold ambient — bottom left */}
           <div style={{position:'absolute',width:500,height:500,bottom:'0%',left:'-6%',background:'radial-gradient(circle,rgba(201,163,78,0.055) 0%,transparent 65%)',filter:'blur(80px)',pointerEvents:'none',zIndex:0}}/>
-
+          
           {/* Navbar */}
           <nav style={{position:'relative',zIndex:1,padding:'20px 44px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
             <a href="#" style={{display:'flex',alignItems:'center',gap:12,textDecoration:'none'}}>
@@ -425,20 +402,18 @@ function HomeView({navigate}) {
               Обсудить проект
             </button>
           </nav>
-
+          
           {/* Divider */}
           <div style={{height:1,background:'linear-gradient(to right,transparent,rgba(201,163,78,0.2),transparent)',marginTop:3}}/>
-
+          
           {/* Headline + subtitle + CTA */}
           <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'flex-start',position:'relative',zIndex:1,padding:'0 52px'}}>
             <div style={{maxWidth:820}}>
-
               {/* Status pill */}
               <div style={{display:'inline-flex',alignItems:'center',gap:8,marginBottom:30,padding:'5px 14px',borderRadius:40,border:'1px solid rgba(201,163,78,0.22)',background:'rgba(201,163,78,0.06)'}}>
                 <div style={{width:6,height:6,borderRadius:'50%',background:GOLD,boxShadow:`0 0 8px ${GOLD}88`}}/>
                 <span style={{fontSize:11,fontWeight:700,letterSpacing:'0.16em',color:GOLD,textTransform:'uppercase'}}>Инженер · Разработчик · 8 лет в производстве</span>
               </div>
-
               {/* Name */}
               <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:'clamp(68px,9vw,116px)',fontWeight:400,lineHeight:0.96,letterSpacing:'-0.02em',margin:'0 0 30px'}}>
                 <span style={{color:'#F5F0E8',display:'block'}}>Алексей</span>
@@ -450,7 +425,6 @@ function HomeView({navigate}) {
                   display:'block',
                 }}>Евтушенко</span>
               </h1>
-
               {/* Subtitle */}
               <p style={{color:'rgba(245,240,232,0.78)',fontSize:19,lineHeight:'32px',maxWidth:560,margin:'0 0 18px',fontWeight:400}}>
                 Создаю сайты, мобильные приложения и&nbsp;системы автоматизации — с&nbsp;инженерной точностью и&nbsp;без переделок
@@ -461,7 +435,6 @@ function HomeView({navigate}) {
                 Теперь применяю тот же подход в&nbsp;разработке: чёткая логика,
                 предсказуемый результат и&nbsp;запуск без хаоса.
               </p>
-
               {/* CTA buttons */}
               <div style={{display:'flex',gap:12,flexWrap:'wrap',alignItems:'center'}}>
                 <button onClick={openContact} className="btn-gold" style={{display:'inline-flex',alignItems:'center',gap:8,padding:'14px 32px',borderRadius:10,fontSize:14,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>
@@ -476,7 +449,7 @@ function HomeView({navigate}) {
               </div>
             </div>
           </div>
-
+          
           {/* Logo marquee */}
           <div style={{paddingBottom:40,position:'relative',zIndex:1}}>
             <div style={{maxWidth:'64rem',margin:'0 auto',padding:'0 44px',display:'flex',alignItems:'center',gap:48}}>
@@ -495,7 +468,6 @@ function HomeView({navigate}) {
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -568,7 +540,6 @@ function HomeView({navigate}) {
       <section id="cases" style={{scrollMarginTop:70,position:'relative',overflow:'hidden'}}>
         <Orb top="10%"   left="2%"   size={700} color="rgba(201,163,78,0.04)" blur={100}/>
         <Orb bottom="5%" right="2%"  size={600} color="rgba(100,70,220,0.04)" blur={90}/>
-
         <div style={{position:'relative',height:240,overflow:'hidden',marginBottom:2}}>
           <img src={CASES_BG} alt="" style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.32) saturate(0.7)'}}/>
           <div style={{position:'absolute',inset:0,background:'linear-gradient(to bottom,rgba(12,13,16,0.3),rgba(12,13,16,0.88))'}}/>
@@ -578,7 +549,6 @@ function HomeView({navigate}) {
             <p style={{fontSize:14,color:'rgba(229,229,229,0.38)',marginTop:10,letterSpacing:'0.02em'}}>Нажмите на карточку — откроется кейс или живой сайт</p>
           </div>
         </div>
-
         <div className="mobile-cases-label" style={{display:'none',alignItems:'center',gap:12,padding:'28px 20px 16px',borderTop:`1px solid ${BORDER}`}}>
           <div style={{width:3,height:28,background:`linear-gradient(to bottom,${GOLD},transparent)`,borderRadius:2,flexShrink:0}}/>
           <div>
@@ -586,7 +556,6 @@ function HomeView({navigate}) {
             <div style={{fontSize:20,fontWeight:700,color:'#F0EDE8',letterSpacing:'-0.01em',lineHeight:1.1}}>Реализованные проекты</div>
           </div>
         </div>
-
         <div className="cases-grid" style={{
           display:'grid',
           gridTemplateColumns:'repeat(3,1fr)',
@@ -805,7 +774,7 @@ function CatsView({navigate}){
     <div style={{textAlign:'center',marginBottom:24}}><div style={{display:'inline-flex',alignItems:'center',gap:6,color:'#D4754A',fontSize:13,fontWeight:700,marginBottom:6}}><Gift size={15}/> Конструктор набора</div><h2 style={{fontWeight:800,fontSize:24,color:'#3D2314',marginBottom:4}}>Собери свой бокс</h2></div>
     <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(185px,1fr))',gap:12,marginBottom:20}}>{CAT_PRODUCTS.map(p=>(<div key={p.id} style={{background:'#fff',borderRadius:22,overflow:'hidden',boxShadow:'0 4px 18px rgba(0,0,0,0.07)'}}><img src={p.img} alt={p.name} style={{width:'100%',height:110,objectFit:'cover'}}/><div style={{padding:'14px 16px 18px',textAlign:'center'}}><div style={{fontWeight:800,fontSize:13,color:'#3D2314',marginBottom:4}}>{p.name}</div><div style={{fontSize:11,color:'#9A6A50',marginBottom:10,minHeight:30,lineHeight:1.5}}>{p.desc}</div><div style={{fontWeight:800,fontSize:17,color:'#D4754A',marginBottom:12}}>{p.price} ₽</div><div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:10}}><button onClick={()=>upd(p.id,-1)} style={{width:30,height:30,borderRadius:'50%',border:'2px solid #E8D0C4',background:'#FFF5EC',color:'#A05A3A',cursor:'pointer',fontSize:18,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center'}}>−</button><motion.span key={counts[p.id]||0} initial={{scale:1.3}} animate={{scale:1}} transition={{type:'spring',stiffness:400}} style={{fontWeight:800,fontSize:17,color:'#3D2314',minWidth:22,textAlign:'center'}}>{counts[p.id]||0}</motion.span><button onClick={()=>upd(p.id,1)} style={{width:30,height:30,borderRadius:'50%',border:'none',background:'#D4754A',color:'#fff',cursor:'pointer',fontSize:18,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center'}}>+</button></div></div></div>))}</div>
     <AnimatePresence>{items>0&&<motion.div initial={{opacity:0,y:14}} animate={{opacity:1,y:0}} exit={{opacity:0,y:14}} style={{background:'#D4754A',borderRadius:18,padding:'20px 24px',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:12}}><div><div style={{fontSize:11,color:'rgba(255,255,255,0.7)',marginBottom:3}}>В боксе</div><div style={{fontWeight:800,fontSize:18,color:'#fff'}}>{items} {items===1?'игрушка':items<5?'игрушки':'игрушек'} · {total} ₽</div></div><button style={{background:'#fff',color:'#D4754A',border:'none',borderRadius:13,padding:'12px 24px',fontWeight:800,fontSize:14,cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontFamily:"'Nunito',sans-serif"}}>Оформить <ArrowUpRight size={13}/></button></motion.div>}</AnimatePresence>
-    </div></div>);
+  </div></div>);
 }
 
 const PER=8;
@@ -828,4 +797,159 @@ function DashboardView({navigate}){
     return <div><h1 style={{fontWeight:800,fontSize:20,marginBottom:16,fontFamily:'Inter,sans-serif'}}>Настройки</h1><div style={{display:'flex',flexDirection:'column',gap:8}}>{[['Уведомления',true],['Slack',false],['Автобэкап',true],['2FA',true],['Публичный API',false]].map(([l,val],i)=><div key={i} style={{background:'#111113',borderRadius:12,padding:'13px 16px',border:'1px solid #27272A',display:'flex',justifyContent:'space-between',alignItems:'center'}}><span style={{fontSize:13,color:'#E4E4E7'}}>{l}</span><div style={{width:38,height:20,borderRadius:100,background:val?'#34D399':'#3F3F46',display:'flex',alignItems:'center',padding:'2px 3px'}}><div style={{width:14,height:14,borderRadius:'50%',background:'#fff',transform:val?'translateX(18px)':'translateX(0)',transition:'transform .2s'}}/></div></div>)}</div></div>;
   };
   return(<div style={{background:'#09090B',color:'#fff',minHeight:'100vh',display:'flex',fontFamily:'Inter,sans-serif'}}><BackBtn navigate={navigate}/>
-    <div style={{width:196,background:'#111113',borderRight:'1px solid #27272A',flexShrink:0,paddingTop:66,padding:'66px 8px 12px'}}><div style={{fontWeight:800,fontSize:11,color:'#34D399',letterSpacing:'0.1em',padding:'0 10px',marginBottom:16,textTransform:'uppercase'}}>Infra Monitor</div>{navItems.map(item=><button key={item.id} onClick={()=>setActive(item.id)} style={{display:'flex',alignItems:'center',gap:9,width:'100%',padding:'9px 10px',borderRadius:8,border:'none',cursor:'pointer',background:active===item.id?'rgba(52,211
+    <div style={{width:196,background:'#111113',borderRight:'1px solid #27272A',flexShrink:0,paddingTop:66,padding:'66px 8px 12px'}}><div style={{fontWeight:800,fontSize:11,color:'#34D399',letterSpacing:'0.1em',padding:'0 10px',marginBottom:16,textTransform:'uppercase'}}>Infra Monitor</div>{navItems.map(item=><button key={item.id} onClick={()=>setActive(item.id)} style={{display:'flex',alignItems:'center',gap:9,width:'100%',padding:'9px 10px',borderRadius:8,border:'none',cursor:'pointer',background:active===item.id?'rgba(52,211,153,0.1)':'transparent',color:active===item.id?'#34D399':'#71717A',fontSize:13,fontWeight:active===item.id?600:400,textAlign:'left',marginBottom:1,fontFamily:'Inter,sans-serif'}}><item.Icon size={14}/> {item.l}</button>)}</div>
+    <div style={{flex:1,overflow:'auto'}}>
+      <div style={{position:'relative',height:88,overflow:'hidden'}}><img src={IMGS.dashboard} alt="" style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.25)'}}/><div style={{position:'absolute',inset:0,background:'linear-gradient(to bottom,transparent,#09090B)'}}/><div style={{position:'absolute',bottom:12,left:20,fontSize:13,fontWeight:800,color:'#34D399',fontFamily:'Inter,sans-serif'}}>Система мониторинга инфраструктуры</div></div>
+      <div style={{background:'#111113',borderBottom:'1px solid #27272A',padding:'12px 20px',display:'flex',gap:10,flexWrap:'wrap',alignItems:'center'}}>{[{l:'ЦП',v:cpu+'%',Icon:Cpu,c:cpu>80?'#F87171':cpu>60?'#FB923C':'#4ADE80',bar:cpu},{l:'БД',v:Math.round(db)+'%',Icon:Database,c:db>80?'#F87171':db>60?'#FB923C':'#4ADE80',bar:db},{l:'Сессии',v:sessions,Icon:Activity,c:'#34D399',bar:null}].map(m=><div key={m.l} style={{display:'flex',alignItems:'center',gap:10,background:'#18181B',borderRadius:12,padding:'10px 13px',border:'1px solid #27272A'}}><m.Icon size={14} color={m.c}/><div><div style={{fontSize:10,color:'#71717A',marginBottom:2}}>{m.l}</div><motion.div key={m.v} initial={{opacity:0.5}} animate={{opacity:1}} style={{fontFamily:"'JetBrains Mono',monospace",fontWeight:700,fontSize:15,color:m.c,lineHeight:1}}>{m.v}</motion.div>{m.bar!==null&&<div style={{width:60,height:4,background:'#27272A',borderRadius:2,marginTop:3}}><motion.div animate={{width:m.bar+'%'}} transition={{duration:0.8}} style={{height:'100%',borderRadius:2,background:m.c}}/></div>}</div></div>)}<div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:6,background:'#18181B',border:'1px solid #27272A',borderRadius:8,padding:'8px 12px'}}><Search size={12} color="#71717A"/><input placeholder="Поиск..." style={{background:'none',border:'none',color:'#A1A1AA',fontSize:12,outline:'none',width:90}}/></div></div>
+      <div style={{padding:18}}>{renderContent()}</div>
+    </div>
+  </div>);
+}
+
+function CncView({navigate}){
+  return(
+    <div style={{position:'fixed',inset:0,background:'#141414',zIndex:10,display:'flex',flexDirection:'column'}}>
+      <BackBtn navigate={navigate}/>
+      <iframe
+        src="https://ddmsngr.github.io/cnc/"
+        title="Инженер-программист ЧПУ — Евтушенко"
+        style={{flex:1,border:'none',width:'100%',height:'100%'}}
+        loading="lazy"
+      />
+    </div>
+  );
+}
+
+function MycaviarView({navigate}){
+  return(
+    <div style={{position:'fixed',inset:0,background:'#0D2140',zIndex:10,display:'flex',flexDirection:'column'}}>
+      <BackBtn navigate={navigate}/>
+      <iframe
+        src="https://ddmsngr.github.io/mycaviar/"
+        title="Охотоморье — оптовый поставщик икры"
+        style={{flex:1,border:'none',width:'100%',height:'100%'}}
+        loading="lazy"
+      />
+    </div>
+  );
+}
+
+function ShopView({navigate}){
+  const [cart,setCart]=useState([]);const [open,setOpen]=useState(false);
+  const add=item=>setCart(c=>{const e=c.find(x=>x.id===item.id);return e?c.map(x=>x.id===item.id?{...x,qty:x.qty+1}:x):[...c,{...item,qty:1}];});
+  const rm=id=>setCart(c=>c.filter(x=>x.id!==id));
+  const upd=(id,d)=>setCart(c=>c.map(x=>x.id===id?{...x,qty:Math.max(1,x.qty+d)}:x));
+  const total=cart.reduce((s,x)=>s+x.price*x.qty,0),cnt=cart.reduce((s,x)=>s+x.qty,0);
+  return(<div style={{background:'#000',color:'#fff',minHeight:'100vh',fontFamily:'Inter,sans-serif'}}><BackBtn navigate={navigate}/>
+    <div style={{position:'relative',height:360,overflow:'hidden'}}><img src={IMGS.shop} alt="" style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.38) saturate(1.3) hue-rotate(-15deg)'}}/><div style={{position:'absolute',inset:0,background:'linear-gradient(to bottom,rgba(0,0,0,0.2),#000)'}}/><div style={{position:'absolute',top:0,left:0,right:0,padding:'20px 36px',display:'flex',justifyContent:'flex-end'}}><button onClick={()=>setOpen(true)} style={{display:'flex',alignItems:'center',gap:7,padding:'9px 16px',borderRadius:8,border:'1px solid #2A2A2A',background:cnt>0?'#FF2D78':'#111',color:'#fff',fontSize:13,fontWeight:600,cursor:'pointer'}}><ShoppingCart size={14}/> {cnt>0?`${cnt} · ${total.toLocaleString('ru-RU')} ₽`:'Корзина'}</button></div><div style={{position:'absolute',bottom:36,left:36}}><div style={{fontSize:10,fontWeight:700,letterSpacing:'0.2em',color:'#FF2D78',marginBottom:12,textTransform:'uppercase'}}>Магазин Невозможных Вещей</div><h1 style={{fontFamily:'Inter,sans-serif',fontWeight:900,fontSize:'clamp(34px,7vw,72px)',lineHeight:0.93,letterSpacing:'-0.04em',marginBottom:12}}>ВЕЩИ,<br/><span style={{color:'#FF2D78'}}>КОТОРЫХ</span><br/>НЕ БЫВАЕТ.</h1><p style={{fontSize:13,color:'#666',maxWidth:320}}>Редкие, лимитированные. Доставка — мысленно.</p></div></div>
+    <div style={{padding:'0 36px 8px',borderBottom:'1px solid #1A1A1A'}}><div style={{fontFamily:'Inter,sans-serif',fontSize:13,fontWeight:800,letterSpacing:'0.1em',padding:'12px 0'}}>IMPOSSIBLE<span style={{color:'#FF2D78'}}>.</span>SHOP</div></div>
+    <div style={{maxWidth:880,margin:'0 auto',padding:'20px 36px 60px'}}><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(250px,1fr))',gap:1,border:'1px solid #1A1A1A'}}>{SHOP_ITEMS.map(item=><div key={item.id} style={{background:'#000',borderRight:'1px solid #1A1A1A',borderBottom:'1px solid #1A1A1A',overflow:'hidden'}}><div style={{position:'relative',height:140,overflow:'hidden'}}><img src={item.img} alt={item.name} style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.55) saturate(0.7)',transition:'transform .4s'}} onMouseEnter={e=>e.target.style.transform='scale(1.06)'} onMouseLeave={e=>e.target.style.transform='scale(1)'}/><div style={{position:'absolute',inset:0,background:'linear-gradient(to bottom,transparent 50%,#000 100%)'}}/><span style={{position:'absolute',top:10,right:10,fontSize:10,fontWeight:800,letterSpacing:'0.12em',color:item.rc,border:`1px solid ${item.rc}50`,padding:'3px 8px',borderRadius:3,background:'rgba(0,0,0,0.7)',textTransform:'uppercase'}}>{item.rarity}</span></div><div style={{padding:'14px 20px 20px'}}><div style={{fontFamily:'Inter,sans-serif',fontWeight:800,fontSize:14,marginBottom:6}}>{item.name}</div><div style={{fontSize:12,color:'#555',lineHeight:1.6,marginBottom:14}}>{item.desc}</div><div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}><div style={{fontFamily:'Inter,sans-serif',fontWeight:800,fontSize:17}}>{item.price.toLocaleString('ru-RU')} <span style={{fontSize:12,color:'#555',fontWeight:400}}>₽</span></div><motion.button whileHover={{scale:1.05}} whileTap={{scale:0.95}} onClick={()=>add(item)} style={{background:'#fff',color:'#000',border:'none',borderRadius:6,padding:'8px 16px',cursor:'pointer',fontSize:12,fontWeight:700}}>В корзину</motion.button></div></div></div>)}</div></div>
+    <AnimatePresence>{open&&<><motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} onClick={()=>setOpen(false)} style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.75)',zIndex:40}}/><motion.div initial={{x:'100%'}} animate={{x:0}} exit={{x:'100%'}} transition={{type:'spring',stiffness:280,damping:28}} style={{position:'fixed',top:0,right:0,bottom:0,width:320,background:'#0A0A0A',borderLeft:'1px solid #222',zIndex:50,display:'flex',flexDirection:'column'}}><div style={{padding:'16px 20px',borderBottom:'1px solid #1A1A1A',display:'flex',justifyContent:'space-between',alignItems:'center'}}><div style={{fontFamily:'Inter,sans-serif',fontWeight:800,fontSize:14}}>КОРЗИНА ({cnt})</div><button onClick={()=>setOpen(false)} style={{background:'none',border:'none',color:'#666',cursor:'pointer',display:'flex'}}><X size={18}/></button></div><div style={{flex:1,overflow:'auto',padding:'12px 16px'}}>{cart.length===0?<div style={{textAlign:'center',color:'#555',marginTop:50}}><ShoppingCart size={34} style={{opacity:0.3,margin:'0 auto 10px'}}/><div style={{fontSize:13}}>Корзина пуста</div></div>:cart.map(item=><div key={item.id} style={{padding:'12px 0',borderBottom:'1px solid #1A1A1A'}}><div style={{display:'flex',gap:10,justifyContent:'space-between',marginBottom:8}}><div style={{display:'flex',gap:10,alignItems:'flex-start'}}><img src={item.img} alt={item.name} style={{width:38,height:38,borderRadius:6,objectFit:'cover',filter:'brightness(0.65)'}}/><div><div style={{fontWeight:700,fontSize:12,marginBottom:2}}>{item.name}</div><div style={{fontSize:11,color:'#666'}}>{(item.price*item.qty).toLocaleString('ru-RU')} ₽</div></div></div><button onClick={()=>rm(item.id)} style={{background:'none',border:'none',color:'#555',cursor:'pointer',display:'flex'}}><X size={12}/></button></div><div style={{display:'flex',alignItems:'center',gap:8}}><button onClick={()=>upd(item.id,-1)} style={{width:24,height:24,borderRadius:6,border:'1px solid #222',background:'#111',color:'#fff',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}><Minus size={9}/></button><span style={{fontSize:12,fontWeight:700,minWidth:18,textAlign:'center'}}>{item.qty}</span><button onClick={()=>upd(item.id,1)} style={{width:24,height:24,borderRadius:6,border:'none',background:'#fff',color:'#000',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}><Plus size={9}/></button></div></div>)}</div>{cart.length>0&&<div style={{padding:'16px 20px',borderTop:'1px solid #1A1A1A'}}><div style={{display:'flex',justifyContent:'space-between',marginBottom:12}}><span style={{fontSize:13,color:'#666'}}>Итого</span><span style={{fontFamily:'Inter,sans-serif',fontWeight:800,fontSize:18}}>{total.toLocaleString('ru-RU')} ₽</span></div><button style={{width:'100%',background:'#FF2D78',color:'#fff',border:'none',borderRadius:9,padding:12,fontWeight:700,fontSize:13,cursor:'pointer'}}>Оформить заказ</button></div>}</motion.div></>}</AnimatePresence>
+  </div>);
+}
+
+// ═══════════════════ PROJECT DETAIL ═══════════════════
+function ProjectDetailView({navigate,project:p}){
+  const isDD=p.id==='deepdrift';
+  return(<div style={{background:p.bg,color:'#fff',minHeight:'100vh',fontFamily:'Inter,sans-serif',position:'relative',overflow:'hidden'}}>
+    <Orb top="10%" left="60%" size={500} color={p.accent+'15'} blur={120}/>
+    <BackBtn navigate={navigate} returnTo="cases"/>
+    <div style={{position:'relative',height:360,overflow:'hidden'}}>
+      <img src={IMGS[p.id]||IMGS.olga} alt={p.title} style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.28) saturate(0.5)'}}/>
+      <div style={{position:'absolute',inset:0,background:`linear-gradient(to bottom,transparent 20%,${p.bg} 100%)`}}/>
+      <motion.div initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{duration:0.55}} style={{position:'absolute',bottom:36,left:40,right:40,maxWidth:840}}>
+        <div style={{fontSize:11,fontWeight:700,letterSpacing:'0.14em',textTransform:'uppercase',color:p.accent,marginBottom:10}}>{p.tag}</div>
+        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:400,fontSize:'clamp(32px,6vw,66px)',letterSpacing:'-0.02em',marginBottom:8,lineHeight:1.0}}>{p.title}</h1>
+        <div style={{fontSize:17,color:'rgba(255,255,255,0.48)',marginBottom:18}}>{p.subtitle}</div>
+        <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+          {p.url&&<a href={p.url} target="_blank" rel="noopener" onClick={e=>e.stopPropagation()} style={{display:'inline-flex',alignItems:'center',gap:7,padding:'9px 18px',borderRadius:9,border:`1px solid ${p.accent}45`,background:p.accent+'12',color:p.accent,fontSize:13,fontWeight:600,textDecoration:'none'}}><ExternalLink size={13}/> Открыть сайт</a>}
+          {p.zenodoUrl&&<a href={p.zenodoUrl} target="_blank" rel="noopener" onClick={e=>e.stopPropagation()} style={{display:'inline-flex',alignItems:'center',gap:7,padding:'9px 18px',borderRadius:9,border:`1px solid ${p.accent}45`,background:p.accent+'12',color:p.accent,fontSize:13,fontWeight:600,textDecoration:'none'}}><ExternalLink size={13}/> Статья на Zenodo</a>}
+        </div>
+      </motion.div>
+    </div>
+    <div style={{maxWidth:860,margin:'0 auto',padding:'48px 40px',display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))',gap:40,position:'relative',zIndex:1}}>
+      <div>
+        <div style={{fontSize:11,fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase',color:p.accent,marginBottom:14}}>О проекте</div>
+        <p style={{fontSize:14.5,color:'rgba(255,255,255,0.7)',lineHeight:1.85}}>{p.description}</p>
+        <div style={{marginTop:20,padding:'14px 16px',borderRadius:10,border:`1px solid ${p.accent}16`,background:p.accent+'08'}}>
+          <div style={{fontSize:10,fontWeight:700,color:p.accent,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:5}}>Моя роль</div>
+          <div style={{fontSize:13.5,fontWeight:500,color:'rgba(255,255,255,0.72)'}}>{p.role}</div>
+        </div>
+      </div>
+      <div>
+        <div style={{fontSize:11,fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase',color:p.accent,marginBottom:14}}>{p.featuresLabel}</div>
+        <ul style={{listStyle:'none',padding:0,margin:0}}>
+          {p.features.map((f,i)=><li key={i} style={{display:'flex',gap:10,marginBottom:10,fontSize:13.5,color:'rgba(255,255,255,0.68)',lineHeight:1.68}}><CheckCircle size={14} color={p.accent} style={{flexShrink:0,marginTop:2}}/> {f}</li>)}
+        </ul>
+      </div>
+    </div>
+    <div style={{maxWidth:860,margin:'0 auto',padding:'0 40px 40px',position:'relative',zIndex:1}}>
+      <div style={{fontSize:11,fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase',color:p.accent,marginBottom:14}}>Технологический стек</div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(190px,1fr))',gap:10}}>
+        {p.tech.map(([layer,tech])=><div key={layer} style={{borderRadius:10,padding:'13px 16px',border:`1px solid ${p.accent}14`,background:p.accent+'06'}}><div style={{fontSize:10,fontWeight:700,color:p.accent,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:6}}>{layer}</div><div style={{fontSize:12.5,color:'rgba(255,255,255,0.65)',lineHeight:1.5}}>{tech}</div></div>)}
+      </div>
+    </div>
+    {p.challenges&&p.challenges.length>0&&<div style={{maxWidth:860,margin:'0 auto',padding:'0 40px 60px',position:'relative',zIndex:1}}>
+      <div style={{fontSize:11,fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase',color:p.accent,marginBottom:14}}>{isDD?'Решённые инженерные задачи':'Дополнительно'}</div>
+      <div style={{display:'flex',flexDirection:'column',gap:10}}>
+        {p.challenges.map((c,i)=><div key={i} style={{display:'flex',gap:14,padding:'13px 16px',borderRadius:10,border:`1px solid ${p.accent}10`,background:p.accent+'06',alignItems:'flex-start'}}><div style={{width:24,height:24,borderRadius:'50%',border:`1px solid ${p.accent}30`,background:p.accent+'14',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,fontSize:11,fontWeight:800,color:p.accent}}>{i+1}</div><div style={{fontSize:13.5,color:'rgba(255,255,255,0.65)',lineHeight:1.7}}>{c}</div></div>)}
+      </div>
+    </div>}
+  </div>);
+}
+
+// ═══════════════════════════════════════════════════════════
+// APP — History API navigation
+// ═══════════════════════════════════════════════════════════
+export default function App(){
+  const [currentView,setCurrentView]=useState(()=>viewFromHash(window.location.hash));
+  
+  useEffect(()=>{
+    const handlePop=()=>{
+      const v=viewFromHash(window.location.hash);
+      if(pendingScroll===null&&v==='home') pendingScroll='demos';
+      setCurrentView(v);
+    };
+    window.addEventListener('popstate',handlePop);
+    return()=>window.removeEventListener('popstate',handlePop);
+  },[]);
+
+  useEffect(()=>{ window.scrollTo(0,0); },[currentView]);
+
+  const navigate=(v)=>{
+    if(HAS_URL.has(v)){
+      const proj=PROJECTS.find(p=>p.id===v);
+      if(proj?.url){ window.open(proj.url,'_blank'); return; }
+    }
+    if(v==='home'){
+      window.history.pushState(null,'',window.location.pathname+'#');
+      setCurrentView('home');
+    } else if(DEMO_IDS.has(v)){
+      window.history.pushState(null,'',`#/demo/${v}`);
+      setCurrentView(v);
+    } else {
+      window.history.pushState(null,'',`#/project/${v}`);
+      setCurrentView(v);
+    }
+  };
+
+  const realProject=PROJECTS.find(p=>p.id===currentView);
+
+  return(
+    <>
+      <AnimatePresence mode="wait">
+        <motion.div key={currentView} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:0.22}}>
+          {currentView==='home'      && <HomeView navigate={navigate}/>}
+          {currentView==='lawyer'    && <LawyerView navigate={navigate}/>}
+          {currentView==='cats'      && <CatsView navigate={navigate}/>}
+          {currentView==='cnc'       && <CncView navigate={navigate}/>}
+          {currentView==='mycaviar'  && <MycaviarView navigate={navigate}/>}
+          {realProject               && <ProjectDetailView navigate={navigate} project={realProject}/>}
+        </motion.div>
+      </AnimatePresence>
+      <PrivacyModal/>
+      <CookieBanner/>
+      <ContactModal/>
+    </>
+  );
+}
