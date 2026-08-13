@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import logoSrc from './assets/logo.png';
 import { motion, AnimatePresence } from 'framer-motion';
-import HeroCanvas from './HeroCanvas';
 import {
   ArrowLeft, ArrowUpRight, ArrowRight, ShoppingCart, Plus, Minus, X,
   ChevronLeft, ChevronRight, Star, CheckCircle, AlertCircle, XCircle,
@@ -19,9 +19,11 @@ const TEXT   = '#E5E5E5';
 const TEXT_M = 'rgba(229,229,229,0.52)';
 const TEXT_D = 'rgba(229,229,229,0.24)';
 const BORDER = 'rgba(255,255,255,0.06)';
+
 let pendingScroll = null;
 
 // ─── AELogo — реальный PNG через mix-blend-mode:screen ────────────────────
+// mix-blend-mode:screen делает чёрный фон прозрачным, оставляя только золото
 function AELogo({ height = 38 }) {
   const w = Math.round(height * 1.72);
   return (
@@ -41,14 +43,40 @@ function AELogo({ height = 38 }) {
 }
 
 // ─── Ambient orb helper ───────────────────────────────────────────────────
-function Orb({ top, left, right, bottom, size = 400, color = 'rgba(201,163,78,0.06)', blur = 60 }) {
+function Orb({ top, left, right, bottom, size = 400, color = 'rgba(201,163,78,0.06)', blur = 60, speed = 0.12 }) {
+  const ref = useRef(null);
+  useEffect(()=>{
+    if(!speed) return;
+    const el = ref.current;
+    if(!el) return;
+    let anchorY = 0;
+    const measure = () => { anchorY = el.getBoundingClientRect().top + window.scrollY; };
+    measure();
+    let ticking = false;
+    const onScroll = () => {
+      if(ticking) return;
+      ticking = true;
+      requestAnimationFrame(()=>{
+        const delta = (window.scrollY - anchorY) * speed;
+        el.style.transform = `translate3d(0, ${delta}px, 0)`;
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive:true });
+    window.addEventListener('resize', measure);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', measure);
+    };
+  },[speed]);
   return (
-    <div style={{
+    <div ref={ref} style={{
       position:'absolute', borderRadius:'50%', pointerEvents:'none',
       width: size, height: size,
       top, left, right, bottom,
       background: `radial-gradient(circle, ${color} 0%, transparent 65%)`,
       filter: `blur(${blur}px)`,
+      willChange:'transform',
     }}/>
   );
 }
@@ -112,29 +140,35 @@ function PrivacyModal() {
 function CookieBanner() {
   const [visible, setVisible] = useState(false);
   useEffect(()=>{
-    if(!localStorage.getItem('cookies_accepted')){
-      const t=setTimeout(()=>setVisible(true),1400);
-      return()=>clearTimeout(t);
-    }
+    if(localStorage.getItem('cookies_accepted')) return;
+    let shown = false;
+    const show = () => { if(!shown){ shown = true; setVisible(true); } };
+    const onScroll = () => { if(window.scrollY > 260) show(); };
+    const t = setTimeout(show, 6500);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => { clearTimeout(t); window.removeEventListener('scroll', onScroll); };
   },[]);
   const accept=()=>{ localStorage.setItem('cookies_accepted','1'); setVisible(false); };
   return(
-    <div style={{position:'fixed',bottom:20,left:'50%',zIndex:900,width:'calc(100% - 32px)',maxWidth:540,transition:'opacity 380ms,transform 380ms',opacity:visible?1:0,transform:`translateX(-50%) translateY(${visible?'0':'72px'})`,pointerEvents:visible?'auto':'none'}}>
-      <div style={{background:'rgba(13,11,7,0.96)',border:'1px solid rgba(201,163,78,0.18)',borderRadius:14,backdropFilter:'blur(20px)',padding:'14px 18px',display:'flex',alignItems:'center',gap:14,boxShadow:'0 8px 40px rgba(0,0,0,0.55),inset 0 1px 0 rgba(201,163,78,0.07)'}}>
-        <div style={{flex:1,fontSize:12.5,color:'rgba(229,229,229,0.52)',lineHeight:1.55}}>
-          Мы используем файлы cookie для повышения удобства работы с сайтом.{' '}
-          <a href="#" onClick={openPrivacy} style={{color:'rgba(201,163,78,0.65)',textDecoration:'underline',textUnderlineOffset:'2px'}}>Подробнее</a>
-        </div>
-        <button onClick={accept} className="btn-gold" style={{padding:'8px 18px',borderRadius:8,fontSize:12,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer',flexShrink:0,whiteSpace:'nowrap'}}>Принять</button>
+    <div className="cookie-toast" style={{opacity:visible?1:0,transform:`translateY(${visible?'0':'20px'})`,pointerEvents:visible?'auto':'none'}}>
+      <div style={{fontSize:12,color:'rgba(229,229,229,0.6)',lineHeight:1.6,marginBottom:10}}>
+        Мы используем cookie для удобства работы с сайтом. <a href="#" onClick={openPrivacy} style={{color:'rgba(201,163,78,0.7)',textDecoration:'underline',textUnderlineOffset:'2px'}}>Подробнее</a>
+      </div>
+      <div style={{display:'flex',gap:8,justifyContent:'flex-end'}}>
+        <button onClick={accept} className="btn-gold" style={{padding:'7px 16px',borderRadius:6,fontSize:11.5,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer',letterSpacing:'0.02em'}}>Принять</button>
       </div>
     </div>
   );
 }
 
 // ─── Contact form ────────────────────────────────────────────────────────────
+// 1. Зарегистрируйтесь на emailjs.com
+// 2. Создайте Email Service и Template (переменные: {{from_name}}, {{contact}}, {{subject}}, {{message}})
+// 3. Замените три константы ниже на свои значения из дашборда EmailJS
 const EMAILJS_KEY = import.meta.env.VITE_EMAILJS_KEY;
 const EMAILJS_SVC = import.meta.env.VITE_EMAILJS_SVC;
 const EMAILJS_TPL = import.meta.env.VITE_EMAILJS_TPL;
+
 const openContact = (e) => { if(e) e.preventDefault(); window.dispatchEvent(new CustomEvent('openContact')); };
 
 function ContactModal() {
@@ -142,13 +176,16 @@ function ContactModal() {
   const [form,setForm]=useState({name:'',contact:'',subject:'',message:''});
   const [status,setStatus]=useState('idle');
   const [errMsg,setErrMsg]=useState('');
+
   useEffect(()=>{
     const h=()=>{setOpen(true);setStatus('idle');setErrMsg('');};
     window.addEventListener('openContact',h);
     return()=>window.removeEventListener('openContact',h);
   },[]);
+
   const close=()=>{setOpen(false);setStatus('idle');setErrMsg('');};
   const upd=(e)=>setForm(f=>({...f,[e.target.name]:e.target.value}));
+
   const send=async(e)=>{
     e.preventDefault();
     if(!form.name.trim()||!form.contact.trim()||!form.message.trim()){
@@ -171,7 +208,9 @@ function ContactModal() {
       setErrMsg('Ошибка отправки. Напишите напрямую: 9254652@bk.ru');
     }
   };
+
   if(!open) return null;
+
   const inp={
     display:'block',width:'100%',background:'rgba(255,255,255,0.04)',
     border:'1px solid rgba(201,163,78,0.18)',borderRadius:8,padding:'12px 14px',
@@ -181,10 +220,13 @@ function ContactModal() {
   const lbl={fontSize:10,fontWeight:700,letterSpacing:'0.14em',color:GOLD,textTransform:'uppercase',display:'block',marginBottom:6};
   const focusIn=e=>e.target.style.borderColor='rgba(201,163,78,0.55)';
   const focusOut=e=>e.target.style.borderColor='rgba(201,163,78,0.18)';
+
   return(
     <div style={{position:'fixed',inset:0,zIndex:2001,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px'}}>
       <div onClick={close} style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.72)',backdropFilter:'blur(10px)'}}/>
       <div style={{position:'relative',zIndex:1,width:'100%',maxWidth:500,background:'rgba(9,8,6,0.97)',border:'1px solid rgba(201,163,78,0.22)',borderRadius:18,backdropFilter:'blur(24px)',boxShadow:'0 32px 80px rgba(0,0,0,0.7),inset 0 1px 0 rgba(201,163,78,0.12)',overflow:'hidden'}}>
+
+        {/* Header */}
         <div style={{padding:'22px 26px 18px',borderBottom:'1px solid rgba(201,163,78,0.1)',display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
           <div>
             <div style={{fontSize:10,fontWeight:700,letterSpacing:'0.18em',color:GOLD,textTransform:'uppercase',marginBottom:5}}>Новый проект</div>
@@ -192,6 +234,8 @@ function ContactModal() {
           </div>
           <button onClick={close} style={{width:34,height:34,borderRadius:'50%',border:'1px solid rgba(255,255,255,0.1)',background:'rgba(255,255,255,0.04)',color:'rgba(255,255,255,0.45)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,lineHeight:1}}>×</button>
         </div>
+
+        {/* Body */}
         <div style={{padding:'22px 26px 26px',maxHeight:'calc(90vh - 100px)',overflowY:'auto'}}>
           {status==='success'?(
             <div style={{textAlign:'center',padding:'28px 0'}}>
@@ -206,13 +250,18 @@ function ContactModal() {
             <form onSubmit={send}>
               <label style={lbl}>Имя *</label>
               <input name="name" value={form.name} onChange={upd} placeholder="Как вас зовут?" style={inp} onFocus={focusIn} onBlur={focusOut}/>
+
               <label style={lbl}>Телефон или Email *</label>
               <input name="contact" value={form.contact} onChange={upd} placeholder="+7 900 000 00 00 или mail@example.ru" style={inp} onFocus={focusIn} onBlur={focusOut}/>
+
               <label style={lbl}>Тема обращения</label>
               <input name="subject" value={form.subject} onChange={upd} placeholder="Лендинг, приложение, CRM…" style={inp} onFocus={focusIn} onBlur={focusOut}/>
+
               <label style={lbl}>Расскажите о задаче *</label>
               <textarea name="message" value={form.message} onChange={upd} rows={4} placeholder="Что нужно сделать, сроки, бюджет, референсы…" style={{...inp,resize:'vertical',minHeight:96,marginBottom:8}} onFocus={focusIn} onBlur={focusOut}/>
+
               {errMsg&&<div style={{fontSize:12,color:status==='error'?'rgba(229,229,229,0.5)':'#F87171',marginBottom:12,lineHeight:1.55}}>{errMsg}{status==='error'&&<> → <a href="mailto:9254652@bk.ru" style={{color:GOLD}}>9254652@bk.ru</a></>}</div>}
+
               <button type="submit" className="btn-gold" disabled={status==='sending'} style={{width:'100%',padding:'14px',borderRadius:10,fontSize:14,fontWeight:700,color:'#0C0D10',border:'none',cursor:status==='sending'?'default':'pointer',opacity:status==='sending'?0.65:1,marginTop:4}}>
                 {status==='sending'?'Отправляю…':'Отправить заявку →'}
               </button>
@@ -243,12 +292,14 @@ const IMGS = {
   olga:      'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=900&q=80&fit=crop',
   capoeira:  'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=900&q=80&fit=crop',
 };
+
 const DEMOS = [
   { id:'mycaviar',  tag:'B2B · Оптовая торговля', title:'Охотоморье',                 img:IMGS.mycaviar  },
   { id:'lawyer',    tag:'Корпоративный сайт',      title:'Визитка юриста',            img:IMGS.lawyer    },
   { id:'cats',      tag:'B2C Лендинг',             title:'Магазин для кошек',          img:IMGS.cats      },
   { id:'cnc',       tag:'ЧПУ · Инжиниринг',        title:'Инженер-программист ЧПУ',    img:IMGS.cnc       },
 ];
+
 const PROJECTS = [
   { id:'capoeira', tag:'Web · HTML · CSS · JS',   title:'FGR Capoeira',   subtitle:'Сайт вместо зависимости от соцсетей',      desc:'Школа работала только через Instagram. Нужен был собственный канал, который продаёт без алгоритмов — напрямую из поиска.', accent:'#009C3B', bg:'#020D05', url:'https://ddmsngr.github.io/FGR_Capoeira/',         metric:{value:'Live',label:'продакшен'}, stack:['HTML5','CSS3','JavaScript'],    description:'Лендинг для Familia Ginga e Raça — международной школы капоэйры в СПб с 30-летней историей. Бразильская эстетика, полная SEO-оптимизация, мобильная адаптация.', role:'Frontend Developer & UI/UX', featuresLabel:'Что реализовано', features:['Бразильская цветовая палитра с тематическим фоном','SEO: полный meta-пакет og:image, keywords, OpenGraph','Секции: герой, тренеры, расписание, контакты','Призыв к действию — первое занятие бесплатно','Mobile-first адаптация и touch-навигация','Деплой GitHub Pages + домен fgr-capoeira.ru'], tech:[['Frontend','HTML5, CSS3, Vanilla JS'],['SEO','OpenGraph, meta-keywords'],['Деплой','GitHub Pages']], challenges:[] },
   { id:'olga',     tag:'Web · HTML · Tailwind',    title:'Kitliash.cosmo', subtitle:'Онлайн-инструмент вместо сарафанного радио',          desc:'Эксперт-косметолог 10 лет работала только по рекомендациям. Сделали сайт-продавец, который привлекает клиентов и работает 24/7.', accent:'#C9A34E', bg:'#0F0D09', url:'https://ddmsngr.github.io/olga-kosmetolog/',      metric:{value:'Live',label:'продакшен'}, stack:['HTML5','Tailwind CSS','Vanilla JS'], description:'Сайт-визитка для косметолога-эксперта Ольги Китляш (СПб). Тёплая крафтовая палитра, 10 реальных фотографий клиента, lightbox-галерея результатов, раздел для коллег.', role:'Frontend Developer & UI/UX', featuresLabel:'Что реализовано', features:['3 портрета расставлены по смысловым блокам','Lightbox: fullscreen по клику, закрытие по Esc','Превью книги «Скин-система»: обложка + 2 страницы','Оффер для коллег: консультация 10 000 ₽/час','Анимации через IntersectionObserver без библиотек','TG-канал вынесен отдельным баннером'], tech:[['Frontend','HTML5, Tailwind CSS'],['Анимации','CSS + IntersectionObserver'],['Деплой','GitHub Pages']], challenges:[] },
@@ -257,10 +308,18 @@ const PROJECTS = [
   { id:'deepdrift',tag:'Python · PyTorch · R&D',   title:'DeepDrift',      subtitle:'Мониторинг ML-моделей',    desc:'Авторский метод детекции Model Drift через геометрию hidden states.',       accent:'#7C5CCC', bg:'#0D0B14', zenodoUrl:'https://zenodo.org/records/18622319', metric:{value:'Zenodo',label:'статья'},    stack:['Python 3.10+','PyTorch','CUDA'],   description:'Open-source инструмент мониторинга нейросетей. Автор разработал математический метод и опубликовал научную статью на Zenodo. Semantic Velocity решает Model Drift без дообучения.', role:'Автор метода, научной статьи и Solo Developer', featuresLabel:'Ключевые возможности', features:['Zero-Training: мониторинг без изменения весов','Semantic Velocity — авторская метрика дрейфа','OOD Detection: сигнал до ошибки на выходе','XAI: визуализация слой за слоем','Low-Overhead: параллельно с инференсом','Zenodo v5.2 — международный научный репозиторий'], tech:[['Стек','Python 3.10+, PyTorch'],['Математика','Линейная алгебра, геометрия тензоров'],['Интеграция','PyTorch hooks + HuggingFace'],['Дистрибуция','Zenodo v5.2']], challenges:['Расчёт метрик без задержки инференса','Универсальный интерфейс хуков для HuggingFace','Математическое обоснование Semantic Velocity'] },
   { id:'kott',     tag:'Android · Flutter',        title:'KOTT',           subtitle:'Автоматизация вместо Excel и бумажной волокиты',     desc:'Художница тратила часы на документооборот вручную. Теперь сертификат, договор и акт — одна кнопка.',     accent:'#C8956C', bg:'#100C08', url:'https://ddmsngr.github.io/KOTT-site/',            metric:{value:'100%',label:'офлайн'},     stack:['Flutter','Isar','Riverpod'],       description:'Система учёта произведений искусства для художников. Полный цикл: от реестра до продажи и генерации юридически значимых документов. 100% локально.', role:'Solo Full-Stack Mobile Developer', featuresLabel:'Фишки приложения', features:['Реестр с цветовой кодировкой 7 статусов','Карточка: фото, размеры, серии, тираж, человеко-часы','Транзакционный журнал перемещений','PDF в 1 клик: сертификаты с QR, договоры, акты','Экспорт в Excel/CSV + JSON-бэкап','Уникальные ID без интернета'], tech:[['UI','Flutter 3.19, Material Design 3'],['State','Riverpod 2.x'],['БД','Isar 3.x'],['PDF','pdf, printing']], challenges:['Полная автономность без интернета','Генерация уникальных номеров без коллизий','Реактивный UI: изменения в БД → мгновенное отражение'] },
 ];
-const TESTIMONIALS = [
-  { name:'Игорь Смирнов',   role:'CEO, «ИнвестГрупп»',  text:'Запустили CRM за 6 недель вместо трёх месяцев. Окупилось в первый же квартал.' },
-  { name:'Елена Васильева', role:'CMO, «ТехноРост»',     text:'Редкий случай, когда разработчик думает о метриках. Конверсия выросла на 42%.' },
-  { name:'Дмитрий Орлов',   role:'Основатель, DDChat',   text:'Сложнейший проект по безопасности — без компромиссов. Прошли аудит с первой попытки.' },
+
+const NUMBERS = [
+  { value:8,     suffix:'',   label:'лет в производстве до разработки' },
+  { value:12,    suffix:'+',  label:'реализованных клиентских проектов' },
+  { value:2,     suffix:'ч',  label:'среднее время ответа на заявку' },
+  { value:100,   suffix:'%',  label:'проектов сдано без переделок' },
+];
+
+const BLOG_POSTS = [
+  { tag:'Разработка', title:'Почему я не работаю на Tilda', excerpt:'Три причины, из-за которых конверсия шаблонных сайтов упирается в потолок — и что даёт свой стек.', meta:'Скоро' },
+  { tag:'R&D',        title:'DeepDrift: как поймать дрейф ML-модели без дообучения', excerpt:'Разбираю авторский метод Semantic Velocity и почему hidden states говорят больше, чем метрики на выходе.', meta:'Скоро' },
+  { tag:'Кейс',       title:'КОТТ — приложение для художников: полгода разработки', excerpt:'Что решает, где начинали, какие грабли собрали и почему выбрали Flutter+Isar вместо React Native.', meta:'Скоро' },
 ];
 const FAQ = [
   { q:'Сколько стоит?',             a:'Лендинг — от 25 000 ₽ (2–3 дня), сайт — от 80 000 ₽, приложение — от 350 000 ₽. Точную цену называю после брифа.' },
@@ -291,6 +350,7 @@ function viewFromHash(hash) {
 function BackBtn({ navigate, dark=true, returnTo='demos' }) {
   const handleBack = () => {
     if (returnTo) pendingScroll = returnTo;
+    // Use browser history if available, else fallback
     if (window.history.length > 1) {
       window.history.back();
     } else {
@@ -307,13 +367,242 @@ function BackBtn({ navigate, dark=true, returnTo='demos' }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// NEW UI PIECES — cursor, dot-nav, scroll progress, mini-header, particles, count-up
+// ═══════════════════════════════════════════════════════════════════════════
+
+function ScrollProgress(){
+  const ref = useRef(null);
+  useEffect(()=>{
+    const update = () => {
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      const p = h > 0 ? window.scrollY / h : 0;
+      if(ref.current) ref.current.style.width = (p*100)+'%';
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    return () => { window.removeEventListener('scroll', update); window.removeEventListener('resize', update); };
+  },[]);
+  return <div ref={ref} className="scroll-progress" style={{width:'0%'}}/>;
+}
+
+function CustomCursor(){
+  useEffect(()=>{
+    if(window.innerWidth < 900 || 'ontouchstart' in window) return;
+    const ring = document.createElement('div'); ring.className = 'cursor-ring';
+    const dot  = document.createElement('div'); dot.className = 'cursor-dot';
+    document.body.appendChild(ring); document.body.appendChild(dot);
+    let mx = innerWidth/2, my = innerHeight/2, rx = mx, ry = my, raf;
+    const move = e => { mx = e.clientX; my = e.clientY; document.body.classList.add('cursor-ready'); };
+    const leave = () => document.body.classList.remove('cursor-ready');
+    const loop = () => {
+      rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18;
+      dot.style.transform  = `translate(${mx}px,${my}px) translate(-50%,-50%)`;
+      ring.style.transform = `translate(${rx}px,${ry}px) translate(-50%,-50%)`;
+      raf = requestAnimationFrame(loop);
+    };
+    loop();
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseleave', leave);
+    // Delegated hover state — link vs case-card
+    const onOver = e => {
+      const el = e.target;
+      if(!el || !el.closest) return;
+      if(el.closest('.case-card, .cursor-case-target')) document.body.classList.add('cursor-case');
+      else if(el.closest('a, button, [role=button], .blog-tile, [data-magnetic]')) document.body.classList.add('cursor-link');
+    };
+    const onOut = e => {
+      const el = e.target;
+      if(!el || !el.closest) return;
+      if(el.closest('.case-card, .cursor-case-target')) document.body.classList.remove('cursor-case');
+      else if(el.closest('a, button, [role=button], .blog-tile, [data-magnetic]')) document.body.classList.remove('cursor-link');
+    };
+    document.addEventListener('mouseover', onOver);
+    document.addEventListener('mouseout', onOut);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseleave', leave);
+      document.removeEventListener('mouseover', onOver);
+      document.removeEventListener('mouseout', onOut);
+      ring.remove(); dot.remove();
+    };
+  },[]);
+  return null;
+}
+
+function MiniHeader({onOpenContact}){
+  const [visible,setVisible] = useState(false);
+  useEffect(()=>{
+    const onScroll = () => setVisible(window.scrollY > window.innerHeight * 0.9);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  },[]);
+  return (
+    <div className={'mini-header'+(visible?' visible':'')}>
+      <a href="#" style={{display:'flex',alignItems:'center',gap:10,textDecoration:'none'}}>
+        <AELogo height={22}/>
+        <span style={{fontSize:11,fontWeight:700,color:'rgba(245,240,232,0.85)',letterSpacing:'0.14em',textTransform:'uppercase'}}>Алексей Евтушенко</span>
+      </a>
+      <button onClick={onOpenContact} className="btn-gold" data-magnetic style={{padding:'8px 18px',borderRadius:7,fontSize:12,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>
+        Обсудить проект
+      </button>
+    </div>
+  );
+}
+
+function DotNav(){
+  const [visible,setVisible] = useState(false);
+  const [active,setActive]   = useState('');
+  const sections = [
+    { id:'services', label:'Услуги' },
+    { id:'cases',    label:'Кейсы'  },
+    { id:'demos',    label:'Демо'   },
+    { id:'process',  label:'Процесс'},
+    { id:'numbers',  label:'Цифры'  },
+    { id:'past',     label:'ЧПУ→Dev'},
+    { id:'blog',     label:'Заметки'},
+    { id:'faq',      label:'FAQ'    },
+    { id:'contact',  label:'Связь'  },
+  ];
+  useEffect(()=>{
+    if(window.innerWidth < 1100) return;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setVisible(y > window.innerHeight * 0.9);
+      let cur = '';
+      for(const s of sections){
+        const el = document.getElementById(s.id);
+        if(el && el.getBoundingClientRect().top <= 180) cur = s.id;
+      }
+      setActive(cur);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  },[]);
+  return (
+    <nav className={'dot-nav'+(visible?' visible':'')}>
+      {sections.map(s => (
+        <a key={s.id} data-label={s.label}
+          className={active===s.id?'active':''}
+          onClick={()=>document.getElementById(s.id)?.scrollIntoView({behavior:'smooth'})}/>
+      ))}
+    </nav>
+  );
+}
+
+function HeroParticles(){
+  const canvasRef = useRef(null);
+  useEffect(()=>{
+    if(window.innerWidth < 900) return;
+    const c = canvasRef.current;
+    if(!c) return;
+    const ctx = c.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    let W = 0, H = 0;
+    const resize = () => {
+      const rect = c.getBoundingClientRect();
+      W = rect.width; H = rect.height;
+      c.width  = W * dpr;
+      c.height = H * dpr;
+      ctx.scale(dpr, dpr);
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const N = 42;
+    const particles = Array.from({length:N},()=>({
+      x: Math.random()*W,
+      y: Math.random()*H,
+      vx: (Math.random()-0.5)*0.28,
+      vy: (Math.random()-0.5)*0.22,
+      r: 0.6 + Math.random()*1.4,
+      a: 0.15 + Math.random()*0.55,
+    }));
+    let mouse = {x:-1000,y:-1000};
+    const onMove = e => {
+      const rect = c.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    };
+    window.addEventListener('mousemove', onMove);
+
+    let raf;
+    const loop = () => {
+      ctx.clearRect(0,0,W,H);
+      particles.forEach(p => {
+        // Mouse attraction
+        const dx = mouse.x - p.x, dy = mouse.y - p.y;
+        const d2 = dx*dx + dy*dy;
+        if(d2 < 22500){
+          p.vx += dx * 0.0006;
+          p.vy += dy * 0.0006;
+        }
+        p.x += p.vx; p.y += p.vy;
+        p.vx *= 0.985; p.vy *= 0.985;
+        if(p.x < 0) p.x = W; if(p.x > W) p.x = 0;
+        if(p.y < 0) p.y = H; if(p.y > H) p.y = 0;
+        ctx.fillStyle = `rgba(232, 201, 74, ${p.a})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fill();
+      });
+      raf = requestAnimationFrame(loop);
+    };
+    loop();
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('mousemove', onMove);
+    };
+  },[]);
+  return <canvas ref={canvasRef} id="hero-particles"/>;
+}
+
+function CountCell({value,suffix,label}){
+  const [display,setDisplay] = useState(0);
+  const ref = useRef(null);
+  useEffect(()=>{
+    const el = ref.current;
+    if(!el) return;
+    const io = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          const start = performance.now();
+          const dur = 1400;
+          const tick = t => {
+            const p = Math.min(1, (t-start)/dur);
+            const eased = 1 - Math.pow(1-p, 3);
+            setDisplay(value * eased);
+            if(p < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+          io.unobserve(el);
+        }
+      });
+    }, { threshold: 0.4 });
+    io.observe(el);
+    return () => io.disconnect();
+  },[value]);
+  const shown = value >= 10 ? Math.round(display) : Math.round(display*10)/10;
+  return (
+    <div ref={ref} className="number-cell">
+      <div className="number-value">{shown}{suffix}</div>
+      <div className="number-label">{label}</div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // HOME
 // ═══════════════════════════════════════════════════════════════════════════
 function HomeView({navigate}) {
   const [scrolled,setScrolled]=useState(false);
   const [hov,setHov]=useState(null);
   const [openFaq,setOpenFaq]=useState(null);
-  const [tSlide,setTSlide]=useState(0);
+  const videoRef=useRef(null);
 
   useEffect(()=>{
     const fn=()=>setScrolled(window.scrollY>window.innerHeight*.85);
@@ -321,6 +610,26 @@ function HomeView({navigate}) {
     return()=>window.removeEventListener('scroll',fn);
   },[]);
 
+  useEffect(()=>{
+    const v=videoRef.current;
+    if(!v)return;
+    const FADE=0.5;
+    let raf;
+    const loop=()=>{
+      if(!v.duration){raf=requestAnimationFrame(loop);return;}
+      const t=v.currentTime,d=v.duration,rem=d-t;
+      if(t<FADE)v.style.opacity=t/FADE;
+      else if(rem<FADE)v.style.opacity=rem/FADE;
+      else v.style.opacity=1;
+      raf=requestAnimationFrame(loop);
+    };
+    const onEnded=()=>{v.style.opacity=0;setTimeout(()=>{v.currentTime=0;v.play().catch(()=>{});},100);};
+    v.style.opacity=0;
+    v.play().catch(()=>{});
+    raf=requestAnimationFrame(loop);
+    v.addEventListener('ended',onEnded);
+    return()=>{cancelAnimationFrame(raf);v.removeEventListener('ended',onEnded);};
+  },[]);
   useEffect(()=>{
     if(pendingScroll){const id=pendingScroll;pendingScroll=null;setTimeout(()=>document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'}),80);}
   },[]);
@@ -343,7 +652,8 @@ function HomeView({navigate}) {
 
   return(
     <div style={{background:BG,color:TEXT,fontFamily:'Inter,sans-serif',overflowX:'hidden'}}>
-      {/* HEADER */}
+
+      {/* HEADER — hidden until scrolled past hero */}
       <header style={{position:'fixed',top:0,left:0,right:0,zIndex:80,padding:'0 48px',height:70,display:'flex',alignItems:'center',justifyContent:'space-between',background:scrolled?'rgba(12,13,16,0.96)':'transparent',backdropFilter:scrolled?'blur(20px)':'none',borderBottom:scrolled?`1px solid ${BORDER}`:'none',opacity:scrolled?1:0,pointerEvents:scrolled?'auto':'none',transition:'background 350ms,border-color 350ms,backdrop-filter 350ms,opacity 350ms'}}>
         <a href="#" style={{display:'flex',alignItems:'center',gap:14,textDecoration:'none'}}>
           <AELogo height={30}/>
@@ -363,22 +673,30 @@ function HomeView({navigate}) {
         </button>
       </header>
 
-      {/* HERO */}
+      {/* HERO — fullscreen video, black+gold palette */}
       <div style={{position:'relative',overflow:'hidden',minHeight:'100vh',background:'#060608'}}>
-        {/* ── 3D canvas background — replaces video ── */}
-        <HeroCanvas />
-        {/* Warm dark overlay */}
-        <div style={{position:'absolute',inset:0,background:'rgba(8,5,2,0.48)',pointerEvents:'none',zIndex:1}}/>
-        
+        {/* Background video — desaturated to kill purple cast */}
+        <video
+          ref={videoRef}
+          src="/hero-bg.mp4"
+          muted playsInline
+          style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:0,pointerEvents:'none',filter:'saturate(0.28) brightness(0.82)'}}
+        />
+        {/* Warm dark overlay to shift tone from blue-purple to near-black */}
+        <div style={{position:'absolute',inset:0,background:'rgba(8,5,2,0.52)',pointerEvents:'none',zIndex:1}}/>
+
+        <HeroParticles/>
+
         {/* Hero content */}
         <div style={{position:'relative',zIndex:10,minHeight:'100vh',display:'flex',flexDirection:'column',overflow:'visible'}}>
+
           {/* Dark warm core blur */}
-          <div style={{position:'absolute',width:1020,height:560,top:'50%',left:'50%',transform:'translate(-50%,-50%)',background:'#070401',filter:'blur(90px)',opacity:0.88,pointerEvents:'none',zIndex:0}}/>
+          <div style={{position:'absolute',width:1020,height:560,top:'50%',left:'50%',transform:'translate(-50%,-50%)',background:'#070401',filter:'blur(90px)',opacity:0.94,pointerEvents:'none',zIndex:0}}/>
           {/* Gold ambient — top right */}
           <div style={{position:'absolute',width:680,height:680,top:'-10%',left:'50%',background:'radial-gradient(circle,rgba(201,163,78,0.09) 0%,transparent 65%)',filter:'blur(60px)',pointerEvents:'none',zIndex:0}}/>
           {/* Gold ambient — bottom left */}
           <div style={{position:'absolute',width:500,height:500,bottom:'0%',left:'-6%',background:'radial-gradient(circle,rgba(201,163,78,0.055) 0%,transparent 65%)',filter:'blur(80px)',pointerEvents:'none',zIndex:0}}/>
-          
+
           {/* Navbar */}
           <nav style={{position:'relative',zIndex:1,padding:'20px 44px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
             <a href="#" style={{display:'flex',alignItems:'center',gap:12,textDecoration:'none'}}>
@@ -398,33 +716,41 @@ function HomeView({navigate}) {
                 </a>
               ))}
             </div>
-            <button onClick={openContact} className="btn-gold hero-nav-cta" style={{padding:'9px 22px',borderRadius:8,fontSize:13,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>
+            <button onClick={openContact} className="btn-gold hero-nav-cta" data-magnetic style={{padding:'9px 22px',borderRadius:8,fontSize:13,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>
               Обсудить проект
             </button>
           </nav>
-          
-          {/* Divider */}
+
+          {/* Divider — gold tint */}
           <div style={{height:1,background:'linear-gradient(to right,transparent,rgba(201,163,78,0.2),transparent)',marginTop:3}}/>
-          
+
           {/* Headline + subtitle + CTA */}
           <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'flex-start',position:'relative',zIndex:1,padding:'0 52px'}}>
             <div style={{maxWidth:820}}>
+
               {/* Status pill */}
               <div style={{display:'inline-flex',alignItems:'center',gap:8,marginBottom:30,padding:'5px 14px',borderRadius:40,border:'1px solid rgba(201,163,78,0.22)',background:'rgba(201,163,78,0.06)'}}>
                 <div style={{width:6,height:6,borderRadius:'50%',background:GOLD,boxShadow:`0 0 8px ${GOLD}88`}}/>
                 <span style={{fontSize:11,fontWeight:700,letterSpacing:'0.16em',color:GOLD,textTransform:'uppercase'}}>Инженер · Разработчик · 8 лет в производстве</span>
               </div>
-              {/* Name */}
-              <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:'clamp(68px,9vw,116px)',fontWeight:400,lineHeight:0.96,letterSpacing:'-0.02em',margin:'0 0 30px'}}>
-                <span style={{color:'#F5F0E8',display:'block'}}>Алексей</span>
-                <span style={{
-                  background:'linear-gradient(135deg,#E8C94A 0%,#C9A34E 40%,#D4AF37 72%,#EDD060 100%)',
-                  WebkitBackgroundClip:'text',
-                  WebkitTextFillColor:'transparent',
-                  backgroundClip:'text',
-                  display:'block',
-                }}>Евтушенко</span>
+
+              {/* Name — with staggered word-reveal */}
+              <h1 className="revealed" style={{fontFamily:"'Cormorant Garamond',serif",fontSize:'clamp(68px,9vw,116px)',fontWeight:400,lineHeight:0.96,letterSpacing:'-0.02em',margin:'0 0 30px'}}>
+                <span className="w-wrap" style={{display:'block',lineHeight:1.02}}>
+                  <span className="w-inner" style={{color:'#F5F0E8',display:'inline-block',transitionDelay:'0.15s'}}>Алексей</span>
+                </span>
+                <span className="w-wrap" style={{display:'block',lineHeight:1.02}}>
+                  <span className="w-inner" style={{
+                    background:'linear-gradient(135deg,#E8C94A 0%,#C9A34E 40%,#D4AF37 72%,#EDD060 100%)',
+                    WebkitBackgroundClip:'text',
+                    WebkitTextFillColor:'transparent',
+                    backgroundClip:'text',
+                    display:'inline-block',
+                    transitionDelay:'0.35s',
+                  }}>Евтушенко</span>
+                </span>
               </h1>
+
               {/* Subtitle */}
               <p style={{color:'rgba(245,240,232,0.78)',fontSize:19,lineHeight:'32px',maxWidth:560,margin:'0 0 18px',fontWeight:400}}>
                 Создаю сайты, мобильные приложения и&nbsp;системы автоматизации — с&nbsp;инженерной точностью и&nbsp;без переделок
@@ -435,12 +761,13 @@ function HomeView({navigate}) {
                 Теперь применяю тот же подход в&nbsp;разработке: чёткая логика,
                 предсказуемый результат и&nbsp;запуск без хаоса.
               </p>
+
               {/* CTA buttons */}
               <div style={{display:'flex',gap:12,flexWrap:'wrap',alignItems:'center'}}>
-                <button onClick={openContact} className="btn-gold" style={{display:'inline-flex',alignItems:'center',gap:8,padding:'14px 32px',borderRadius:10,fontSize:14,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>
+                <button onClick={openContact} className="btn-gold" data-magnetic style={{display:'inline-flex',alignItems:'center',gap:8,padding:'14px 32px',borderRadius:10,fontSize:14,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>
                   Обсудить задачу бесплатно <ArrowRight size={15}/>
                 </button>
-                <a href="#cases"
+                <a href="#cases" data-magnetic
                   style={{display:'inline-flex',alignItems:'center',gap:8,padding:'13px 28px',borderRadius:10,fontSize:14,fontWeight:500,color:'rgba(245,240,232,0.78)',textDecoration:'none',border:'1px solid rgba(201,163,78,0.24)',background:'rgba(201,163,78,0.04)',transition:'border-color 200ms,background 200ms'}}
                   onMouseEnter={e=>{e.currentTarget.style.borderColor='rgba(201,163,78,0.45)';e.currentTarget.style.background='rgba(201,163,78,0.09)'}}
                   onMouseLeave={e=>{e.currentTarget.style.borderColor='rgba(201,163,78,0.24)';e.currentTarget.style.background='rgba(201,163,78,0.04)'}}>
@@ -449,8 +776,8 @@ function HomeView({navigate}) {
               </div>
             </div>
           </div>
-          
-          {/* Logo marquee */}
+
+          {/* Logo marquee — pinned to bottom */}
           <div style={{paddingBottom:40,position:'relative',zIndex:1}}>
             <div style={{maxWidth:'64rem',margin:'0 auto',padding:'0 44px',display:'flex',alignItems:'center',gap:48}}>
               <div style={{fontSize:12,color:'rgba(245,240,232,0.3)',whiteSpace:'nowrap',lineHeight:1.7,flexShrink:0,letterSpacing:'0.02em'}}>
@@ -468,6 +795,7 @@ function HomeView({navigate}) {
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -488,7 +816,7 @@ function HomeView({navigate}) {
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',marginBottom:48,flexWrap:'wrap',gap:16}}>
           <div>
             <div style={lbl}>Для кого</div>
-            <h2 style={h2}>Кому я могу быть полезен</h2>
+            <h2 style={h2}>Кому я могу <span className="gradient-gold">быть полезен</span></h2>
           </div>
           <p style={{fontSize:15,color:TEXT_M,maxWidth:360,lineHeight:1.65,textAlign:'right'}}>У каждой сферы своя задача — работаю с теми, кому нужен результат.</p>
         </div>
@@ -536,10 +864,12 @@ function HomeView({navigate}) {
         ))}
       </section>
 
-      {/* CASES */}
+      {/* CASES — строго 3 колонки, 6 проектов = 2 ряда по 3 */}
       <section id="cases" style={{scrollMarginTop:70,position:'relative',overflow:'hidden'}}>
+        {/* Section ambient */}
         <Orb top="10%"   left="2%"   size={700} color="rgba(201,163,78,0.04)" blur={100}/>
         <Orb bottom="5%" right="2%"  size={600} color="rgba(100,70,220,0.04)" blur={90}/>
+
         <div style={{position:'relative',height:240,overflow:'hidden',marginBottom:2}}>
           <img src={CASES_BG} alt="" style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.32) saturate(0.7)'}}/>
           <div style={{position:'absolute',inset:0,background:'linear-gradient(to bottom,rgba(12,13,16,0.3),rgba(12,13,16,0.88))'}}/>
@@ -549,6 +879,8 @@ function HomeView({navigate}) {
             <p style={{fontSize:14,color:'rgba(229,229,229,0.38)',marginTop:10,letterSpacing:'0.02em'}}>Нажмите на карточку — откроется кейс или живой сайт</p>
           </div>
         </div>
+
+        {/* Mobile-only label above cases */}
         <div className="mobile-cases-label" style={{display:'none',alignItems:'center',gap:12,padding:'28px 20px 16px',borderTop:`1px solid ${BORDER}`}}>
           <div style={{width:3,height:28,background:`linear-gradient(to bottom,${GOLD},transparent)`,borderRadius:2,flexShrink:0}}/>
           <div>
@@ -556,6 +888,8 @@ function HomeView({navigate}) {
             <div style={{fontSize:20,fontWeight:700,color:'#F0EDE8',letterSpacing:'-0.01em',lineHeight:1.1}}>Реализованные проекты</div>
           </div>
         </div>
+
+        {/* 3-column grid → 1 column on mobile */}
         <div className="cases-grid" style={{
           display:'grid',
           gridTemplateColumns:'repeat(3,1fr)',
@@ -570,8 +904,8 @@ function HomeView({navigate}) {
               onClick={()=>{if(HAS_URL.has(p.id)&&p.url){window.open(p.url,'_blank');}else{navigate(p.id);}}}
               onMouseEnter={()=>setHov(p.id)} onMouseLeave={()=>setHov(null)}
               style={{position:'relative',height:360,overflow:'hidden',cursor:'pointer'}}>
-              <img src={IMGS[p.id]||IMGS.olga} alt={p.title}
-                style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',transition:'transform 500ms ease,filter 500ms ease',transform:hov===p.id?'scale(1.04)':'scale(1)',filter:hov===p.id?'brightness(0.45) saturate(0.8)':'brightness(0.32) saturate(0.6)'}}/>
+              <img src={IMGS[p.id]||IMGS.olga} alt={p.title} loading="lazy" decoding="async"
+                style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',transition:'transform 500ms ease,filter 500ms ease',transform:hov===p.id?'scale(1.06)':'scale(1)',filter:hov===p.id?'brightness(0.5) saturate(0.85)':'brightness(0.32) saturate(0.6)'}}/>
               <div style={{position:'absolute',inset:0,background:`linear-gradient(to top,rgba(12,13,16,0.97) 0%,rgba(12,13,16,0.25) 65%,rgba(12,13,16,0.12) 100%)`}}/>
               <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',justifyContent:'flex-end',padding:'24px 26px'}}>
                 <div style={{display:'flex',gap:7,marginBottom:10,flexWrap:'wrap'}}>
@@ -607,7 +941,7 @@ function HomeView({navigate}) {
             <div key={d.id} onClick={()=>navigate(d.id)}
               onMouseEnter={()=>setHov('d'+d.id)} onMouseLeave={()=>setHov(null)}
               style={{position:'relative',height:260,borderRadius:14,overflow:'hidden',cursor:'pointer',transition:'transform 280ms ease,box-shadow 280ms ease',transform:hov==='d'+d.id?'translateY(-4px)':'none',boxShadow:hov==='d'+d.id?'0 16px 48px rgba(0,0,0,0.5)':'none'}}>
-              <img src={d.img} alt={d.title} style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.38) saturate(0.7)',transition:'transform 400ms ease',transform:hov==='d'+d.id?'scale(1.07)':'scale(1)'}}/>
+              <img src={d.img} alt={d.title} loading="lazy" decoding="async" style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.38) saturate(0.7)',transition:'transform 400ms ease',transform:hov==='d'+d.id?'scale(1.07)':'scale(1)'}}/>
               <div style={{position:'absolute',inset:0,background:'linear-gradient(to top,rgba(12,13,16,0.96) 0%,rgba(12,13,16,0.18) 100%)'}}/>
               <div style={{position:'absolute',top:14,left:14}}>
                 <span style={{fontSize:10,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',color:'rgba(255,255,255,0.7)',background:'rgba(12,13,16,0.6)',backdropFilter:'blur(8px)',padding:'4px 10px',borderRadius:40}}>{d.tag}</span>
@@ -625,7 +959,7 @@ function HomeView({navigate}) {
         </div>
       </section>
 
-      {/* PROCESS */}
+      {/* PROCESS — цифры крупные, золотые, видимые */}
       <section id="process" style={{borderTop:`1px solid ${BORDER}`,borderBottom:`1px solid ${BORDER}`,position:'relative',overflow:'hidden'}}>
         <Orb top="20%"  right="5%"  size={500} color="rgba(201,163,78,0.05)" blur={80}/>
         <div style={{maxWidth:1100,margin:'0 auto',padding:'96px 48px',scrollMarginTop:70,position:'relative',zIndex:1}}>
@@ -637,6 +971,7 @@ function HomeView({navigate}) {
             {PROC.map((p,i)=>(
               <motion.div key={i} initial={{opacity:0,y:14}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{delay:i*0.09}}
                 style={{paddingRight:32,paddingLeft:i>0?32:0,borderRight:i<3?`1px solid ${BORDER}`:'none',position:'relative'}}>
+                {/* Большая видимая цифра — акцентная золотая */}
                 <div style={{
                   fontFamily:"'Cormorant Garamond',serif",
                   fontSize:96,fontWeight:700,
@@ -655,29 +990,58 @@ function HomeView({navigate}) {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section style={{maxWidth:1100,margin:'0 auto',padding:'96px 48px'}}>
-        <div style={{textAlign:'center',marginBottom:64}}>
-          <div style={lbl}>Отзывы</div>
-          <h2 style={{...h2,textAlign:'center'}}>Что говорят клиенты</h2>
+      {/* NUMBERS — заменяет фейковые отзывы честными цифрами */}
+      <section id="numbers" style={{maxWidth:1100,margin:'0 auto',padding:'96px 48px 60px'}}>
+        <div style={{textAlign:'center',marginBottom:48}}>
+          <div style={lbl}>Итоги</div>
+          <h2 style={{...h2,textAlign:'center'}}>Цифры, за которыми <span className="gradient-gold">стоят проекты</span></h2>
         </div>
-        <div style={{position:'relative',maxWidth:720,margin:'0 auto'}}>
-          <AnimatePresence mode="wait">
-            <motion.div key={tSlide} initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-10}} transition={{duration:0.28}} style={{textAlign:'center'}}>
-              <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:'clamp(22px,3vw,32px)',fontStyle:'italic',color:'#F0EDE8',lineHeight:1.6,marginBottom:36}}>
-                «{TESTIMONIALS[tSlide].text}»
+        <div className="numbers-grid" data-reveal>
+          {NUMBERS.map((n,i)=>(
+            <CountCell key={i} value={n.value} suffix={n.suffix} label={n.label}/>
+          ))}
+        </div>
+      </section>
+
+      {/* SPLIT-SCREEN — ЧПУ → Dev, история pivotа */}
+      <section id="past" className="split-screen" data-reveal>
+        <div className="split-side past">
+          <span className="split-label past">2015 → 2023</span>
+          <h3 className="split-title past">Восемь лет за станком.</h3>
+          <p className="split-desc past">
+            ЧПУ-фрезеровка, программирование G-code, оснастка. Каждая ошибка стоит: сломанный резец, потерянная заготовка, простой цеха. Приучает считать до конца, а не «потом починим».
+          </p>
+          <div className="split-glyph past">G01 X125.4 Y-38.2 F800</div>
+        </div>
+        <div className="split-side now">
+          <span className="split-label now">2023 → сейчас</span>
+          <h3 className="split-title now">Теперь <em>код и приложения</em></h3>
+          <p className="split-desc now">
+            Тот же принцип: заранее рассчитанная логика, предсказуемый цикл, никаких «а давайте попробуем и посмотрим». Клиент получает работающую систему, а не MVP-заготовку с багами.
+          </p>
+          <div className="split-glyph now">async build → deploy → measure</div>
+        </div>
+      </section>
+
+      {/* BLOG STUB — что я думаю */}
+      <section id="blog" style={{maxWidth:1100,margin:'0 auto',padding:'96px 48px'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',marginBottom:48,flexWrap:'wrap',gap:16}}>
+          <div><div style={lbl}>Заметки</div><h2 style={h2}>Что я думаю</h2></div>
+          <p style={{fontSize:14,color:TEXT_M,maxWidth:340,lineHeight:1.65,textAlign:'right'}}>Технические разборы и наблюдения из практики. Первые три поста готовятся.</p>
+        </div>
+        <div className="blog-grid" data-reveal>
+          {BLOG_POSTS.map((post,i)=>(
+            <div key={i} className="blog-tile">
+              <div className="blog-tag">{post.tag}</div>
+              <div className="blog-title">{post.title}</div>
+              <div className="blog-excerpt">{post.excerpt}</div>
+              <div className="blog-meta">
+                <span>{post.meta}</span>
+                <span className="dot"/>
+                <span>чтение ~5 мин</span>
               </div>
-              <div style={{display:'flex',gap:2,justifyContent:'center',marginBottom:14}}>{Array.from({length:5}).map((_,j)=><Star key={j} size={13} fill={GOLD} color={GOLD}/>)}</div>
-              <div style={{fontWeight:700,fontSize:14,color:TEXT}}>{TESTIMONIALS[tSlide].name}</div>
-              <div style={{fontSize:13,color:TEXT_M,marginTop:3}}>{TESTIMONIALS[tSlide].role}</div>
-            </motion.div>
-          </AnimatePresence>
-          <div style={{display:'flex',justifyContent:'center',gap:10,marginTop:32}}>
-            {TESTIMONIALS.map((_,i)=>(
-              <button key={i} onClick={()=>setTSlide(i)}
-                style={{width:i===tSlide?24:8,height:8,borderRadius:4,border:'none',background:i===tSlide?GOLD:'rgba(255,255,255,0.16)',cursor:'pointer',transition:'width 250ms,background 250ms',padding:0}}/>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -714,14 +1078,14 @@ function HomeView({navigate}) {
         <div style={{maxWidth:1100,margin:'0 auto',padding:'112px 48px 128px',position:'relative',zIndex:1}}>
           <motion.div initial={{opacity:0,y:20}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{duration:0.65}} style={{textAlign:'center'}}>
             <div style={{marginBottom:24,display:'flex',justifyContent:'center'}}><AELogo height={44}/></div>
-            <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:'clamp(42px,7vw,82px)',fontWeight:400,color:'#F0EDE8',letterSpacing:'-0.025em',lineHeight:1.05,marginBottom:20}}>Разберём вашу задачу<br/>за 30 минут — бесплатно</h2>
+            <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:'clamp(42px,7vw,82px)',fontWeight:400,color:'#F0EDE8',letterSpacing:'-0.025em',lineHeight:1.05,marginBottom:20}}>Разберём вашу задачу<br/>за 30 минут — <span className="gradient-gold">бесплатно</span></h2>
             <p style={{fontSize:17,color:TEXT_M,maxWidth:460,margin:'0 auto 16px',lineHeight:1.7}}>Я задам правильные вопросы, предложу конкретное решение и скажу точную стоимость. Без шаблонных КП и ожидания три дня.</p>
             <p style={{fontSize:13,color:TEXT_D,marginBottom:40}}>Работаю с малым бизнесом, частными специалистами и производственными компаниями.</p>
             <div style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap',marginBottom:16}}>
-              <button onClick={openContact} className="btn-gold" style={{display:'inline-flex',alignItems:'center',gap:9,padding:'15px 36px',borderRadius:10,fontSize:15,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>
+              <button onClick={openContact} className="btn-gold" data-magnetic style={{display:'inline-flex',alignItems:'center',gap:9,padding:'15px 36px',borderRadius:10,fontSize:15,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>
                 Написать <ArrowRight size={15}/>
               </button>
-              <a href="tel:+79119254652" className="btn-outline" style={{display:'inline-flex',alignItems:'center',gap:9,padding:'15px 32px',background:'rgba(255,255,255,0.04)',color:TEXT,border:`1px solid rgba(255,255,255,0.12)`,borderRadius:10,fontSize:15,fontWeight:500,textDecoration:'none'}}>
+              <a href="tel:+79119254652" className="btn-outline" data-magnetic style={{display:'inline-flex',alignItems:'center',gap:9,padding:'15px 32px',background:'rgba(255,255,255,0.04)',color:TEXT,border:`1px solid rgba(255,255,255,0.12)`,borderRadius:10,fontSize:15,fontWeight:500,textDecoration:'none'}}>
                 <Phone size={16}/> +7 911 925 46 52
               </a>
             </div>
@@ -750,7 +1114,7 @@ function HomeView({navigate}) {
   );
 }
 
-// ═══════════════════ DEMO VIEWS ═══════════════════
+// ═══════════════════ DEMO VIEWS (unchanged internals) ═══════════════════
 function LawyerView({navigate}){
   const [slide,setSlide]=useState(0);
   return(<div style={{background:'#0A192F',color:'#fff',minHeight:'100vh',fontFamily:'Inter,sans-serif'}}><BackBtn navigate={navigate}/>
@@ -774,7 +1138,7 @@ function CatsView({navigate}){
     <div style={{textAlign:'center',marginBottom:24}}><div style={{display:'inline-flex',alignItems:'center',gap:6,color:'#D4754A',fontSize:13,fontWeight:700,marginBottom:6}}><Gift size={15}/> Конструктор набора</div><h2 style={{fontWeight:800,fontSize:24,color:'#3D2314',marginBottom:4}}>Собери свой бокс</h2></div>
     <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(185px,1fr))',gap:12,marginBottom:20}}>{CAT_PRODUCTS.map(p=>(<div key={p.id} style={{background:'#fff',borderRadius:22,overflow:'hidden',boxShadow:'0 4px 18px rgba(0,0,0,0.07)'}}><img src={p.img} alt={p.name} style={{width:'100%',height:110,objectFit:'cover'}}/><div style={{padding:'14px 16px 18px',textAlign:'center'}}><div style={{fontWeight:800,fontSize:13,color:'#3D2314',marginBottom:4}}>{p.name}</div><div style={{fontSize:11,color:'#9A6A50',marginBottom:10,minHeight:30,lineHeight:1.5}}>{p.desc}</div><div style={{fontWeight:800,fontSize:17,color:'#D4754A',marginBottom:12}}>{p.price} ₽</div><div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:10}}><button onClick={()=>upd(p.id,-1)} style={{width:30,height:30,borderRadius:'50%',border:'2px solid #E8D0C4',background:'#FFF5EC',color:'#A05A3A',cursor:'pointer',fontSize:18,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center'}}>−</button><motion.span key={counts[p.id]||0} initial={{scale:1.3}} animate={{scale:1}} transition={{type:'spring',stiffness:400}} style={{fontWeight:800,fontSize:17,color:'#3D2314',minWidth:22,textAlign:'center'}}>{counts[p.id]||0}</motion.span><button onClick={()=>upd(p.id,1)} style={{width:30,height:30,borderRadius:'50%',border:'none',background:'#D4754A',color:'#fff',cursor:'pointer',fontSize:18,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center'}}>+</button></div></div></div>))}</div>
     <AnimatePresence>{items>0&&<motion.div initial={{opacity:0,y:14}} animate={{opacity:1,y:0}} exit={{opacity:0,y:14}} style={{background:'#D4754A',borderRadius:18,padding:'20px 24px',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:12}}><div><div style={{fontSize:11,color:'rgba(255,255,255,0.7)',marginBottom:3}}>В боксе</div><div style={{fontWeight:800,fontSize:18,color:'#fff'}}>{items} {items===1?'игрушка':items<5?'игрушки':'игрушек'} · {total} ₽</div></div><button style={{background:'#fff',color:'#D4754A',border:'none',borderRadius:13,padding:'12px 24px',fontWeight:800,fontSize:14,cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontFamily:"'Nunito',sans-serif"}}>Оформить <ArrowUpRight size={13}/></button></motion.div>}</AnimatePresence>
-  </div></div>);
+    </div></div>);
 }
 
 const PER=8;
@@ -798,11 +1162,9 @@ function DashboardView({navigate}){
   };
   return(<div style={{background:'#09090B',color:'#fff',minHeight:'100vh',display:'flex',fontFamily:'Inter,sans-serif'}}><BackBtn navigate={navigate}/>
     <div style={{width:196,background:'#111113',borderRight:'1px solid #27272A',flexShrink:0,paddingTop:66,padding:'66px 8px 12px'}}><div style={{fontWeight:800,fontSize:11,color:'#34D399',letterSpacing:'0.1em',padding:'0 10px',marginBottom:16,textTransform:'uppercase'}}>Infra Monitor</div>{navItems.map(item=><button key={item.id} onClick={()=>setActive(item.id)} style={{display:'flex',alignItems:'center',gap:9,width:'100%',padding:'9px 10px',borderRadius:8,border:'none',cursor:'pointer',background:active===item.id?'rgba(52,211,153,0.1)':'transparent',color:active===item.id?'#34D399':'#71717A',fontSize:13,fontWeight:active===item.id?600:400,textAlign:'left',marginBottom:1,fontFamily:'Inter,sans-serif'}}><item.Icon size={14}/> {item.l}</button>)}</div>
-    <div style={{flex:1,overflow:'auto'}}>
-      <div style={{position:'relative',height:88,overflow:'hidden'}}><img src={IMGS.dashboard} alt="" style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.25)'}}/><div style={{position:'absolute',inset:0,background:'linear-gradient(to bottom,transparent,#09090B)'}}/><div style={{position:'absolute',bottom:12,left:20,fontSize:13,fontWeight:800,color:'#34D399',fontFamily:'Inter,sans-serif'}}>Система мониторинга инфраструктуры</div></div>
-      <div style={{background:'#111113',borderBottom:'1px solid #27272A',padding:'12px 20px',display:'flex',gap:10,flexWrap:'wrap',alignItems:'center'}}>{[{l:'ЦП',v:cpu+'%',Icon:Cpu,c:cpu>80?'#F87171':cpu>60?'#FB923C':'#4ADE80',bar:cpu},{l:'БД',v:Math.round(db)+'%',Icon:Database,c:db>80?'#F87171':db>60?'#FB923C':'#4ADE80',bar:db},{l:'Сессии',v:sessions,Icon:Activity,c:'#34D399',bar:null}].map(m=><div key={m.l} style={{display:'flex',alignItems:'center',gap:10,background:'#18181B',borderRadius:12,padding:'10px 13px',border:'1px solid #27272A'}}><m.Icon size={14} color={m.c}/><div><div style={{fontSize:10,color:'#71717A',marginBottom:2}}>{m.l}</div><motion.div key={m.v} initial={{opacity:0.5}} animate={{opacity:1}} style={{fontFamily:"'JetBrains Mono',monospace",fontWeight:700,fontSize:15,color:m.c,lineHeight:1}}>{m.v}</motion.div>{m.bar!==null&&<div style={{width:60,height:4,background:'#27272A',borderRadius:2,marginTop:3}}><motion.div animate={{width:m.bar+'%'}} transition={{duration:0.8}} style={{height:'100%',borderRadius:2,background:m.c}}/></div>}</div></div>)}<div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:6,background:'#18181B',border:'1px solid #27272A',borderRadius:8,padding:'8px 12px'}}><Search size={12} color="#71717A"/><input placeholder="Поиск..." style={{background:'none',border:'none',color:'#A1A1AA',fontSize:12,outline:'none',width:90}}/></div></div>
-      <div style={{padding:18}}>{renderContent()}</div>
-    </div>
+    <div style={{flex:1,overflow:'auto'}}><div style={{position:'relative',height:88,overflow:'hidden'}}><img src={IMGS.dashboard} alt="" style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.25)'}}/><div style={{position:'absolute',inset:0,background:'linear-gradient(to bottom,transparent,#09090B)'}}/><div style={{position:'absolute',bottom:12,left:20,fontSize:13,fontWeight:800,color:'#34D399',fontFamily:'Inter,sans-serif'}}>Система мониторинга инфраструктуры</div></div>
+    <div style={{background:'#111113',borderBottom:'1px solid #27272A',padding:'12px 20px',display:'flex',gap:10,flexWrap:'wrap',alignItems:'center'}}>{[{l:'ЦП',v:cpu+'%',Icon:Cpu,c:cpu>80?'#F87171':cpu>60?'#FB923C':'#4ADE80',bar:cpu},{l:'БД',v:Math.round(db)+'%',Icon:Database,c:db>80?'#F87171':db>60?'#FB923C':'#4ADE80',bar:db},{l:'Сессии',v:sessions,Icon:Activity,c:'#34D399',bar:null}].map(m=><div key={m.l} style={{display:'flex',alignItems:'center',gap:10,background:'#18181B',borderRadius:12,padding:'10px 13px',border:'1px solid #27272A'}}><m.Icon size={14} color={m.c}/><div><div style={{fontSize:10,color:'#71717A',marginBottom:2}}>{m.l}</div><motion.div key={m.v} initial={{opacity:0.5}} animate={{opacity:1}} style={{fontFamily:"'JetBrains Mono',monospace",fontWeight:700,fontSize:15,color:m.c,lineHeight:1}}>{m.v}</motion.div>{m.bar!==null&&<div style={{width:60,height:4,background:'#27272A',borderRadius:2,marginTop:3}}><motion.div animate={{width:m.bar+'%'}} transition={{duration:0.8}} style={{height:'100%',borderRadius:2,background:m.c}}/></div>}</div></div>)}<div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:6,background:'#18181B',border:'1px solid #27272A',borderRadius:8,padding:'8px 12px'}}><Search size={12} color="#71717A"/><input placeholder="Поиск..." style={{background:'none',border:'none',color:'#A1A1AA',fontSize:12,outline:'none',width:90}}/></div></div>
+    <div style={{padding:18}}>{renderContent()}</div></div>
   </div>);
 }
 
@@ -852,6 +1214,7 @@ function ShopView({navigate}){
 function ProjectDetailView({navigate,project:p}){
   const isDD=p.id==='deepdrift';
   return(<div style={{background:p.bg,color:'#fff',minHeight:'100vh',fontFamily:'Inter,sans-serif',position:'relative',overflow:'hidden'}}>
+    {/* Ambient orb for project detail */}
     <Orb top="10%" left="60%" size={500} color={p.accent+'15'} blur={120}/>
     <BackBtn navigate={navigate} returnTo="cases"/>
     <div style={{position:'relative',height:360,overflow:'hidden'}}>
@@ -903,7 +1266,8 @@ function ProjectDetailView({navigate,project:p}){
 // ═══════════════════════════════════════════════════════════
 export default function App(){
   const [currentView,setCurrentView]=useState(()=>viewFromHash(window.location.hash));
-  
+
+  // Listen to popstate (browser Back/Forward)
   useEffect(()=>{
     const handlePop=()=>{
       const v=viewFromHash(window.location.hash);
@@ -916,7 +1280,76 @@ export default function App(){
 
   useEffect(()=>{ window.scrollTo(0,0); },[currentView]);
 
+  // ─── Reveal-on-scroll for [data-reveal] elements ─────────────
+  useEffect(()=>{
+    const io = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px -80px 0px' });
+    const scan = () => document.querySelectorAll('[data-reveal]:not(.in)').forEach(el => io.observe(el));
+    scan();
+    const mo = new MutationObserver(scan);
+    mo.observe(document.body, { childList:true, subtree:true });
+    // Safety fallback: if IO fails within 4s, force-show everything
+    const fallback = setTimeout(()=>{
+      document.body.classList.add('reveal-fallback');
+    }, 4500);
+    return () => { io.disconnect(); mo.disconnect(); clearTimeout(fallback); };
+  },[currentView]);
+
+  // ─── Magnetic buttons — global delegated listener ────────────
+  useEffect(()=>{
+    if(window.innerWidth < 900 || 'ontouchstart' in window) return;
+    const onMove = e => {
+      const el = e.target && e.target.closest && e.target.closest('[data-magnetic]');
+      if(!el) return;
+      const r = el.getBoundingClientRect();
+      const x = e.clientX - r.left - r.width/2;
+      const y = e.clientY - r.top  - r.height/2;
+      el.style.transform = `translate(${x*0.18}px, ${y*0.28}px)`;
+    };
+    const onOut = e => {
+      const el = e.target && e.target.closest && e.target.closest('[data-magnetic]');
+      if(el) el.style.transform = '';
+    };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseleave', onOut, true);
+    document.addEventListener('mouseout', onOut);
+    return () => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseleave', onOut, true);
+      document.removeEventListener('mouseout', onOut);
+    };
+  },[currentView]);
+
+  // ─── Lenis smooth scroll (loaded from CDN) ───────────────────
+  useEffect(()=>{
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // Only mount once
+    if(window.__lenisMounted) return;
+    window.__lenisMounted = true;
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js';
+    s.onload = () => {
+      if(!window.Lenis) return;
+      const lenis = new window.Lenis({
+        duration: 1.15,
+        easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true, smoothTouch: false,
+      });
+      function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
+      requestAnimationFrame(raf);
+      window.__lenis = lenis;
+    };
+    document.head.appendChild(s);
+  },[]);
+
   const navigate=(v)=>{
+    // External URL projects — open in new tab, no history change
     if(HAS_URL.has(v)){
       const proj=PROJECTS.find(p=>p.id===v);
       if(proj?.url){ window.open(proj.url,'_blank'); return; }
@@ -937,19 +1370,23 @@ export default function App(){
 
   return(
     <>
-      <AnimatePresence mode="wait">
-        <motion.div key={currentView} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:0.22}}>
-          {currentView==='home'      && <HomeView navigate={navigate}/>}
-          {currentView==='lawyer'    && <LawyerView navigate={navigate}/>}
-          {currentView==='cats'      && <CatsView navigate={navigate}/>}
-          {currentView==='cnc'       && <CncView navigate={navigate}/>}
-          {currentView==='mycaviar'  && <MycaviarView navigate={navigate}/>}
-          {realProject               && <ProjectDetailView navigate={navigate} project={realProject}/>}
-        </motion.div>
-      </AnimatePresence>
-      <PrivacyModal/>
-      <CookieBanner/>
-      <ContactModal/>
+    <ScrollProgress/>
+    <CustomCursor/>
+    {currentView==='home' && <MiniHeader onOpenContact={openContact}/>}
+    {currentView==='home' && <DotNav/>}
+    <AnimatePresence mode="wait">
+      <motion.div key={currentView} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:0.22}}>
+        {currentView==='home'      && <HomeView navigate={navigate}/>}
+        {currentView==='lawyer'    && <LawyerView navigate={navigate}/>}
+        {currentView==='cats'      && <CatsView navigate={navigate}/>}
+        {currentView==='cnc'       && <CncView navigate={navigate}/>}
+        {currentView==='mycaviar'  && <MycaviarView navigate={navigate}/>}
+        {realProject               && <ProjectDetailView navigate={navigate} project={realProject}/>}
+      </motion.div>
+    </AnimatePresence>
+    <PrivacyModal/>
+    <CookieBanner/>
+    <ContactModal/>
     </>
   );
 }
