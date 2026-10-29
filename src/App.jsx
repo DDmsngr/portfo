@@ -16,14 +16,13 @@ const GOLD   = '#C9A34E';
 const GOLD_G = 'linear-gradient(90deg,#D4AF37 0%,#C09820 55%,#C5A028 100%)';
 const BG     = '#0C0D10';
 const TEXT   = '#E5E5E5';
-const TEXT_M = 'rgba(229,229,229,0.52)';
-const TEXT_D = 'rgba(229,229,229,0.24)';
+const TEXT_M = 'rgba(229,229,229,0.66)';
+const TEXT_D = 'rgba(229,229,229,0.55)';
 const BORDER = 'rgba(255,255,255,0.06)';
 
 let pendingScroll = null;
 
-// ─── AELogo — реальный PNG через mix-blend-mode:screen ────────────────────
-// mix-blend-mode:screen делает чёрный фон прозрачным, оставляя только золото
+// ─── AELogo — PNG с прозрачным фоном ──────────────────────────────────────
 function AELogo({ height = 38 }) {
   const w = Math.round(height * 1.72);
   return (
@@ -34,7 +33,6 @@ function AELogo({ height = 38 }) {
         width: w,
         height: height,
         objectFit: 'contain',
-        mixBlendMode: 'screen',
         display: 'block',
         flexShrink: 0,
       }}
@@ -65,13 +63,19 @@ function PrivacyModal() {
     window.addEventListener('openPrivacy',h);
     return()=>window.removeEventListener('openPrivacy',h);
   },[]);
+  useEffect(()=>{
+    if(!open) return;
+    const k=(e)=>{if(e.key==='Escape')setOpen(false);};
+    window.addEventListener('keydown',k);
+    return()=>window.removeEventListener('keydown',k);
+  },[open]);
   if(!open) return null;
   const close=()=>setOpen(false);
   const st={fontSize:11,fontWeight:700,letterSpacing:'0.14em',textTransform:'uppercase',color:GOLD,marginTop:20,marginBottom:8};
   const pt={fontSize:13,color:'rgba(229,229,229,0.58)',lineHeight:1.82,margin:'0 0 6px'};
   const lt={fontSize:13,color:'rgba(229,229,229,0.58)',lineHeight:1.82,paddingLeft:14};
   return(
-    <div style={{position:'fixed',inset:0,zIndex:2000,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px'}}>
+    <div role="dialog" aria-modal="true" aria-label="Политика обработки персональных данных" style={{position:'fixed',inset:0,zIndex:2000,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px'}}>
       <div onClick={close} style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.72)',backdropFilter:'blur(10px)'}}/>
       <div style={{position:'relative',zIndex:1,width:'100%',maxWidth:640,maxHeight:'86vh',background:'rgba(9,8,6,0.97)',border:'1px solid rgba(201,163,78,0.22)',borderRadius:18,backdropFilter:'blur(24px)',boxShadow:'0 32px 80px rgba(0,0,0,0.7),inset 0 1px 0 rgba(201,163,78,0.12)',display:'flex',flexDirection:'column',overflow:'hidden'}}>
         <div style={{padding:'22px 26px 18px',borderBottom:'1px solid rgba(201,163,78,0.1)',display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexShrink:0}}>
@@ -79,7 +83,7 @@ function PrivacyModal() {
             <div style={{fontSize:10,fontWeight:700,letterSpacing:'0.18em',color:GOLD,textTransform:'uppercase',marginBottom:6}}>Юридический документ · 152-ФЗ</div>
             <div style={{fontSize:19,fontWeight:500,color:'#F0EDE8',fontFamily:"'Cormorant Garamond',serif",lineHeight:1.2}}>Политика обработки<br/>персональных данных</div>
           </div>
-          <button onClick={close} style={{width:34,height:34,borderRadius:'50%',border:'1px solid rgba(255,255,255,0.1)',background:'rgba(255,255,255,0.04)',color:'rgba(255,255,255,0.45)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,fontSize:20,lineHeight:1,marginTop:2}}>×</button>
+          <button onClick={close} aria-label="Закрыть" style={{width:34,height:34,borderRadius:'50%',border:'1px solid rgba(255,255,255,0.1)',background:'rgba(255,255,255,0.04)',color:'rgba(255,255,255,0.45)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,fontSize:20,lineHeight:1,marginTop:2}}>×</button>
         </div>
         <div style={{overflowY:'auto',padding:'20px 26px 28px',flex:1}}>
           <p style={pt}>Настоящая Политика разработана в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных».</p>
@@ -115,16 +119,18 @@ function CookieBanner() {
   const [visible, setVisible] = useState(false);
   useEffect(()=>{
     if(!localStorage.getItem('cookies_accepted')){
-      const t=setTimeout(()=>setVisible(true),1400);
-      return()=>clearTimeout(t);
+      const show=()=>setVisible(true);
+      const t=setTimeout(show,8000);
+      window.addEventListener('scroll',show,{once:true,passive:true});
+      return()=>{clearTimeout(t);window.removeEventListener('scroll',show);};
     }
   },[]);
   const accept=()=>{ localStorage.setItem('cookies_accepted','1'); setVisible(false); };
   return(
-    <div style={{position:'fixed',bottom:20,left:'50%',zIndex:900,width:'calc(100% - 32px)',maxWidth:540,transition:'opacity 380ms,transform 380ms',opacity:visible?1:0,transform:`translateX(-50%) translateY(${visible?'0':'72px'})`,pointerEvents:visible?'auto':'none'}}>
-      <div style={{background:'rgba(13,11,7,0.96)',border:'1px solid rgba(201,163,78,0.18)',borderRadius:14,backdropFilter:'blur(20px)',padding:'14px 18px',display:'flex',alignItems:'center',gap:14,boxShadow:'0 8px 40px rgba(0,0,0,0.55),inset 0 1px 0 rgba(201,163,78,0.07)'}}>
-        <div style={{flex:1,fontSize:12.5,color:'rgba(229,229,229,0.52)',lineHeight:1.55}}>
-          Мы используем файлы cookie для повышения удобства работы с сайтом.{' '}
+    <div style={{position:'fixed',bottom:16,left:16,zIndex:900,width:'calc(100% - 32px)',maxWidth:420,transition:'opacity 380ms,transform 380ms',opacity:visible?1:0,transform:`translateY(${visible?'0':'40px'})`,pointerEvents:visible?'auto':'none'}}>
+      <div style={{background:'rgba(13,11,7,0.96)',border:'1px solid rgba(201,163,78,0.18)',borderRadius:14,backdropFilter:'blur(20px)',padding:'10px 14px',display:'flex',alignItems:'center',gap:12,boxShadow:'0 8px 40px rgba(0,0,0,0.55),inset 0 1px 0 rgba(201,163,78,0.07)'}}>
+        <div style={{flex:1,fontSize:12,color:'rgba(229,229,229,0.66)',lineHeight:1.5}}>
+          Сайт использует cookie.{' '}
           <a href="#" onClick={openPrivacy} style={{color:'rgba(201,163,78,0.65)',textDecoration:'underline',textUnderlineOffset:'2px'}}>Подробнее</a>
         </div>
         <button onClick={accept} className="btn-gold" style={{padding:'8px 18px',borderRadius:8,fontSize:12,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer',flexShrink:0,whiteSpace:'nowrap'}}>Принять</button>
@@ -181,6 +187,13 @@ function ContactModal() {
     }
   };
 
+  useEffect(()=>{
+    if(!open) return;
+    const k=(e)=>{if(e.key==='Escape')setOpen(false);};
+    window.addEventListener('keydown',k);
+    return()=>window.removeEventListener('keydown',k);
+  },[open]);
+
   if(!open) return null;
 
   const inp={
@@ -194,7 +207,7 @@ function ContactModal() {
   const focusOut=e=>e.target.style.borderColor='rgba(201,163,78,0.18)';
 
   return(
-    <div style={{position:'fixed',inset:0,zIndex:2001,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px'}}>
+    <div role="dialog" aria-modal="true" aria-label="Форма обращения" style={{position:'fixed',inset:0,zIndex:2001,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px'}}>
       <div onClick={close} style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.72)',backdropFilter:'blur(10px)'}}/>
       <div style={{position:'relative',zIndex:1,width:'100%',maxWidth:500,background:'rgba(9,8,6,0.97)',border:'1px solid rgba(201,163,78,0.22)',borderRadius:18,backdropFilter:'blur(24px)',boxShadow:'0 32px 80px rgba(0,0,0,0.7),inset 0 1px 0 rgba(201,163,78,0.12)',overflow:'hidden'}}>
 
@@ -204,7 +217,7 @@ function ContactModal() {
             <div style={{fontSize:10,fontWeight:700,letterSpacing:'0.18em',color:GOLD,textTransform:'uppercase',marginBottom:5}}>Новый проект</div>
             <div style={{fontSize:22,fontWeight:500,color:'#F0EDE8',fontFamily:"'Cormorant Garamond',serif",lineHeight:1.2}}>Обсудить задачу</div>
           </div>
-          <button onClick={close} style={{width:34,height:34,borderRadius:'50%',border:'1px solid rgba(255,255,255,0.1)',background:'rgba(255,255,255,0.04)',color:'rgba(255,255,255,0.45)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,lineHeight:1}}>×</button>
+          <button onClick={close} aria-label="Закрыть" style={{width:34,height:34,borderRadius:'50%',border:'1px solid rgba(255,255,255,0.1)',background:'rgba(255,255,255,0.04)',color:'rgba(255,255,255,0.45)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,lineHeight:1}}>×</button>
         </div>
 
         {/* Body */}
@@ -220,19 +233,19 @@ function ContactModal() {
             </div>
           ):(
             <form onSubmit={send}>
-              <label style={lbl}>Имя *</label>
-              <input name="name" value={form.name} onChange={upd} placeholder="Как вас зовут?" style={inp} onFocus={focusIn} onBlur={focusOut}/>
+              <label htmlFor="cf-name" style={lbl}>Имя *</label>
+              <input id="cf-name" autoComplete="name" name="name" value={form.name} onChange={upd} placeholder="Как вас зовут?" style={inp} onFocus={focusIn} onBlur={focusOut}/>
 
-              <label style={lbl}>Телефон или Email *</label>
-              <input name="contact" value={form.contact} onChange={upd} placeholder="+7 900 000 00 00 или mail@example.ru" style={inp} onFocus={focusIn} onBlur={focusOut}/>
+              <label htmlFor="cf-contact" style={lbl}>Телефон или Email *</label>
+              <input id="cf-contact" autoComplete="email" name="contact" value={form.contact} onChange={upd} placeholder="+7 900 000 00 00 или mail@example.ru" style={inp} onFocus={focusIn} onBlur={focusOut}/>
 
-              <label style={lbl}>Тема обращения</label>
-              <input name="subject" value={form.subject} onChange={upd} placeholder="Лендинг, приложение, CRM…" style={inp} onFocus={focusIn} onBlur={focusOut}/>
+              <label htmlFor="cf-subject" style={lbl}>Тема обращения</label>
+              <input id="cf-subject" autoComplete="off" name="subject" value={form.subject} onChange={upd} placeholder="Лендинг, приложение, CRM…" style={inp} onFocus={focusIn} onBlur={focusOut}/>
 
-              <label style={lbl}>Расскажите о задаче *</label>
-              <textarea name="message" value={form.message} onChange={upd} rows={4} placeholder="Что нужно сделать, сроки, бюджет, референсы…" style={{...inp,resize:'vertical',minHeight:96,marginBottom:8}} onFocus={focusIn} onBlur={focusOut}/>
+              <label htmlFor="cf-message" style={lbl}>Расскажите о задаче *</label>
+              <textarea id="cf-message" name="message" value={form.message} onChange={upd} rows={4} placeholder="Что нужно сделать, сроки, бюджет, референсы…" style={{...inp,resize:'vertical',minHeight:96,marginBottom:8}} onFocus={focusIn} onBlur={focusOut}/>
 
-              {errMsg&&<div style={{fontSize:12,color:status==='error'?'rgba(229,229,229,0.5)':'#F87171',marginBottom:12,lineHeight:1.55}}>{errMsg}{status==='error'&&<> → <a href="mailto:9254652@bk.ru" style={{color:GOLD}}>9254652@bk.ru</a></>}</div>}
+              {errMsg&&<div role="alert" style={{fontSize:12,color:status==='error'?'rgba(229,229,229,0.5)':'#F87171',marginBottom:12,lineHeight:1.55}}>{errMsg}{status==='error'&&<> → <a href="mailto:9254652@bk.ru" style={{color:GOLD}}>9254652@bk.ru</a></>}</div>}
 
               <button type="submit" className="btn-gold" disabled={status==='sending'} style={{width:'100%',padding:'14px',borderRadius:10,fontSize:14,fontWeight:700,color:'#0C0D10',border:'none',cursor:status==='sending'?'default':'pointer',opacity:status==='sending'?0.65:1,marginTop:4}}>
                 {status==='sending'?'Отправляю…':'Отправить заявку →'}
@@ -265,6 +278,9 @@ const IMGS = {
   capoeira:  'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=900&q=80&fit=crop',
 };
 
+// Реальные скриншоты живых сайтов (public/projects/); для остальных пока сток
+const SHOTS = { olga:'/projects/olga.jpg', kott:'/projects/kott.jpg' };
+
 const DEMOS = [
   { id:'mycaviar',  tag:'B2B · Оптовая торговля', title:'Охотоморье',                 img:IMGS.mycaviar  },
   { id:'lawyer',    tag:'Корпоративный сайт',      title:'Визитка юриста',            img:IMGS.lawyer    },
@@ -281,13 +297,8 @@ const PROJECTS = [
   { id:'kott',     tag:'Android · Flutter',        title:'KOTT',           subtitle:'Автоматизация вместо Excel и бумажной волокиты',     desc:'Художница тратила часы на документооборот вручную. Теперь сертификат, договор и акт — одна кнопка.',     accent:'#C8956C', bg:'#100C08', url:'https://ddmsngr.github.io/KOTT-site/',            metric:{value:'100%',label:'офлайн'},     stack:['Flutter','Isar','Riverpod'],       description:'Система учёта произведений искусства для художников. Полный цикл: от реестра до продажи и генерации юридически значимых документов. 100% локально.', role:'Solo Full-Stack Mobile Developer', featuresLabel:'Фишки приложения', features:['Реестр с цветовой кодировкой 7 статусов','Карточка: фото, размеры, серии, тираж, человеко-часы','Транзакционный журнал перемещений','PDF в 1 клик: сертификаты с QR, договоры, акты','Экспорт в Excel/CSV + JSON-бэкап','Уникальные ID без интернета'], tech:[['UI','Flutter 3.19, Material Design 3'],['State','Riverpod 2.x'],['БД','Isar 3.x'],['PDF','pdf, printing']], challenges:['Полная автономность без интернета','Генерация уникальных номеров без коллизий','Реактивный UI: изменения в БД → мгновенное отражение'] },
 ];
 
-const TESTIMONIALS = [
-  { name:'Игорь Смирнов',   role:'CEO, «ИнвестГрупп»',  text:'Запустили CRM за 6 недель вместо трёх месяцев. Окупилось в первый же квартал.' },
-  { name:'Елена Васильева', role:'CMO, «ТехноРост»',     text:'Редкий случай, когда разработчик думает о метриках. Конверсия выросла на 42%.' },
-  { name:'Дмитрий Орлов',   role:'Основатель, DDChat',   text:'Сложнейший проект по безопасности — без компромиссов. Прошли аудит с первой попытки.' },
-];
 const FAQ = [
-  { q:'Сколько стоит?',             a:'Лендинг — от 25 000 ₽ (2–3 дня), сайт — от 80 000 ₽, приложение — от 350 000 ₽. Точную цену называю после брифа.' },
+  { q:'Сколько стоит?',             a:'Лендинг — от 25 000 ₽ (2–3 дня), сайт — от 80 000 ₽, веб-приложение — от 350 000 ₽, мобильное приложение — от 400 000 ₽. Точную цену называю после брифа.' },
   { q:'Какие сроки?',               a:'Лендинг: от 2 дней. Сайт: 4–6 недель. Приложения: от 2 месяцев. Дедлайн фиксирую в договоре.' },
   { q:'Работаете по договору?',     a:'Да. ИП, фиксированная стоимость, оплата 30/40/30, закрывающие документы.' },
   { q:'Что после запуска?',         a:'30 дней бесплатных правок. Дальше — от 15 000 ₽/мес или разовые задачи.' },
@@ -338,7 +349,7 @@ function HomeView({navigate}) {
   const [scrolled,setScrolled]=useState(false);
   const [hov,setHov]=useState(null);
   const [openFaq,setOpenFaq]=useState(null);
-  const [tSlide,setTSlide]=useState(0);
+  const [menu,setMenu]=useState(false);
   const videoRef=useRef(null);
 
   useEffect(()=>{
@@ -390,16 +401,29 @@ function HomeView({navigate}) {
   return(
     <div style={{background:BG,color:TEXT,fontFamily:'Inter,sans-serif',overflowX:'hidden'}}>
 
+      <a href="#main" className="skip-link">К содержимому</a>
+      <button className="mobile-menu-btn" onClick={()=>setMenu(v=>!v)} aria-label={menu?'Закрыть меню':'Открыть меню'} aria-expanded={menu}
+        style={{position:'fixed',top:8,right:12,zIndex:120,width:42,height:42,borderRadius:10,border:'1px solid rgba(255,255,255,0.14)',background:'rgba(12,13,16,0.82)',backdropFilter:'blur(12px)',color:TEXT,alignItems:'center',justifyContent:'center',cursor:'pointer'}}>
+        {menu?<X size={20}/>:<span aria-hidden="true" style={{fontSize:20,lineHeight:1}}>☰</span>}
+      </button>
+      {menu&&(
+        <div role="dialog" aria-modal="true" aria-label="Меню" style={{position:'fixed',inset:0,zIndex:110,background:'#08090B',display:'flex',flexDirection:'column',justifyContent:'center',padding:'0 32px',gap:6}}>
+          {[['Услуги','#services'],['Кейсы','#cases'],['Процесс','#process'],['FAQ','#faq']].map(([n,h])=>(
+            <a key={n} href={h} onClick={()=>setMenu(false)} style={{fontFamily:"'Cormorant Garamond',serif",fontSize:40,color:'#F0EDE8',textDecoration:'none',padding:'8px 0',borderBottom:`1px solid ${BORDER}`}}>{n}</a>
+          ))}
+          <button onClick={()=>{setMenu(false);openContact();}} className="btn-gold" style={{marginTop:28,padding:'15px',borderRadius:10,fontSize:15,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>Обсудить проект</button>
+        </div>
+      )}
       {/* HEADER — hidden until scrolled past hero */}
       <header style={{position:'fixed',top:0,left:0,right:0,zIndex:80,padding:'0 48px',height:70,display:'flex',alignItems:'center',justifyContent:'space-between',background:scrolled?'rgba(12,13,16,0.96)':'transparent',backdropFilter:scrolled?'blur(20px)':'none',borderBottom:scrolled?`1px solid ${BORDER}`:'none',opacity:scrolled?1:0,pointerEvents:scrolled?'auto':'none',transition:'background 350ms,border-color 350ms,backdrop-filter 350ms,opacity 350ms'}}>
         <a href="#" style={{display:'flex',alignItems:'center',gap:14,textDecoration:'none'}}>
           <AELogo height={30}/>
           <div>
             <div style={{fontWeight:700,fontSize:12.5,letterSpacing:'0.1em',color:TEXT,textTransform:'uppercase',lineHeight:1.2}}>Алексей Евтушенко</div>
-            <div style={{fontSize:9,letterSpacing:'0.2em',color:TEXT_D,textTransform:'uppercase',marginTop:2}}>Разработка сайтов и приложений</div>
+            <div style={{fontSize:10,letterSpacing:'0.16em',color:TEXT_D,textTransform:'uppercase',marginTop:2}}>Разработка сайтов и приложений</div>
           </div>
         </a>
-        <nav className="desktop-nav" style={{display:'flex',gap:36,alignItems:'center'}}>
+        <nav aria-label="Основное меню" className="desktop-nav" style={{display:'flex',gap:36,alignItems:'center'}}>
           {[['Услуги','#services'],['Кейсы','#cases'],['Процесс','#process'],['FAQ','#faq']].map(([n,h])=>(
             <a key={n} href={h} style={{fontSize:13,fontWeight:500,color:TEXT_M,textDecoration:'none',transition:'color 200ms'}}
               onMouseEnter={e=>e.target.style.color=TEXT} onMouseLeave={e=>e.target.style.color=TEXT_M}>{n}</a>
@@ -410,6 +434,7 @@ function HomeView({navigate}) {
         </button>
       </header>
 
+      <main id="main">
       {/* HERO — fullscreen video, black+gold palette */}
       <div style={{position:'relative',overflow:'hidden',minHeight:'100vh',background:'#060608'}}>
         {/* Background video — desaturated to kill purple cast */}
@@ -433,12 +458,12 @@ function HomeView({navigate}) {
           <div style={{position:'absolute',width:500,height:500,bottom:'0%',left:'-6%',background:'radial-gradient(circle,rgba(201,163,78,0.055) 0%,transparent 65%)',filter:'blur(80px)',pointerEvents:'none',zIndex:0}}/>
 
           {/* Navbar */}
-          <nav style={{position:'relative',zIndex:1,padding:'20px 44px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          <nav aria-label="Меню" style={{position:'relative',zIndex:1,padding:'20px 44px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
             <a href="#" style={{display:'flex',alignItems:'center',gap:12,textDecoration:'none'}}>
               <AELogo height={34}/>
               <div>
                 <div style={{fontWeight:700,fontSize:11,letterSpacing:'0.14em',color:'rgba(245,240,232,0.88)',textTransform:'uppercase',lineHeight:1.2}}>Алексей Евтушенко</div>
-                <div style={{fontSize:8.5,letterSpacing:'0.18em',color:'rgba(245,240,232,0.28)',textTransform:'uppercase',marginTop:2}}>Fullstack · Mobile · Web</div>
+                <div style={{fontSize:10,letterSpacing:'0.16em',color:'rgba(245,240,232,0.5)',textTransform:'uppercase',marginTop:2}}>Fullstack · Mobile · Web</div>
               </div>
             </a>
             <div className="hero-nav-links" style={{display:'flex',gap:32,alignItems:'center'}}>
@@ -460,33 +485,33 @@ function HomeView({navigate}) {
           <div style={{height:1,background:'linear-gradient(to right,transparent,rgba(201,163,78,0.2),transparent)',marginTop:3}}/>
 
           {/* Headline + subtitle + CTA */}
-          <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'flex-start',position:'relative',zIndex:1,padding:'0 52px'}}>
+          <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'space-between',gap:56,position:'relative',zIndex:1,padding:'0 52px'}}>
             <div style={{maxWidth:820}}>
 
               {/* Status pill */}
               <div style={{display:'inline-flex',alignItems:'center',gap:8,marginBottom:30,padding:'5px 14px',borderRadius:40,border:'1px solid rgba(201,163,78,0.22)',background:'rgba(201,163,78,0.06)'}}>
                 <div style={{width:6,height:6,borderRadius:'50%',background:GOLD,boxShadow:`0 0 8px ${GOLD}88`}}/>
-                <span style={{fontSize:11,fontWeight:700,letterSpacing:'0.16em',color:GOLD,textTransform:'uppercase'}}>Инженер · Разработчик · 8 лет в производстве</span>
+                <span style={{fontSize:11,fontWeight:700,letterSpacing:'0.16em',color:GOLD,textTransform:'uppercase'}}>Алексей Евтушенко · 8 лет в производстве</span>
               </div>
 
-              {/* Name */}
-              <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:'clamp(68px,9vw,116px)',fontWeight:400,lineHeight:0.96,letterSpacing:'-0.02em',margin:'0 0 30px'}}>
-                <span style={{color:'#F5F0E8',display:'block'}}>Алексей</span>
+              {/* Offer */}
+              <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:'clamp(52px,6.8vw,96px)',fontWeight:400,lineHeight:1.0,letterSpacing:'-0.02em',margin:'0 0 30px'}}>
+                <span style={{color:'#F5F0E8',display:'block'}}>Сайты и приложения</span>
                 <span style={{
                   background:'linear-gradient(135deg,#E8C94A 0%,#C9A34E 40%,#D4AF37 72%,#EDD060 100%)',
                   WebkitBackgroundClip:'text',
                   WebkitTextFillColor:'transparent',
                   backgroundClip:'text',
                   display:'block',
-                }}>Евтушенко</span>
+                }}>без переделок</span>
               </h1>
 
               {/* Subtitle */}
               <p style={{color:'rgba(245,240,232,0.78)',fontSize:19,lineHeight:'32px',maxWidth:560,margin:'0 0 18px',fontWeight:400}}>
-                Создаю сайты, мобильные приложения и&nbsp;системы автоматизации — с&nbsp;инженерной точностью и&nbsp;без переделок
+                Разрабатываю сайты, мобильные приложения и&nbsp;системы автоматизации — с&nbsp;инженерной точностью
               </p>
               {/* Description */}
-              <p style={{color:'rgba(245,240,232,0.42)',fontSize:15,lineHeight:'26px',maxWidth:500,margin:'0 0 42px'}}>
+              <p style={{color:'rgba(245,240,232,0.62)',fontSize:15,lineHeight:'26px',maxWidth:500,margin:'0 0 42px'}}>
                 Я 8 лет работал с&nbsp;ЧПУ-системами, где ошибка стоит дорого.
                 Теперь применяю тот же подход в&nbsp;разработке: чёткая логика,
                 предсказуемый результат и&nbsp;запуск без хаоса.
@@ -505,12 +530,24 @@ function HomeView({navigate}) {
                 </a>
               </div>
             </div>
+            <aside className="hero-aside" aria-label="Коротко обо мне" style={{width:340,flexShrink:0,borderRadius:18,border:'1px solid rgba(201,163,78,0.2)',background:'rgba(12,13,16,0.55)',backdropFilter:'blur(14px)',padding:'8px 28px',boxShadow:'0 24px 60px rgba(0,0,0,0.45), inset 0 1px 0 rgba(201,163,78,0.12)'}}>
+              {[
+                ['8 лет','с ЧПУ-системами, где ошибка стоит дорого'],
+                [String(PROJECTS.length),'проектов в портфолио: от лендингов до мессенджера'],
+                ['от 2 дней','лендинг под ключ, срок фиксирую в договоре'],
+              ].map(([v,l],i)=>(
+                <div key={v} style={{padding:'22px 0',borderTop:i?'1px solid rgba(201,163,78,0.14)':'none'}}>
+                  <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:46,lineHeight:1,fontVariantNumeric:'lining-nums',background:GOLD_G,WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text',display:'inline-block'}}>{v}</div>
+                  <div style={{fontSize:13,color:TEXT_M,lineHeight:1.55,marginTop:8}}>{l}</div>
+                </div>
+              ))}
+            </aside>
           </div>
 
           {/* Logo marquee — pinned to bottom */}
           <div style={{paddingBottom:40,position:'relative',zIndex:1}}>
             <div style={{maxWidth:'64rem',margin:'0 auto',padding:'0 44px',display:'flex',alignItems:'center',gap:48}}>
-              <div style={{fontSize:12,color:'rgba(245,240,232,0.3)',whiteSpace:'nowrap',lineHeight:1.7,flexShrink:0,letterSpacing:'0.02em'}}>
+              <div style={{fontSize:12,color:'rgba(245,240,232,0.5)',whiteSpace:'nowrap',lineHeight:1.7,flexShrink:0,letterSpacing:'0.02em'}}>
                 Работаю с клиентами<br/>из разных сфер
               </div>
               <div style={{overflow:'hidden',flex:1}}>
@@ -634,9 +671,9 @@ function HomeView({navigate}) {
               onClick={()=>{if(HAS_URL.has(p.id)&&p.url){window.open(p.url,'_blank');}else{navigate(p.id);}}}
               onMouseEnter={()=>setHov(p.id)} onMouseLeave={()=>setHov(null)}
               style={{position:'relative',height:360,overflow:'hidden',cursor:'pointer'}}>
-              <img src={IMGS[p.id]||IMGS.olga} alt={p.title}
-                style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',transition:'transform 500ms ease,filter 500ms ease',transform:hov===p.id?'scale(1.04)':'scale(1)',filter:hov===p.id?'brightness(0.45) saturate(0.8)':'brightness(0.32) saturate(0.6)'}}/>
-              <div style={{position:'absolute',inset:0,background:`linear-gradient(to top,rgba(12,13,16,0.97) 0%,rgba(12,13,16,0.25) 65%,rgba(12,13,16,0.12) 100%)`}}/>
+              <img src={SHOTS[p.id]||IMGS[p.id]||IMGS.olga} alt={`${p.title} — ${p.subtitle}`} width="1280" height="960" loading="lazy"
+                style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'top',transition:'transform 500ms ease,filter 500ms ease',transform:hov===p.id?'scale(1.04)':'scale(1)',filter:SHOTS[p.id]?(hov===p.id?'brightness(0.7)':'brightness(0.5)'):(hov===p.id?'brightness(0.45) saturate(0.8)':'brightness(0.32) saturate(0.6)')}}/>
+              <div style={{position:'absolute',inset:0,background:SHOTS[p.id]?'linear-gradient(to top,rgba(12,13,16,0.98) 0%,rgba(12,13,16,0.95) 52%,rgba(12,13,16,0.25) 80%,rgba(12,13,16,0.1) 100%)':`linear-gradient(to top,rgba(12,13,16,0.97) 0%,rgba(12,13,16,0.25) 65%,rgba(12,13,16,0.12) 100%)`}}/>
               <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',justifyContent:'flex-end',padding:'24px 26px'}}>
                 <div style={{display:'flex',gap:7,marginBottom:10,flexWrap:'wrap'}}>
                   {p.stack.slice(0,2).map(t=><span key={t} style={{fontSize:10,fontWeight:700,padding:'3px 9px',borderRadius:40,background:p.accent+'18',border:`1px solid ${p.accent}22`,color:p.accent,letterSpacing:'0.06em'}}>{t}</span>)}
@@ -720,32 +757,6 @@ function HomeView({navigate}) {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section style={{maxWidth:1100,margin:'0 auto',padding:'96px 48px'}}>
-        <div style={{textAlign:'center',marginBottom:64}}>
-          <div style={lbl}>Отзывы</div>
-          <h2 style={{...h2,textAlign:'center'}}>Что говорят клиенты</h2>
-        </div>
-        <div style={{position:'relative',maxWidth:720,margin:'0 auto'}}>
-          <AnimatePresence mode="wait">
-            <motion.div key={tSlide} initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-10}} transition={{duration:0.28}} style={{textAlign:'center'}}>
-              <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:'clamp(22px,3vw,32px)',fontStyle:'italic',color:'#F0EDE8',lineHeight:1.6,marginBottom:36}}>
-                «{TESTIMONIALS[tSlide].text}»
-              </div>
-              <div style={{display:'flex',gap:2,justifyContent:'center',marginBottom:14}}>{Array.from({length:5}).map((_,j)=><Star key={j} size={13} fill={GOLD} color={GOLD}/>)}</div>
-              <div style={{fontWeight:700,fontSize:14,color:TEXT}}>{TESTIMONIALS[tSlide].name}</div>
-              <div style={{fontSize:13,color:TEXT_M,marginTop:3}}>{TESTIMONIALS[tSlide].role}</div>
-            </motion.div>
-          </AnimatePresence>
-          <div style={{display:'flex',justifyContent:'center',gap:10,marginTop:32}}>
-            {TESTIMONIALS.map((_,i)=>(
-              <button key={i} onClick={()=>setTSlide(i)}
-                style={{width:i===tSlide?24:8,height:8,borderRadius:4,border:'none',background:i===tSlide?GOLD:'rgba(255,255,255,0.16)',cursor:'pointer',transition:'width 250ms,background 250ms',padding:0}}/>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* FAQ */}
       <section id="faq" style={{borderTop:`1px solid ${BORDER}`}}>
         <div style={{maxWidth:720,margin:'0 auto',padding:'96px 48px',scrollMarginTop:70}}>
@@ -755,7 +766,7 @@ function HomeView({navigate}) {
           </div>
           {FAQ.map((f,i)=>(
             <div key={i} style={{borderBottom:`1px solid ${openFaq===i?'rgba(201,163,78,0.2)':BORDER}`,transition:'border-color 200ms'}}>
-              <button onClick={()=>setOpenFaq(openFaq===i?null:i)}
+              <button onClick={()=>setOpenFaq(openFaq===i?null:i)} aria-expanded={openFaq===i}
                 style={{width:'100%',padding:'22px 0',display:'flex',justifyContent:'space-between',alignItems:'center',background:'transparent',border:'none',cursor:'pointer',fontFamily:'Inter,sans-serif',textAlign:'left'}}>
                 <span style={{fontSize:15.5,fontWeight:600,color:openFaq===i?TEXT:TEXT_M,paddingRight:20,transition:'color 200ms',lineHeight:1.4}}>{f.q}</span>
                 <ChevronDown size={16} style={{color:GOLD,flexShrink:0,transform:openFaq===i?'rotate(180deg)':'none',transition:'transform 250ms'}}/>
@@ -798,6 +809,7 @@ function HomeView({navigate}) {
         </div>
       </section>
 
+      </main>
       {/* FOOTER */}
       <footer style={{borderTop:`1px solid ${BORDER}`,padding:'26px 0'}}>
         <div style={{maxWidth:1100,margin:'0 auto',padding:'0 48px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:16,flexWrap:'wrap'}}>
