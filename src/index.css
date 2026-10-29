@@ -181,6 +181,9 @@ body {
   /* Section padding */
   section[style] { padding-left: 20px !important; padding-right: 20px !important; }
 
+  /* Флагманская карточка: текст поверх телефонов читаем */
+  .flagship-ov { background: linear-gradient(to top, rgba(12,13,16,0.97) 0%, rgba(12,13,16,0.9) 55%, rgba(12,13,16,0.45) 100%) !important; }
+
   /* Cases grid — 1 column on mobile */
   .cases-grid { grid-template-columns: 1fr !important; gap: 3px !important; }
 
