@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import logoSrc from './assets/logo.png';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import HeroCanvas from './HeroCanvas';
 import {
   ArrowLeft, ArrowUpRight, ArrowRight, ShoppingCart, Plus, Minus, X,
   ChevronLeft, ChevronRight, Star, CheckCircle, AlertCircle, XCircle,
@@ -19,7 +19,6 @@ const TEXT   = '#E5E5E5';
 const TEXT_M = 'rgba(229,229,229,0.66)';
 const TEXT_D = 'rgba(229,229,229,0.55)';
 const BORDER = 'rgba(255,255,255,0.06)';
-
 let pendingScroll = null;
 
 // ─── AELogo — PNG с прозрачным фоном ──────────────────────────────────────
@@ -140,13 +139,9 @@ function CookieBanner() {
 }
 
 // ─── Contact form ────────────────────────────────────────────────────────────
-// 1. Зарегистрируйтесь на emailjs.com
-// 2. Создайте Email Service и Template (переменные: {{from_name}}, {{contact}}, {{subject}}, {{message}})
-// 3. Замените три константы ниже на свои значения из дашборда EmailJS
 const EMAILJS_KEY = import.meta.env.VITE_EMAILJS_KEY;
 const EMAILJS_SVC = import.meta.env.VITE_EMAILJS_SVC;
 const EMAILJS_TPL = import.meta.env.VITE_EMAILJS_TPL;
-
 const openContact = (e) => { if(e) e.preventDefault(); window.dispatchEvent(new CustomEvent('openContact')); };
 
 function ContactModal() {
@@ -154,16 +149,13 @@ function ContactModal() {
   const [form,setForm]=useState({name:'',contact:'',subject:'',message:''});
   const [status,setStatus]=useState('idle');
   const [errMsg,setErrMsg]=useState('');
-
   useEffect(()=>{
     const h=()=>{setOpen(true);setStatus('idle');setErrMsg('');};
     window.addEventListener('openContact',h);
     return()=>window.removeEventListener('openContact',h);
   },[]);
-
   const close=()=>{setOpen(false);setStatus('idle');setErrMsg('');};
   const upd=(e)=>setForm(f=>({...f,[e.target.name]:e.target.value}));
-
   const send=async(e)=>{
     e.preventDefault();
     if(!form.name.trim()||!form.contact.trim()||!form.message.trim()){
@@ -195,7 +187,6 @@ function ContactModal() {
   },[open]);
 
   if(!open) return null;
-
   const inp={
     display:'block',width:'100%',background:'rgba(255,255,255,0.04)',
     border:'1px solid rgba(201,163,78,0.18)',borderRadius:8,padding:'12px 14px',
@@ -205,13 +196,10 @@ function ContactModal() {
   const lbl={fontSize:10,fontWeight:700,letterSpacing:'0.14em',color:GOLD,textTransform:'uppercase',display:'block',marginBottom:6};
   const focusIn=e=>e.target.style.borderColor='rgba(201,163,78,0.55)';
   const focusOut=e=>e.target.style.borderColor='rgba(201,163,78,0.18)';
-
   return(
     <div role="dialog" aria-modal="true" aria-label="Форма обращения" style={{position:'fixed',inset:0,zIndex:2001,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px'}}>
       <div onClick={close} style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.72)',backdropFilter:'blur(10px)'}}/>
       <div style={{position:'relative',zIndex:1,width:'100%',maxWidth:500,background:'rgba(9,8,6,0.97)',border:'1px solid rgba(201,163,78,0.22)',borderRadius:18,backdropFilter:'blur(24px)',boxShadow:'0 32px 80px rgba(0,0,0,0.7),inset 0 1px 0 rgba(201,163,78,0.12)',overflow:'hidden'}}>
-
-        {/* Header */}
         <div style={{padding:'22px 26px 18px',borderBottom:'1px solid rgba(201,163,78,0.1)',display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
           <div>
             <div style={{fontSize:10,fontWeight:700,letterSpacing:'0.18em',color:GOLD,textTransform:'uppercase',marginBottom:5}}>Новый проект</div>
@@ -219,8 +207,6 @@ function ContactModal() {
           </div>
           <button onClick={close} aria-label="Закрыть" style={{width:34,height:34,borderRadius:'50%',border:'1px solid rgba(255,255,255,0.1)',background:'rgba(255,255,255,0.04)',color:'rgba(255,255,255,0.45)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,lineHeight:1}}>×</button>
         </div>
-
-        {/* Body */}
         <div style={{padding:'22px 26px 26px',maxHeight:'calc(90vh - 100px)',overflowY:'auto'}}>
           {status==='success'?(
             <div style={{textAlign:'center',padding:'28px 0'}}>
@@ -287,7 +273,6 @@ const DEMOS = [
   { id:'cats',      tag:'B2C Лендинг',             title:'Магазин для кошек',          img:IMGS.cats      },
   { id:'cnc',       tag:'ЧПУ · Инжиниринг',        title:'Инженер-программист ЧПУ',    img:IMGS.cnc       },
 ];
-
 const PROJECTS = [
   { id:'chawo', flagship:true, tag:'Android · Flutter · Supabase', title:'ChaWo', subtitle:'Социальная сеть, которая становится городом', desc:'Лента, карта событий, чаты и каналы в одном приложении. Точные координаты остаются на телефоне — другим виден только район.', accent:'#E8467C', bg:'#0C0D10', metric:{value:'Пилот',label:'Сочи'}, stack:['Flutter','Riverpod','Supabase'], description:'Мобильная социальная сеть для пилота в Сочи. Лента Flow, карта «Пульс города» с событиями и местами, личные и групповые чаты, каналы, видеокружки и звонки. Приложение и серверную часть проектирую и разрабатываю сам, включая сборку и доставку обновлений.', role:'Разработчик и архитектор: мобильный клиент, бэкенд, CI/CD', featuresLabel:'Что внутри', features:['Flow — лента с вкладками «Для вас», «Страна» и по городу','Пульс города — карта событий, мест и свежих моментов на Яндекс MapKit','Личные и групповые чаты, каналы, видеокружки до 3 минут','Звонки через собственный TURN-сервер','Размытая геопозиция: другим виден район, а не точка','Магазин стикеров и реферальная программа','Автообновление приложения без ручной установки'], tech:[['Клиент','Flutter, Dart, Riverpod'],['Бэкенд','Supabase (Postgres, RLS), self-hosted'],['Карта','Яндекс MapKit'],['Звонки','WebRTC + coturn'],['CI/CD','GitHub Actions, автообновление APK']], challenges:['Приватность геопозиции: точные координаты не покидают телефон','Серверы в России (152-ФЗ): свой стек Supabase, миграции и резервные копии под контролем','Сборка и выкладка обновлений через CI — пользователю не нужно ставить APK вручную'], gallery:['/projects/chawo-flow.jpg','/projects/chawo-chats.jpg','/projects/chawo-profile.jpg'] },
   { id:'capoeira', tag:'Web · HTML · CSS · JS',   title:'FGR Capoeira',   subtitle:'Сайт вместо зависимости от соцсетей',      desc:'Школа работала только через Instagram. Нужен был собственный канал, который продаёт без алгоритмов — напрямую из поиска.', accent:'#009C3B', bg:'#020D05', url:'https://ddmsngr.github.io/FGR_Capoeira/',         metric:{value:'Live',label:'продакшен'}, stack:['HTML5','CSS3','JavaScript'],    description:'Лендинг для Familia Ginga e Raça — международной школы капоэйры в СПб с 30-летней историей. Бразильская эстетика, полная SEO-оптимизация, мобильная адаптация.', role:'Frontend Developer & UI/UX', featuresLabel:'Что реализовано', features:['Бразильская цветовая палитра с тематическим фоном','SEO: полный meta-пакет og:image, keywords, OpenGraph','Секции: герой, тренеры, расписание, контакты','Призыв к действию — первое занятие бесплатно','Mobile-first адаптация и touch-навигация','Деплой GitHub Pages + домен fgr-capoeira.ru'], tech:[['Frontend','HTML5, CSS3, Vanilla JS'],['SEO','OpenGraph, meta-keywords'],['Деплой','GitHub Pages']], challenges:[] },
@@ -327,7 +312,6 @@ function viewFromHash(hash) {
 function BackBtn({ navigate, dark=true, returnTo='demos' }) {
   const handleBack = () => {
     if (returnTo) pendingScroll = returnTo;
-    // Use browser history if available, else fallback
     if (window.history.length > 1) {
       window.history.back();
     } else {
@@ -351,7 +335,6 @@ function HomeView({navigate}) {
   const [hov,setHov]=useState(null);
   const [openFaq,setOpenFaq]=useState(null);
   const [menu,setMenu]=useState(false);
-  const videoRef=useRef(null);
 
   useEffect(()=>{
     const fn=()=>setScrolled(window.scrollY>window.innerHeight*.85);
@@ -359,26 +342,6 @@ function HomeView({navigate}) {
     return()=>window.removeEventListener('scroll',fn);
   },[]);
 
-  useEffect(()=>{
-    const v=videoRef.current;
-    if(!v)return;
-    const FADE=0.5;
-    let raf;
-    const loop=()=>{
-      if(!v.duration){raf=requestAnimationFrame(loop);return;}
-      const t=v.currentTime,d=v.duration,rem=d-t;
-      if(t<FADE)v.style.opacity=t/FADE;
-      else if(rem<FADE)v.style.opacity=rem/FADE;
-      else v.style.opacity=1;
-      raf=requestAnimationFrame(loop);
-    };
-    const onEnded=()=>{v.style.opacity=0;setTimeout(()=>{v.currentTime=0;v.play().catch(()=>{});},100);};
-    v.style.opacity=0;
-    v.play().catch(()=>{});
-    raf=requestAnimationFrame(loop);
-    v.addEventListener('ended',onEnded);
-    return()=>{cancelAnimationFrame(raf);v.removeEventListener('ended',onEnded);};
-  },[]);
   useEffect(()=>{
     if(pendingScroll){const id=pendingScroll;pendingScroll=null;setTimeout(()=>document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'}),80);}
   },[]);
@@ -436,28 +399,22 @@ function HomeView({navigate}) {
       </header>
 
       <main id="main">
-      {/* HERO — fullscreen video, black+gold palette */}
+      {/* HERO */}
       <div style={{position:'relative',overflow:'hidden',minHeight:'100vh',background:'#060608'}}>
-        {/* Background video — desaturated to kill purple cast */}
-        <video
-          ref={videoRef}
-          src="/hero-bg.mp4"
-          muted playsInline
-          style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:0,pointerEvents:'none',filter:'saturate(0.28) brightness(0.82)'}}
-        />
-        {/* Warm dark overlay to shift tone from blue-purple to near-black */}
-        <div style={{position:'absolute',inset:0,background:'rgba(8,5,2,0.52)',pointerEvents:'none',zIndex:1}}/>
-
+        {/* ── 3D canvas background — replaces video ── */}
+        <HeroCanvas />
+        {/* Warm dark overlay */}
+        <div style={{position:'absolute',inset:0,background:'rgba(8,5,2,0.48)',pointerEvents:'none',zIndex:1}}/>
+        
         {/* Hero content */}
         <div style={{position:'relative',zIndex:10,minHeight:'100vh',display:'flex',flexDirection:'column',overflow:'visible'}}>
-
           {/* Dark warm core blur */}
-          <div style={{position:'absolute',width:1020,height:560,top:'50%',left:'50%',transform:'translate(-50%,-50%)',background:'#070401',filter:'blur(90px)',opacity:0.94,pointerEvents:'none',zIndex:0}}/>
+          <div style={{position:'absolute',width:1020,height:560,top:'50%',left:'50%',transform:'translate(-50%,-50%)',background:'#070401',filter:'blur(90px)',opacity:0.88,pointerEvents:'none',zIndex:0}}/>
           {/* Gold ambient — top right */}
           <div style={{position:'absolute',width:680,height:680,top:'-10%',left:'50%',background:'radial-gradient(circle,rgba(201,163,78,0.09) 0%,transparent 65%)',filter:'blur(60px)',pointerEvents:'none',zIndex:0}}/>
           {/* Gold ambient — bottom left */}
           <div style={{position:'absolute',width:500,height:500,bottom:'0%',left:'-6%',background:'radial-gradient(circle,rgba(201,163,78,0.055) 0%,transparent 65%)',filter:'blur(80px)',pointerEvents:'none',zIndex:0}}/>
-
+          
           {/* Navbar */}
           <nav aria-label="Меню" style={{position:'relative',zIndex:1,padding:'20px 44px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
             <a href="#" style={{display:'flex',alignItems:'center',gap:12,textDecoration:'none'}}>
@@ -481,14 +438,13 @@ function HomeView({navigate}) {
               Обсудить проект
             </button>
           </nav>
-
-          {/* Divider — gold tint */}
+          
+          {/* Divider */}
           <div style={{height:1,background:'linear-gradient(to right,transparent,rgba(201,163,78,0.2),transparent)',marginTop:3}}/>
-
+          
           {/* Headline + subtitle + CTA */}
           <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'space-between',gap:56,position:'relative',zIndex:1,padding:'0 52px'}}>
             <div style={{maxWidth:820}}>
-
               {/* Status pill */}
               <div style={{display:'inline-flex',alignItems:'center',gap:8,marginBottom:30,padding:'5px 14px',borderRadius:40,border:'1px solid rgba(201,163,78,0.22)',background:'rgba(201,163,78,0.06)'}}>
                 <div style={{width:6,height:6,borderRadius:'50%',background:GOLD,boxShadow:`0 0 8px ${GOLD}88`}}/>
@@ -506,7 +462,6 @@ function HomeView({navigate}) {
                   display:'block',
                 }}>без переделок</span>
               </h1>
-
               {/* Subtitle */}
               <p style={{color:'rgba(245,240,232,0.78)',fontSize:19,lineHeight:'32px',maxWidth:560,margin:'0 0 18px',fontWeight:400}}>
                 Разрабатываю сайты, мобильные приложения и&nbsp;системы автоматизации — с&nbsp;инженерной точностью
@@ -517,7 +472,6 @@ function HomeView({navigate}) {
                 Теперь применяю тот же подход в&nbsp;разработке: чёткая логика,
                 предсказуемый результат и&nbsp;запуск без хаоса.
               </p>
-
               {/* CTA buttons */}
               <div style={{display:'flex',gap:12,flexWrap:'wrap',alignItems:'center'}}>
                 <button onClick={openContact} className="btn-gold" style={{display:'inline-flex',alignItems:'center',gap:8,padding:'14px 32px',borderRadius:10,fontSize:14,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>
@@ -544,8 +498,8 @@ function HomeView({navigate}) {
               ))}
             </aside>
           </div>
-
-          {/* Logo marquee — pinned to bottom */}
+          
+          {/* Logo marquee */}
           <div style={{paddingBottom:40,position:'relative',zIndex:1}}>
             <div style={{maxWidth:'64rem',margin:'0 auto',padding:'0 44px',display:'flex',alignItems:'center',gap:48}}>
               <div style={{fontSize:12,color:'rgba(245,240,232,0.5)',whiteSpace:'nowrap',lineHeight:1.7,flexShrink:0,letterSpacing:'0.02em'}}>
@@ -563,7 +517,6 @@ function HomeView({navigate}) {
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -632,12 +585,10 @@ function HomeView({navigate}) {
         ))}
       </section>
 
-      {/* CASES — строго 3 колонки, 6 проектов = 2 ряда по 3 */}
+      {/* CASES */}
       <section id="cases" style={{scrollMarginTop:70,position:'relative',overflow:'hidden'}}>
-        {/* Section ambient */}
         <Orb top="10%"   left="2%"   size={700} color="rgba(201,163,78,0.04)" blur={100}/>
         <Orb bottom="5%" right="2%"  size={600} color="rgba(100,70,220,0.04)" blur={90}/>
-
         <div style={{position:'relative',height:240,overflow:'hidden',marginBottom:2}}>
           <img src={CASES_BG} alt="" style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.32) saturate(0.7)'}}/>
           <div style={{position:'absolute',inset:0,background:'linear-gradient(to bottom,rgba(12,13,16,0.3),rgba(12,13,16,0.88))'}}/>
@@ -647,8 +598,6 @@ function HomeView({navigate}) {
             <p style={{fontSize:14,color:'rgba(229,229,229,0.38)',marginTop:10,letterSpacing:'0.02em'}}>Нажмите на карточку — откроется кейс или живой сайт</p>
           </div>
         </div>
-
-        {/* Mobile-only label above cases */}
         <div className="mobile-cases-label" style={{display:'none',alignItems:'center',gap:12,padding:'28px 20px 16px',borderTop:`1px solid ${BORDER}`}}>
           <div style={{width:3,height:28,background:`linear-gradient(to bottom,${GOLD},transparent)`,borderRadius:2,flexShrink:0}}/>
           <div>
@@ -656,8 +605,6 @@ function HomeView({navigate}) {
             <div style={{fontSize:20,fontWeight:700,color:'#F0EDE8',letterSpacing:'-0.01em',lineHeight:1.1}}>Реализованные проекты</div>
           </div>
         </div>
-
-        {/* 3-column grid → 1 column on mobile */}
         <div className="cases-grid" style={{
           display:'grid',
           gridTemplateColumns:'repeat(3,1fr)',
@@ -728,7 +675,7 @@ function HomeView({navigate}) {
         </div>
       </section>
 
-      {/* PROCESS — цифры крупные, золотые, видимые */}
+      {/* PROCESS */}
       <section id="process" style={{borderTop:`1px solid ${BORDER}`,borderBottom:`1px solid ${BORDER}`,position:'relative',overflow:'hidden'}}>
         <Orb top="20%"  right="5%"  size={500} color="rgba(201,163,78,0.05)" blur={80}/>
         <div style={{maxWidth:1100,margin:'0 auto',padding:'96px 48px',scrollMarginTop:70,position:'relative',zIndex:1}}>
@@ -740,7 +687,6 @@ function HomeView({navigate}) {
             {PROC.map((p,i)=>(
               <motion.div key={i} initial={{opacity:0,y:14}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{delay:i*0.09}}
                 style={{paddingRight:32,paddingLeft:i>0?32:0,borderRight:i<3?`1px solid ${BORDER}`:'none',position:'relative'}}>
-                {/* Большая видимая цифра — акцентная золотая */}
                 <div style={{
                   fontFamily:"'Cormorant Garamond',serif",
                   fontSize:96,fontWeight:700,
@@ -829,7 +775,7 @@ function HomeView({navigate}) {
   );
 }
 
-// ═══════════════════ DEMO VIEWS (unchanged internals) ═══════════════════
+// ═══════════════════ DEMO VIEWS ═══════════════════
 function LawyerView({navigate}){
   const [slide,setSlide]=useState(0);
   return(<div style={{background:'#0A192F',color:'#fff',minHeight:'100vh',fontFamily:'Inter,sans-serif'}}><BackBtn navigate={navigate}/>
@@ -853,7 +799,7 @@ function CatsView({navigate}){
     <div style={{textAlign:'center',marginBottom:24}}><div style={{display:'inline-flex',alignItems:'center',gap:6,color:'#D4754A',fontSize:13,fontWeight:700,marginBottom:6}}><Gift size={15}/> Конструктор набора</div><h2 style={{fontWeight:800,fontSize:24,color:'#3D2314',marginBottom:4}}>Собери свой бокс</h2></div>
     <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(185px,1fr))',gap:12,marginBottom:20}}>{CAT_PRODUCTS.map(p=>(<div key={p.id} style={{background:'#fff',borderRadius:22,overflow:'hidden',boxShadow:'0 4px 18px rgba(0,0,0,0.07)'}}><img src={p.img} alt={p.name} style={{width:'100%',height:110,objectFit:'cover'}}/><div style={{padding:'14px 16px 18px',textAlign:'center'}}><div style={{fontWeight:800,fontSize:13,color:'#3D2314',marginBottom:4}}>{p.name}</div><div style={{fontSize:11,color:'#9A6A50',marginBottom:10,minHeight:30,lineHeight:1.5}}>{p.desc}</div><div style={{fontWeight:800,fontSize:17,color:'#D4754A',marginBottom:12}}>{p.price} ₽</div><div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:10}}><button onClick={()=>upd(p.id,-1)} style={{width:30,height:30,borderRadius:'50%',border:'2px solid #E8D0C4',background:'#FFF5EC',color:'#A05A3A',cursor:'pointer',fontSize:18,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center'}}>−</button><motion.span key={counts[p.id]||0} initial={{scale:1.3}} animate={{scale:1}} transition={{type:'spring',stiffness:400}} style={{fontWeight:800,fontSize:17,color:'#3D2314',minWidth:22,textAlign:'center'}}>{counts[p.id]||0}</motion.span><button onClick={()=>upd(p.id,1)} style={{width:30,height:30,borderRadius:'50%',border:'none',background:'#D4754A',color:'#fff',cursor:'pointer',fontSize:18,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center'}}>+</button></div></div></div>))}</div>
     <AnimatePresence>{items>0&&<motion.div initial={{opacity:0,y:14}} animate={{opacity:1,y:0}} exit={{opacity:0,y:14}} style={{background:'#D4754A',borderRadius:18,padding:'20px 24px',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:12}}><div><div style={{fontSize:11,color:'rgba(255,255,255,0.7)',marginBottom:3}}>В боксе</div><div style={{fontWeight:800,fontSize:18,color:'#fff'}}>{items} {items===1?'игрушка':items<5?'игрушки':'игрушек'} · {total} ₽</div></div><button style={{background:'#fff',color:'#D4754A',border:'none',borderRadius:13,padding:'12px 24px',fontWeight:800,fontSize:14,cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontFamily:"'Nunito',sans-serif"}}>Оформить <ArrowUpRight size={13}/></button></motion.div>}</AnimatePresence>
-    </div></div>);
+  </div></div>);
 }
 
 const PER=8;
@@ -877,9 +823,11 @@ function DashboardView({navigate}){
   };
   return(<div style={{background:'#09090B',color:'#fff',minHeight:'100vh',display:'flex',fontFamily:'Inter,sans-serif'}}><BackBtn navigate={navigate}/>
     <div style={{width:196,background:'#111113',borderRight:'1px solid #27272A',flexShrink:0,paddingTop:66,padding:'66px 8px 12px'}}><div style={{fontWeight:800,fontSize:11,color:'#34D399',letterSpacing:'0.1em',padding:'0 10px',marginBottom:16,textTransform:'uppercase'}}>Infra Monitor</div>{navItems.map(item=><button key={item.id} onClick={()=>setActive(item.id)} style={{display:'flex',alignItems:'center',gap:9,width:'100%',padding:'9px 10px',borderRadius:8,border:'none',cursor:'pointer',background:active===item.id?'rgba(52,211,153,0.1)':'transparent',color:active===item.id?'#34D399':'#71717A',fontSize:13,fontWeight:active===item.id?600:400,textAlign:'left',marginBottom:1,fontFamily:'Inter,sans-serif'}}><item.Icon size={14}/> {item.l}</button>)}</div>
-    <div style={{flex:1,overflow:'auto'}}><div style={{position:'relative',height:88,overflow:'hidden'}}><img src={IMGS.dashboard} alt="" style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.25)'}}/><div style={{position:'absolute',inset:0,background:'linear-gradient(to bottom,transparent,#09090B)'}}/><div style={{position:'absolute',bottom:12,left:20,fontSize:13,fontWeight:800,color:'#34D399',fontFamily:'Inter,sans-serif'}}>Система мониторинга инфраструктуры</div></div>
-    <div style={{background:'#111113',borderBottom:'1px solid #27272A',padding:'12px 20px',display:'flex',gap:10,flexWrap:'wrap',alignItems:'center'}}>{[{l:'ЦП',v:cpu+'%',Icon:Cpu,c:cpu>80?'#F87171':cpu>60?'#FB923C':'#4ADE80',bar:cpu},{l:'БД',v:Math.round(db)+'%',Icon:Database,c:db>80?'#F87171':db>60?'#FB923C':'#4ADE80',bar:db},{l:'Сессии',v:sessions,Icon:Activity,c:'#34D399',bar:null}].map(m=><div key={m.l} style={{display:'flex',alignItems:'center',gap:10,background:'#18181B',borderRadius:12,padding:'10px 13px',border:'1px solid #27272A'}}><m.Icon size={14} color={m.c}/><div><div style={{fontSize:10,color:'#71717A',marginBottom:2}}>{m.l}</div><motion.div key={m.v} initial={{opacity:0.5}} animate={{opacity:1}} style={{fontFamily:"'JetBrains Mono',monospace",fontWeight:700,fontSize:15,color:m.c,lineHeight:1}}>{m.v}</motion.div>{m.bar!==null&&<div style={{width:60,height:4,background:'#27272A',borderRadius:2,marginTop:3}}><motion.div animate={{width:m.bar+'%'}} transition={{duration:0.8}} style={{height:'100%',borderRadius:2,background:m.c}}/></div>}</div></div>)}<div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:6,background:'#18181B',border:'1px solid #27272A',borderRadius:8,padding:'8px 12px'}}><Search size={12} color="#71717A"/><input placeholder="Поиск..." style={{background:'none',border:'none',color:'#A1A1AA',fontSize:12,outline:'none',width:90}}/></div></div>
-    <div style={{padding:18}}>{renderContent()}</div></div>
+    <div style={{flex:1,overflow:'auto'}}>
+      <div style={{position:'relative',height:88,overflow:'hidden'}}><img src={IMGS.dashboard} alt="" style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.25)'}}/><div style={{position:'absolute',inset:0,background:'linear-gradient(to bottom,transparent,#09090B)'}}/><div style={{position:'absolute',bottom:12,left:20,fontSize:13,fontWeight:800,color:'#34D399',fontFamily:'Inter,sans-serif'}}>Система мониторинга инфраструктуры</div></div>
+      <div style={{background:'#111113',borderBottom:'1px solid #27272A',padding:'12px 20px',display:'flex',gap:10,flexWrap:'wrap',alignItems:'center'}}>{[{l:'ЦП',v:cpu+'%',Icon:Cpu,c:cpu>80?'#F87171':cpu>60?'#FB923C':'#4ADE80',bar:cpu},{l:'БД',v:Math.round(db)+'%',Icon:Database,c:db>80?'#F87171':db>60?'#FB923C':'#4ADE80',bar:db},{l:'Сессии',v:sessions,Icon:Activity,c:'#34D399',bar:null}].map(m=><div key={m.l} style={{display:'flex',alignItems:'center',gap:10,background:'#18181B',borderRadius:12,padding:'10px 13px',border:'1px solid #27272A'}}><m.Icon size={14} color={m.c}/><div><div style={{fontSize:10,color:'#71717A',marginBottom:2}}>{m.l}</div><motion.div key={m.v} initial={{opacity:0.5}} animate={{opacity:1}} style={{fontFamily:"'JetBrains Mono',monospace",fontWeight:700,fontSize:15,color:m.c,lineHeight:1}}>{m.v}</motion.div>{m.bar!==null&&<div style={{width:60,height:4,background:'#27272A',borderRadius:2,marginTop:3}}><motion.div animate={{width:m.bar+'%'}} transition={{duration:0.8}} style={{height:'100%',borderRadius:2,background:m.c}}/></div>}</div></div>)}<div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:6,background:'#18181B',border:'1px solid #27272A',borderRadius:8,padding:'8px 12px'}}><Search size={12} color="#71717A"/><input placeholder="Поиск..." style={{background:'none',border:'none',color:'#A1A1AA',fontSize:12,outline:'none',width:90}}/></div></div>
+      <div style={{padding:18}}>{renderContent()}</div>
+    </div>
   </div>);
 }
 
@@ -929,7 +877,6 @@ function ShopView({navigate}){
 function ProjectDetailView({navigate,project:p}){
   const isDD=p.id==='deepdrift';
   return(<div style={{background:p.bg,color:'#fff',minHeight:'100vh',fontFamily:'Inter,sans-serif',position:'relative',overflow:'hidden'}}>
-    {/* Ambient orb for project detail */}
     <Orb top="10%" left="60%" size={500} color={p.accent+'15'} blur={120}/>
     <BackBtn navigate={navigate} returnTo="cases"/>
     <div style={{position:'relative',height:360,overflow:'hidden'}}>
@@ -984,8 +931,7 @@ function ProjectDetailView({navigate,project:p}){
 // ═══════════════════════════════════════════════════════════
 export default function App(){
   const [currentView,setCurrentView]=useState(()=>viewFromHash(window.location.hash));
-
-  // Listen to popstate (browser Back/Forward)
+  
   useEffect(()=>{
     const handlePop=()=>{
       const v=viewFromHash(window.location.hash);
@@ -999,7 +945,6 @@ export default function App(){
   useEffect(()=>{ window.scrollTo(0,0); },[currentView]);
 
   const navigate=(v)=>{
-    // External URL projects — open in new tab, no history change
     if(HAS_URL.has(v)){
       const proj=PROJECTS.find(p=>p.id===v);
       if(proj?.url){ window.open(proj.url,'_blank'); return; }
@@ -1020,19 +965,19 @@ export default function App(){
 
   return(
     <>
-    <AnimatePresence mode="wait">
-      <motion.div key={currentView} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:0.22}}>
-        {currentView==='home'      && <HomeView navigate={navigate}/>}
-        {currentView==='lawyer'    && <LawyerView navigate={navigate}/>}
-        {currentView==='cats'      && <CatsView navigate={navigate}/>}
-        {currentView==='cnc'       && <CncView navigate={navigate}/>}
-        {currentView==='mycaviar'  && <MycaviarView navigate={navigate}/>}
-        {realProject               && <ProjectDetailView navigate={navigate} project={realProject}/>}
-      </motion.div>
-    </AnimatePresence>
-    <PrivacyModal/>
-    <CookieBanner/>
-    <ContactModal/>
+      <AnimatePresence mode="wait">
+        <motion.div key={currentView} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:0.22}}>
+          {currentView==='home'      && <HomeView navigate={navigate}/>}
+          {currentView==='lawyer'    && <LawyerView navigate={navigate}/>}
+          {currentView==='cats'      && <CatsView navigate={navigate}/>}
+          {currentView==='cnc'       && <CncView navigate={navigate}/>}
+          {currentView==='mycaviar'  && <MycaviarView navigate={navigate}/>}
+          {realProject               && <ProjectDetailView navigate={navigate} project={realProject}/>}
+        </motion.div>
+      </AnimatePresence>
+      <PrivacyModal/>
+      <CookieBanner/>
+      <ContactModal/>
     </>
   );
 }
