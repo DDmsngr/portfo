@@ -252,9 +252,10 @@ function ContactModal() {
 
 // ─── History-aware navigation ─────────────────────────────────────────────
 const DEMO_IDS = new Set(['mycaviar','lawyer','cats','cnc']);
-const HAS_URL  = new Set(['olga','capoeira','kott']);
+const HAS_URL  = new Set(['olga','capoeira','kott','chawo']);
 
 function viewFromHash(hash) {
+  if (hash === '#/project/chawo') return 'home';
   if (hash.startsWith('#/project/')) return hash.slice(10);
   if (hash.startsWith('#/demo/'))    return hash.slice(7);
   return 'home';

@@ -125,7 +125,7 @@ function ChaWoFrame({ navigate }) {
           <p className="mt-5 max-w-md text-[16px] leading-relaxed text-ink">{p.desc}</p>
 
           <dl className="mt-10 grid max-w-md grid-cols-3 gap-4 border-t border-ink/25 pt-6 text-ink">
-            {[['Flutter', 'Supabase'], ['Сочи', 'пилот'], ['Всё моё', 'клиент, сервер, CI']].map(([a, b]) => (
+            {[['Flutter', 'Supabase'], ['Петербург', 'пилот'], ['Всё моё', 'клиент, сервер, CI']].map(([a, b]) => (
               <div key={a}>
                 <dt className="font-display text-[15px] font-extrabold uppercase leading-tight">{a}</dt>
                 <dd className="mt-1 text-[12px] leading-snug opacity-75">{b}</dd>
@@ -134,7 +134,7 @@ function ChaWoFrame({ navigate }) {
           </dl>
 
           <button type="button" onClick={() => navigate('chawo')} className="group mt-10 inline-flex items-center gap-3 bg-ink px-8 py-5 text-[12px] font-bold uppercase tracking-[0.12em] text-white transition-colors hover:bg-white hover:text-ink">
-            Читать кейс <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            Открыть сайт <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </button>
         </div>
 
