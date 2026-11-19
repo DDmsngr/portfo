@@ -3,9 +3,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: '#0E0E0E',
-        paper: '#F4F1EA',
-        gold: '#B8923A',
+        ink: 'rgb(var(--ink) / <alpha-value>)',
+        paper: 'rgb(var(--paper) / <alpha-value>)',
+        gold: 'rgb(var(--gold) / <alpha-value>)',
+        chawo: 'rgb(var(--chawo) / <alpha-value>)',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         'hero-sub': 'hsl(var(--hero-sub))',

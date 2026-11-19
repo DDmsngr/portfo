@@ -1,4 +1,9 @@
-
+/* Hallmark · checked: 2026-11-19 · genre: editorial (inferred)
+ * floor: fixed 6a, 15, 19, 26a, 34, 49a, 50, 54, 67 (small labels), 75 · structural: printed (59, 71)
+ * built: the project · redesign: polish · v2.0.0 */
+/* Вне polish по решению владельца: капс с разрядкой в меню, на кнопках и крупных заголовках
+   (стиль сайта); демо-страницы в App.jsx (адвокат, магазин, кошки, мониторинг) со своими
+   палитрами, курсивом и стрелками: это макеты чужих продуктов, а не оформление портфолио. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,209 +12,84 @@
   --background: 260 87% 3%;
   --foreground: 40 6% 95%;
   --hero-sub: 40 6% 82%;
+  /* бренд портфолио: каналы RGB, чтобы Tailwind делал bg-ink/85 */
+  --ink: 14 14 14;
+  --paper: 244 241 234;
+  --gold: 184 146 58;
+  --chawo: 232 70 124;
+  /* окна, баннер cookie, служебные страницы */
+  --ui-bg: #0C0D10;
+  --ui-surface: rgb(9 8 6 / 0.97);
+  --ui-text: #E5E5E5;
+  --ui-text-strong: #F0EDE8;
+  --ui-text-muted: rgb(229 229 229 / 0.7);
+  --ui-text-soft: rgb(229 229 229 / 0.58);
+  --ui-gold: #C9A34E;
+  --ui-gold-hi: #E8C94A;
+  --ui-gold-lo: #B08930;
+  --ui-gold-soft: rgb(201 163 78 / 0.85);
+  --ui-gold-glow: rgb(201 163 78 / 0.25);
+  --ui-gold-glow-hi: rgb(201 163 78 / 0.4);
+  --ui-line: rgb(201 163 78 / 0.22);
+  --ui-line-soft: rgb(201 163 78 / 0.12);
+  --ui-scrim: rgb(0 0 0 / 0.72);
+  --ui-shadow: 0 32px 80px rgb(0 0 0 / 0.7);
+  --ui-field: rgb(255 255 255 / 0.04);
+  --ui-close: rgb(255 255 255 / 0.6);
+  --ui-close-line: rgb(255 255 255 / 0.12);
+  --ui-error: #F87171;
+  --focus-ring: rgb(var(--ink));
+  --focus-ring-on-dark: rgb(var(--paper));
+  --font-ui: 'Inter', sans-serif;
+  --font-serif: 'Cormorant Garamond', serif;
 }
 
-html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; overflow-x: clip; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-ui);
   -webkit-font-smoothing: antialiased;
-  background: #0E1117;
-  color: #EAEDF3;
-  overflow-x: hidden;
+  background: var(--ui-bg);
+  color: var(--ui-text);
+  overflow-x: clip;
 }
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #0E1117; }
-::-webkit-scrollbar-thumb { background: rgba(186,155,93,0.4); border-radius: 4px; }
+h1, h2 { text-wrap: balance; overflow-wrap: break-word; min-width: 0; }
 
-/* Marquee */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--ui-bg); }
+::-webkit-scrollbar-thumb { background: rgb(var(--gold) / 0.4); border-radius: 4px; }
+
 @keyframes marquee {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
 }
-.marquee-inner { animation: marquee 28s linear infinite; display: flex; white-space: nowrap; }
-.marquee-inner:hover { animation-play-state: paused; }
 
-/* Hero secondary button */
-.hero-secondary {
-  background: rgba(255, 255, 255, 0.06);
-  color: hsl(40, 6%, 95%);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(8px);
-  font-family: 'Inter', sans-serif;
-  transition: background 200ms, border-color 200ms;
-}
-.hero-secondary:hover {
-  background: rgba(255, 255, 255, 0.10);
-  border-color: rgba(255, 255, 255, 0.24);
-}
-
-/* Liquid glass */
-.liquid-glass {
-  background: rgba(255, 255, 255, 0.01);
-  background-blend-mode: luminosity;
-  backdrop-filter: blur(4px);
-  border: none;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
-  position: relative;
-  overflow: hidden;
-}
-.liquid-glass::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1.4px;
-  background: linear-gradient(180deg,
-    rgba(255,255,255,0.45) 0%,
-    rgba(255,255,255,0.15) 20%,
-    rgba(255,255,255,0) 40%,
-    rgba(255,255,255,0) 60%,
-    rgba(255,255,255,0.15) 80%,
-    rgba(255,255,255,0.45) 100%
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* Gold gradient button — premium */
+/* Золотая кнопка в окнах заявки и политики */
 .btn-gold {
-  background: linear-gradient(135deg, #E8C94A 0%, #C9A34E 40%, #B08930 100%);
-  box-shadow: 0 4px 20px rgba(201,163,78,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
-  transition: opacity 200ms, transform 150ms, box-shadow 200ms;
+  background: linear-gradient(135deg, var(--ui-gold-hi) 0%, var(--ui-gold) 40%, var(--ui-gold-lo) 100%);
+  box-shadow: 0 4px 20px var(--ui-gold-glow);
+  transition: opacity 200ms, transform 150ms;
 }
-.btn-gold:hover {
-  opacity: 0.92;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(201,163,78,0.4), inset 0 1px 0 rgba(255,255,255,0.25);
-}
+.btn-gold:hover { opacity: 0.92; transform: translateY(-2px); box-shadow: 0 8px 32px var(--ui-gold-glow-hi); }
 .btn-gold:active { transform: translateY(0); }
 
-.btn-outline {
-  transition: background 200ms, transform 150ms, border-color 200ms;
-}
-.btn-outline:hover {
-  background: rgba(201,163,78,0.08) !important;
-  border-color: rgba(201,163,78,0.3) !important;
-  transform: translateY(-1px);
-}
-
-/* Service row hover */
-.service-row {
-  transition: background 200ms, padding 200ms, border-color 200ms;
-}
-.service-row:hover {
-  background: rgba(201,163,78,0.05);
-  padding-left: 28px;
-}
-
-/* Case card */
-.case-card {
-  transition: transform 320ms ease;
-}
-.case-card:hover { transform: scale(1.01); }
-
-/* Back button */
-.back-btn {
-  transition: background 200ms, opacity 200ms;
-}
-.back-btn:hover { background: rgba(255,255,255,0.1) !important; }
-
-/* Gradient mesh orbs */
-.gradient-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
-  pointer-events: none;
-  opacity: 0.5;
-}
-
-/* Glass card effect */
-.glass-card {
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.06);
-  transition: border-color 200ms, background 200ms, box-shadow 200ms;
-}
-.glass-card:hover {
-  border-color: rgba(201,163,78,0.15);
-  background: rgba(255,255,255,0.05);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.2);
-}
-
-/* Section gradient backgrounds */
-.section-gradient-1 {
-  background: linear-gradient(180deg, #0E1117 0%, #111827 50%, #0E1117 100%);
-}
-.section-gradient-2 {
-  background: linear-gradient(180deg, #0E1117 0%, #0F1520 50%, #0E1117 100%);
-}
-
-/* Mobile responsive */
+/* Mobile */
 @media (max-width: 768px) {
-  /* Hide nav links and CTAs in hero and fixed header */
-  .desktop-nav      { display: none !important; }
-  .hero-nav-links   { display: none !important; }
-  .hero-nav-cta     { display: none !important; }
-  .mobile-menu-btn  { display: flex !important; }
-  .header-subtitle  { display: none; }
-
-  /* Fixed header — compact on mobile */
-  header[style] {
-    padding: 0 16px !important;
-    height: 56px !important;
-  }
-
-  /* Hero navbar padding */
-  nav[style] {
-    padding: 16px 20px !important;
-  }
-
-  /* Hero headline size floor */
+  /* Hero: нижняя граница кегля имени */
   h1 { font-size: clamp(40px, 11vw, 64px) !important; }
 
-  /* Hero content padding */
-  .hero-content-pad { padding: 0 20px !important; }
-
-  /* Ticker — smaller text on mobile */
-  .marquee-inner span[style] { padding: 0 14px !important; font-size: 10px !important; }
-
-  /* Section padding */
   section[style] { padding-left: 20px !important; padding-right: 20px !important; }
 
-  /* Флагманская карточка: текст поверх телефонов читаем */
-  .flagship-ov { background: linear-gradient(to top, rgba(12,13,16,0.97) 0%, rgba(12,13,16,0.9) 55%, rgba(12,13,16,0.45) 100%) !important; }
-
-  /* Cases grid — 1 column on mobile */
-  .cases-grid { grid-template-columns: 1fr !important; gap: 3px !important; }
-
-  /* Case cards — taller on mobile for readability */
-  .cases-grid .case-card { height: 300px !important; }
-
-  /* Mobile cases label — show only on mobile */
-  .mobile-cases-label { display: flex !important; }
-
-  /* Process grid — single column */
-  .process-grid { grid-template-columns: 1fr !important; }
-
-  /* ── Lawyer demo page ─────────────────────── */
-  /* Navbar: push below fixed BackBtn, reduce padding */
+  /* ── Демо адвоката ── */
   .lawyer-nav {
     padding: 70px 16px 16px 16px !important;
     flex-wrap: wrap;
     gap: 10px;
     align-items: flex-start;
   }
-  .lawyer-nav > div:first-child > div:first-child {
-    font-size: 13px !important;
-    letter-spacing: 0.04em !important;
-  }
-
-  /* Hero text: full width, proper bottom margin */
+  .lawyer-nav > div:first-child > div:first-child { font-size: 13px !important; }
   .lawyer-hero-text {
     left: 16px !important;
     right: 16px !important;
@@ -220,25 +100,23 @@ body {
     font-size: clamp(26px, 7vw, 40px) !important;
     margin-bottom: 12px !important;
   }
-
-  /* Content area: compact horizontal padding */
-  .lawyer-content {
-    padding: 28px 16px !important;
-  }
+  .lawyer-content { padding: 28px 16px !important; }
 }
 
-/* Skip link, focus, mobile menu button */
+/* Skip link и фокус */
 .skip-link {
   position: fixed; left: 12px; top: -60px; z-index: 3000;
-  padding: 10px 16px; border-radius: 8px; background: #C9A34E; color: #0C0D10;
+  padding: 10px 16px; border-radius: 8px; background: var(--ui-gold); color: var(--ui-bg);
   font-weight: 700; font-size: 13px; text-decoration: none; transition: top 150ms;
 }
 .skip-link:focus { top: 12px; }
-:focus-visible { outline: 2px solid #C9A34E; outline-offset: 3px; }
-input:focus-visible, textarea:focus-visible { outline: 2px solid #C9A34E !important; outline-offset: 1px; }
-.mobile-menu-btn { display: none; }
+/* Кольцо фокуса появляется сразу: тёмное на светлых блоках, белое на тёмных */
+:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+.bg-ink :focus-visible, [role="dialog"] :focus-visible { outline-color: var(--focus-ring-on-dark); }
+input:focus-visible, textarea:focus-visible { outline: 2px solid var(--ui-gold) !important; outline-offset: 1px; }
+button:active, a:active { transform: translateY(1px); }
+button:disabled { cursor: not-allowed; opacity: 0.6; }
 
-/* Уважаем «уменьшить движение»: без бегущей строки и фонового видео */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -247,8 +125,4 @@ input:focus-visible, textarea:focus-visible { outline: 2px solid #C9A34E !import
     scroll-behavior: auto !important;
   }
   video { display: none !important; }
-}
-
-@media (max-width: 1100px) {
-  .hero-aside { display: none !important; }
 }

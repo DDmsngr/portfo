@@ -71,25 +71,25 @@ function PrivacyModal() {
   },[open]);
   if(!open) return null;
   const close=()=>setOpen(false);
-  const st={fontSize:11,fontWeight:700,letterSpacing:'0.14em',textTransform:'uppercase',color:GOLD,marginTop:20,marginBottom:8};
-  const pt={fontSize:13,color:'rgba(229,229,229,0.58)',lineHeight:1.82,margin:'0 0 6px'};
-  const lt={fontSize:13,color:'rgba(229,229,229,0.58)',lineHeight:1.82,paddingLeft:14};
+  const st={fontSize:14,fontWeight:600,color:'var(--ui-gold)',marginTop:20,marginBottom:8};
+  const pt={fontSize:14,color:'var(--ui-text-soft)',lineHeight:1.75,margin:'0 0 6px'};
+  const lt={fontSize:14,color:'var(--ui-text-soft)',lineHeight:1.75,paddingLeft:14};
   return(
     <div role="dialog" aria-modal="true" aria-label="Политика обработки персональных данных" style={{position:'fixed',inset:0,zIndex:2000,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px'}}>
-      <div onClick={close} style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.72)',backdropFilter:'blur(10px)'}}/>
-      <div style={{position:'relative',zIndex:1,width:'100%',maxWidth:640,maxHeight:'86vh',background:'rgba(9,8,6,0.97)',border:'1px solid rgba(201,163,78,0.22)',borderRadius:18,backdropFilter:'blur(24px)',boxShadow:'0 32px 80px rgba(0,0,0,0.7),inset 0 1px 0 rgba(201,163,78,0.12)',display:'flex',flexDirection:'column',overflow:'hidden'}}>
-        <div style={{padding:'22px 26px 18px',borderBottom:'1px solid rgba(201,163,78,0.1)',display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexShrink:0}}>
+      <div onClick={close} style={{position:'absolute',inset:0,background:'var(--ui-scrim)'}}/>
+      <div style={{position:'relative',zIndex:1,width:'100%',maxWidth:640,maxHeight:'86vh',background:'var(--ui-surface)',border:'1px solid var(--ui-line)',borderRadius:18,boxShadow:'var(--ui-shadow)',display:'flex',flexDirection:'column',overflow:'hidden'}}>
+        <div style={{padding:'22px 26px 18px',borderBottom:'1px solid var(--ui-line-soft)',display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexShrink:0}}>
           <div>
-            <div style={{fontSize:10,fontWeight:700,letterSpacing:'0.18em',color:GOLD,textTransform:'uppercase',marginBottom:6}}>Юридический документ · 152-ФЗ</div>
-            <div style={{fontSize:19,fontWeight:500,color:'#F0EDE8',fontFamily:"'Cormorant Garamond',serif",lineHeight:1.2}}>Политика обработки<br/>персональных данных</div>
+            <div style={{fontSize:13,fontWeight:500,color:'var(--ui-gold)',marginBottom:6}}>Юридический документ, 152-ФЗ</div>
+            <div style={{fontSize:19,fontWeight:500,color:'var(--ui-text-strong)',fontFamily:'var(--font-serif)',lineHeight:1.2}}>Политика обработки<br/>персональных данных</div>
           </div>
-          <button onClick={close} aria-label="Закрыть" style={{width:34,height:34,borderRadius:'50%',border:'1px solid rgba(255,255,255,0.1)',background:'rgba(255,255,255,0.04)',color:'rgba(255,255,255,0.45)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,fontSize:20,lineHeight:1,marginTop:2}}>×</button>
+          <button onClick={close} aria-label="Закрыть" style={{width:34,height:34,borderRadius:'50%',border:'1px solid var(--ui-close-line)',background:'var(--ui-field)',color:'var(--ui-close)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,fontSize:20,lineHeight:1,marginTop:2}}>×</button>
         </div>
         <div style={{overflowY:'auto',padding:'20px 26px 28px',flex:1}}>
           <p style={pt}>Настоящая Политика разработана в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных».</p>
-          <div style={{padding:'12px 16px',borderRadius:10,border:'1px solid rgba(201,163,78,0.15)',background:'rgba(201,163,78,0.04)',margin:'12px 0'}}>
-            <div style={{fontSize:10,fontWeight:700,color:GOLD,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:5}}>Оператор персональных данных</div>
-            <div style={{fontSize:13,color:'rgba(229,229,229,0.72)',lineHeight:1.7}}>ИП Евтушенко Алексей Михайлович<br/>E-mail: 9254652@bk.ru</div>
+          <div style={{padding:'12px 16px',borderRadius:10,border:'1px solid var(--ui-line)',background:'var(--ui-field)',margin:'12px 0'}}>
+            <div style={{fontSize:13,fontWeight:600,color:'var(--ui-gold)',marginBottom:5}}>Оператор персональных данных</div>
+            <div style={{fontSize:14,color:'var(--ui-text-muted)',lineHeight:1.7}}>ИП Евтушенко Алексей Михайлович<br/>E-mail: 9254652@bk.ru</div>
           </div>
           <div style={st}>1. Состав обрабатываемых данных</div>
           <p style={pt}>Оператор обрабатывает данные, добровольно предоставленные через форму обратной связи:</p>
@@ -108,7 +108,7 @@ function PrivacyModal() {
           <p style={pt}>Сайт использует файлы cookie для корректной работы. Cookie можно отключить в настройках браузера.</p>
           <div style={st}>8. Контакты оператора</div>
           <p style={pt}>По вопросам обработки персональных данных: 9254652@bk.ru</p>
-          <button onClick={close} className="btn-gold" style={{marginTop:22,width:'100%',padding:'12px',borderRadius:10,fontSize:13,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>Понятно, закрыть</button>
+          <button onClick={close} className="btn-gold" style={{marginTop:22,width:'100%',padding:'12px',borderRadius:10,fontSize:14,fontWeight:700,color:'var(--ui-bg)',border:'none',cursor:'pointer'}}>Понятно, закрыть</button>
         </div>
       </div>
     </div>
@@ -119,21 +119,22 @@ function CookieBanner() {
   const [visible, setVisible] = useState(false);
   useEffect(()=>{
     if(!localStorage.getItem('cookies_accepted')){
-      const show=()=>setVisible(true);
-      const t=setTimeout(show,8000);
-      window.addEventListener('scroll',show,{once:true,passive:true});
-      return()=>{clearTimeout(t);window.removeEventListener('scroll',show);};
+      // Баннер виден только ниже первого экрана: в hero он закрывает подпись и кнопку
+      const onScroll=()=>setVisible(window.scrollY>window.innerHeight*0.8);
+      onScroll();
+      window.addEventListener('scroll',onScroll,{passive:true});
+      return()=>window.removeEventListener('scroll',onScroll);
     }
   },[]);
   const accept=()=>{ localStorage.setItem('cookies_accepted','1'); setVisible(false); };
   return(
     <div style={{position:'fixed',bottom:16,left:16,zIndex:900,width:'calc(100% - 32px)',maxWidth:420,transition:'opacity 380ms,transform 380ms',opacity:visible?1:0,transform:`translateY(${visible?'0':'40px'})`,pointerEvents:visible?'auto':'none'}}>
-      <div style={{background:'rgba(13,11,7,0.96)',border:'1px solid rgba(201,163,78,0.18)',borderRadius:14,backdropFilter:'blur(20px)',padding:'10px 14px',display:'flex',alignItems:'center',gap:12,boxShadow:'0 8px 40px rgba(0,0,0,0.55),inset 0 1px 0 rgba(201,163,78,0.07)'}}>
-        <div style={{flex:1,fontSize:12,color:'rgba(229,229,229,0.66)',lineHeight:1.5}}>
+      <div style={{background:'var(--ui-surface)',border:'1px solid var(--ui-line)',borderRadius:14,padding:'10px 14px',display:'flex',alignItems:'center',gap:12,boxShadow:'var(--ui-shadow)'}}>
+        <div style={{flex:1,fontSize:13,color:'var(--ui-text-muted)',lineHeight:1.5}}>
           Сайт использует cookie.{' '}
-          <a href="#" onClick={openPrivacy} style={{color:'rgba(201,163,78,0.65)',textDecoration:'underline',textUnderlineOffset:'2px'}}>Подробнее</a>
+          <a href="#" onClick={openPrivacy} style={{color:'var(--ui-gold-soft)',textDecoration:'underline',textUnderlineOffset:'2px'}}>Подробнее</a>
         </div>
-        <button onClick={accept} className="btn-gold" style={{padding:'8px 18px',borderRadius:8,fontSize:12,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer',flexShrink:0,whiteSpace:'nowrap'}}>Принять</button>
+        <button onClick={accept} className="btn-gold" style={{padding:'8px 18px',borderRadius:8,fontSize:13,fontWeight:700,color:'var(--ui-bg)',border:'none',cursor:'pointer',flexShrink:0,whiteSpace:'nowrap'}}>Принять</button>
       </div>
     </div>
   );
@@ -189,34 +190,34 @@ function ContactModal() {
 
   if(!open) return null;
   const inp={
-    display:'block',width:'100%',background:'rgba(255,255,255,0.04)',
-    border:'1px solid rgba(201,163,78,0.18)',borderRadius:8,padding:'12px 14px',
-    color:'#F0EDE8',fontSize:14,outline:'none',fontFamily:'Inter,sans-serif',
+    display:'block',width:'100%',background:'var(--ui-field)',
+    border:'1px solid var(--ui-line)',borderRadius:8,padding:'12px 14px',
+    color:'var(--ui-text-strong)',fontSize:16,outline:'none',fontFamily:'var(--font-ui)',
     boxSizing:'border-box',marginBottom:14,transition:'border-color 200ms',
   };
-  const lbl={fontSize:10,fontWeight:700,letterSpacing:'0.14em',color:GOLD,textTransform:'uppercase',display:'block',marginBottom:6};
-  const focusIn=e=>e.target.style.borderColor='rgba(201,163,78,0.55)';
-  const focusOut=e=>e.target.style.borderColor='rgba(201,163,78,0.18)';
+  const lbl={fontSize:13,fontWeight:600,color:'var(--ui-gold)',display:'block',marginBottom:6};
+  const focusIn=e=>e.target.style.borderColor='var(--ui-gold)';
+  const focusOut=e=>e.target.style.borderColor='var(--ui-line)';
   return(
     <div role="dialog" aria-modal="true" aria-label="Форма обращения" style={{position:'fixed',inset:0,zIndex:2001,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px'}}>
-      <div onClick={close} style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.72)',backdropFilter:'blur(10px)'}}/>
-      <div style={{position:'relative',zIndex:1,width:'100%',maxWidth:500,background:'rgba(9,8,6,0.97)',border:'1px solid rgba(201,163,78,0.22)',borderRadius:18,backdropFilter:'blur(24px)',boxShadow:'0 32px 80px rgba(0,0,0,0.7),inset 0 1px 0 rgba(201,163,78,0.12)',overflow:'hidden'}}>
-        <div style={{padding:'22px 26px 18px',borderBottom:'1px solid rgba(201,163,78,0.1)',display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+      <div onClick={close} style={{position:'absolute',inset:0,background:'var(--ui-scrim)'}}/>
+      <div style={{position:'relative',zIndex:1,width:'100%',maxWidth:500,background:'var(--ui-surface)',border:'1px solid var(--ui-line)',borderRadius:18,boxShadow:'var(--ui-shadow)',overflow:'hidden'}}>
+        <div style={{padding:'22px 26px 18px',borderBottom:'1px solid var(--ui-line-soft)',display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
           <div>
-            <div style={{fontSize:10,fontWeight:700,letterSpacing:'0.18em',color:GOLD,textTransform:'uppercase',marginBottom:5}}>Новый проект</div>
-            <div style={{fontSize:22,fontWeight:500,color:'#F0EDE8',fontFamily:"'Cormorant Garamond',serif",lineHeight:1.2}}>Обсудить задачу</div>
+            <div style={{fontSize:13,fontWeight:500,color:'var(--ui-gold)',marginBottom:5}}>Новый проект</div>
+            <div style={{fontSize:22,fontWeight:500,color:'var(--ui-text-strong)',fontFamily:'var(--font-serif)',lineHeight:1.2}}>Обсудить задачу</div>
           </div>
-          <button onClick={close} aria-label="Закрыть" style={{width:34,height:34,borderRadius:'50%',border:'1px solid rgba(255,255,255,0.1)',background:'rgba(255,255,255,0.04)',color:'rgba(255,255,255,0.45)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,lineHeight:1}}>×</button>
+          <button onClick={close} aria-label="Закрыть" style={{width:34,height:34,borderRadius:'50%',border:'1px solid var(--ui-close-line)',background:'var(--ui-field)',color:'var(--ui-close)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,lineHeight:1}}>×</button>
         </div>
         <div style={{padding:'22px 26px 26px',maxHeight:'calc(90vh - 100px)',overflowY:'auto'}}>
           {status==='success'?(
             <div style={{textAlign:'center',padding:'28px 0'}}>
-              <div style={{width:56,height:56,borderRadius:'50%',background:'rgba(201,163,78,0.1)',border:'1px solid rgba(201,163,78,0.3)',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 18px'}}>
+              <div style={{width:56,height:56,borderRadius:'50%',background:'var(--ui-field)',border:'1px solid var(--ui-line)',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 18px'}}>
                 <CheckCircle size={24} color={GOLD}/>
               </div>
-              <div style={{fontSize:20,fontWeight:500,color:'#F0EDE8',fontFamily:"'Cormorant Garamond',serif",marginBottom:8}}>Заявка отправлена!</div>
-              <div style={{fontSize:14,color:'rgba(229,229,229,0.5)',lineHeight:1.65,marginBottom:24}}>Отвечу в течение нескольких часов. Спасибо за обращение.</div>
-              <button onClick={close} className="btn-gold" style={{padding:'12px 32px',borderRadius:10,fontSize:13,fontWeight:700,color:'#0C0D10',border:'none',cursor:'pointer'}}>Закрыть</button>
+              <div style={{fontSize:20,fontWeight:500,color:'var(--ui-text-strong)',fontFamily:'var(--font-serif)',marginBottom:8}}>Заявка отправлена!</div>
+              <div style={{fontSize:14,color:'var(--ui-text-muted)',lineHeight:1.65,marginBottom:24}}>Отвечу в течение нескольких часов. Спасибо за обращение.</div>
+              <button onClick={close} className="btn-gold" style={{padding:'12px 32px',borderRadius:10,fontSize:14,fontWeight:700,color:'var(--ui-bg)',border:'none',cursor:'pointer'}}>Закрыть</button>
             </div>
           ):(
             <form onSubmit={send}>
@@ -232,14 +233,14 @@ function ContactModal() {
               <label htmlFor="cf-message" style={lbl}>Расскажите о задаче *</label>
               <textarea id="cf-message" name="message" value={form.message} onChange={upd} rows={4} placeholder="Что нужно сделать, сроки, бюджет, референсы…" style={{...inp,resize:'vertical',minHeight:96,marginBottom:8}} onFocus={focusIn} onBlur={focusOut}/>
 
-              {errMsg&&<div role="alert" style={{fontSize:12,color:status==='error'?'rgba(229,229,229,0.5)':'#F87171',marginBottom:12,lineHeight:1.55}}>{errMsg}{status==='error'&&<> → <a href="mailto:9254652@bk.ru" style={{color:GOLD}}>9254652@bk.ru</a></>}</div>}
+              {errMsg&&<div role="alert" style={{fontSize:13,color:status==='error'?'var(--ui-text-muted)':'var(--ui-error)',marginBottom:12,lineHeight:1.55}}>{errMsg}{status==='error'&&<>: <a href="mailto:9254652@bk.ru" style={{color:'var(--ui-gold)'}}>9254652@bk.ru</a></>}</div>}
 
-              <button type="submit" className="btn-gold" disabled={status==='sending'} style={{width:'100%',padding:'14px',borderRadius:10,fontSize:14,fontWeight:700,color:'#0C0D10',border:'none',cursor:status==='sending'?'default':'pointer',opacity:status==='sending'?0.65:1,marginTop:4}}>
-                {status==='sending'?'Отправляю…':'Отправить заявку →'}
+              <button type="submit" className="btn-gold" disabled={status==='sending'} style={{width:'100%',padding:'14px',borderRadius:10,fontSize:14,fontWeight:700,color:'var(--ui-bg)',border:'none',cursor:status==='sending'?'default':'pointer',opacity:status==='sending'?0.65:1,marginTop:4}}>
+                {status==='sending'?'Отправляю…':'Отправить заявку'}
               </button>
-              <p style={{fontSize:11,color:'rgba(229,229,229,0.27)',marginTop:12,lineHeight:1.6,textAlign:'center'}}>
+              <p style={{fontSize:12,color:'var(--ui-text-soft)',marginTop:12,lineHeight:1.6,textAlign:'center'}}>
                 Нажимая кнопку, вы соглашаетесь с{' '}
-                <a href="#" onClick={openPrivacy} style={{color:'rgba(201,163,78,0.5)',textDecoration:'underline',textUnderlineOffset:'2px',cursor:'pointer'}}>Политикой конфиденциальности</a>
+                <a href="#" onClick={openPrivacy} style={{color:'var(--ui-gold-soft)',textDecoration:'underline',textUnderlineOffset:'2px',cursor:'pointer'}}>Политикой конфиденциальности</a>
               </p>
             </form>
           )}
@@ -396,7 +397,7 @@ function ProjectDetailView({navigate,project:p}){
       </motion.div>
     </div>
     {p.gallery&&<div style={{maxWidth:860,margin:'0 auto',padding:'36px 40px 0',position:'relative',zIndex:1,display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
-      {p.gallery.map((g,i)=><img key={g} src={g} alt={`${p.title} — экран ${i+1}`} width="468" height="1013" loading="lazy" style={{width:'min(100%,250px)',height:'auto',borderRadius:22,border:'1px solid rgba(255,255,255,0.1)',boxShadow:'0 20px 50px rgba(0,0,0,0.5)'}}/>)}
+      {p.gallery.map((g,i)=><img key={g} src={g} alt={`${p.title}, экран ${i+1}`} width="468" height="1013" loading="lazy" style={{width:'min(100%,250px)',height:'auto',borderRadius:22,border:'1px solid rgba(255,255,255,0.1)',boxShadow:'0 20px 50px rgba(0,0,0,0.5)'}}/>)}
     </div>}
     <div style={{maxWidth:860,margin:'0 auto',padding:'48px 40px',display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))',gap:40,position:'relative',zIndex:1}}>
       <div>
