@@ -86,6 +86,7 @@ function Hero() {
         >
           <span className="block">Алексей</span>
           <span className="block">Евтушенко</span>
+          <span className="mt-6 block text-[clamp(14px,1.6vw,22px)] font-medium normal-case leading-snug tracking-normal text-white/80 md:mt-8">Если есть цель — ничего не сложно</span>
         </motion.h1>
       </div>
 
