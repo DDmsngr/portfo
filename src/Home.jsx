@@ -272,6 +272,40 @@ function Audience() {
   );
 }
 
+function Certificates() {
+  return (
+    <section id="certificates" className="px-5 pb-24 md:px-8 md:pb-36">
+      <div className="mx-auto max-w-[1500px]">
+        <H2>Сертификаты</H2>
+        <div className="mt-12 grid items-center gap-8 border border-ink/20 p-5 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] md:gap-12 md:p-8">
+          <a href="/certs/it-volunteer.pdf" target="_blank" rel="noopener" className="block bg-ink">
+            <img
+              src="/certs/it-volunteer.jpg"
+              alt="Сертификат IT-Волонтёр об успешном выполнении проекта, Алексей Евтушенко"
+              width="1200"
+              height="849"
+              loading="lazy"
+              className="block h-auto w-full"
+            />
+          </a>
+          <div>
+            <p className="text-[14px] text-ink/60">IT-Волонтёр, 19 ноября 2026</p>
+            <h3 className="mt-4 font-display text-[clamp(22px,2.4vw,34px)] font-bold leading-tight">
+              Обезличенная структура учёта метрик психологической помощи для НКО
+            </h3>
+            <p className="mt-4 break-all text-[13px] text-ink/60">Код проверки: cert_1795090804446_ts7b7dg0</p>
+            <div className="mt-8 flex flex-wrap gap-x-8 gap-y-4 text-[15px] font-semibold">
+              <a href="/certs/it-volunteer.pdf" target="_blank" rel="noopener" className="inline-flex min-h-11 items-center gap-2 underline underline-offset-4">
+                Открыть PDF <ArrowUpRight size={15} />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Services() {
   return (
     <section id="services" className="px-5 pb-24 md:px-8 md:pb-36">
@@ -425,6 +459,7 @@ export default function HomeView({ navigate }) {
         <Ticker />
         <Projects navigate={navigate} />
         <Audience />
+        <Certificates />
         <Services />
         <Demos navigate={navigate} />
         <Process />
